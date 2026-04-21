@@ -27,7 +27,7 @@ const Pricing = () => {
               description="Parfait pour tester le service"
               features={[
                 "1 événement",
-                "Jusqu'à 100 photos",
+                "Jusqu'à 50 photos",
                 "QR Code personnalisable",
                 "Album partagé",
                 "Téléchargement des photos",
@@ -37,7 +37,7 @@ const Pricing = () => {
 
             <PricingCard
               name="Premium Event"
-              price="29€"
+              price="39€"
               period="événement"
               description="Pour un événement mémorable"
               features={[
@@ -56,7 +56,7 @@ const Pricing = () => {
 
             <PricingCard
               name="Pro Events"
-              price="99€"
+              price="149€"
               period="mois"
               description="Pour les professionnels"
               features={[
