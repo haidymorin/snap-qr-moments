@@ -42,7 +42,7 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild variant="hero" size="lg" className="text-lg">
-                <Link to="/contact">Créer mon album événement</Link>
+                <Link to="/auth">Créer mon album événement</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="text-lg">
                 <Link to="/how-it-works">Découvrir comment ça marche</Link>
@@ -141,7 +141,7 @@ const Index = () => {
               Rejoignez des milliers d'organisateurs qui ont déjà choisi QR Memories pour leurs événements.
             </p>
             <Button asChild variant="secondary" size="lg" className="text-lg">
-              <Link to="/contact">Créer mon événement gratuitement</Link>
+              <Link to="/auth">Créer mon événement gratuitement</Link>
             </Button>
           </div>
         </div>

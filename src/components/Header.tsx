@@ -1,10 +1,13 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
@@ -16,6 +19,15 @@ const Header = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+    setIsMenuOpen(false);
+  };
+
+  const ctaTarget = user ? "/dashboard" : "/auth";
+  const ctaLabel = user ? "Mon dashboard" : "Créer mon événement";
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4">
@@ -24,7 +36,6 @@ const Header = () => {
             QR Memories
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
               <Link
@@ -37,12 +48,22 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
-            <Button asChild variant="hero" size="sm">
-              <Link to="/contact">Créer mon événement</Link>
-            </Button>
+            {user ? (
+              <>
+                <Button asChild variant="hero" size="sm">
+                  <Link to="/dashboard"><LayoutDashboard className="w-4 h-4" />Dashboard</Link>
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleSignOut} aria-label="Déconnexion">
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </>
+            ) : (
+              <Button asChild variant="hero" size="sm">
+                <Link to={ctaTarget}>{ctaLabel}</Link>
+              </Button>
+            )}
           </nav>
 
-          {/* Mobile Menu Button */}
           <button
             className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -52,7 +73,6 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
         {isMenuOpen && (
           <nav className="md:hidden py-4 border-t border-border animate-fade-in">
             {navItems.map((item) => (
@@ -67,11 +87,20 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
-            <Button asChild variant="hero" size="sm" className="w-full mt-4">
-              <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
-                Créer mon événement
-              </Link>
-            </Button>
+            {user ? (
+              <>
+                <Button asChild variant="hero" size="sm" className="w-full mt-4">
+                  <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>Mon dashboard</Link>
+                </Button>
+                <Button variant="outline" size="sm" className="w-full mt-2" onClick={handleSignOut}>
+                  <LogOut className="w-4 h-4" /> Déconnexion
+                </Button>
+              </>
+            ) : (
+              <Button asChild variant="hero" size="sm" className="w-full mt-4">
+                <Link to={ctaTarget} onClick={() => setIsMenuOpen(false)}>{ctaLabel}</Link>
+              </Button>
+            )}
           </nav>
         )}
       </div>
