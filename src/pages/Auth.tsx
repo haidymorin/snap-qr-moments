@@ -70,7 +70,10 @@ const Auth = () => {
     setIsSubmitting(true);
     try {
       const data = signInSchema.parse(signInData);
-      const { error } = await supabase.auth.signInWithPassword(data);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
       if (error) throw error;
       toast({ title: "Bienvenue !", description: "Connexion réussie." });
       navigate("/dashboard");

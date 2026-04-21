@@ -59,7 +59,7 @@ const PricingCard = ({
         size="lg"
         className="w-full"
       >
-        <Link to="/contact">Commencer</Link>
+        <Link to="/auth">Commencer</Link>
       </Button>
     </div>
   );
