@@ -13,6 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import EventDetail from "./pages/EventDetail";
 import GuestEvent from "./pages/GuestEvent";
 import NotFound from "./pages/NotFound";
+import Privacy from "./pages/Privacy";
+import Legal from "./pages/Legal";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/event/:id" element={<EventDetail />} />
             <Route path="/event/:id" element={<GuestEvent />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/legal" element={<Legal />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

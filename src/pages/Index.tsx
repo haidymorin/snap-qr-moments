@@ -7,7 +7,7 @@ import heroImage from "@/assets/hero-image.jpg";
 import qrIcon from "@/assets/qr-icon.jpg";
 import photosIcon from "@/assets/photos-icon.jpg";
 import albumIcon from "@/assets/album-icon.jpg";
-import { Sparkles, Camera, Share2 } from "lucide-react";
+import { Sparkles, Camera, Share2, Layers, Palette, Image as ImageIcon } from "lucide-react";
 
 const Index = () => {
   return (
@@ -124,6 +124,58 @@ const Index = () => {
                 <p className="text-muted-foreground">
                   Accédez à tous vos souvenirs en temps réel.
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pro Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto bg-gradient-card rounded-3xl shadow-card p-10 md:p-14">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+              <div className="space-y-6">
+                <h2 className="text-3xl md:text-4xl font-bold">
+                  Vous êtes <span className="bg-gradient-hero bg-clip-text text-transparent">photographe ou wedding planner</span> ?
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  QR Memories s'intègre directement à votre offre. Proposez à vos clients un espace de collecte photos
+                  brandé à votre nom, sans effort supplémentaire. Simplifiez votre livraison de galeries et devenez
+                  prescripteur.
+                </p>
+                <Button asChild variant="hero" size="lg">
+                  <Link to="/pricing">Découvrir l'offre Pro</Link>
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-1 gap-4">
+                <div className="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border">
+                  <div className="w-12 h-12 bg-gradient-hero rounded-xl flex items-center justify-center shrink-0">
+                    <Layers className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Multi-événements</h3>
+                    <p className="text-sm text-muted-foreground">Gérez tous vos clients en un seul espace.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border">
+                  <div className="w-12 h-12 bg-gradient-hero rounded-xl flex items-center justify-center shrink-0">
+                    <Palette className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Branding personnalisé</h3>
+                    <p className="text-sm text-muted-foreground">Vos couleurs, votre logo, votre identité.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border">
+                  <div className="w-12 h-12 bg-gradient-hero rounded-xl flex items-center justify-center shrink-0">
+                    <ImageIcon className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Galerie pro</h3>
+                    <p className="text-sm text-muted-foreground">Livraison soignée et expérience client premium.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -203,6 +203,15 @@ const GuestEvent = () => {
             </div>
           )}
         </div>
+
+        <div className="text-center mt-12 pb-4">
+          <a
+            href="/"
+            className="text-xs text-muted-foreground hover:text-primary transition-colors"
+          >
+            Propulsé par QR Memories
+          </a>
+        </div>
       </main>
     </div>
   );
