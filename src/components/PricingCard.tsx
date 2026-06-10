@@ -10,6 +10,8 @@ interface PricingCardProps {
   features: string[];
   highlighted?: boolean;
   badge?: string;
+  ctaLabel?: string;
+  ctaTo?: string;
 }
 
 const PricingCard = ({
@@ -20,6 +22,8 @@ const PricingCard = ({
   features,
   highlighted = false,
   badge,
+  ctaLabel = "Commencer",
+  ctaTo = "/auth",
 }: PricingCardProps) => {
   return (
     <div
@@ -59,7 +63,7 @@ const PricingCard = ({
         size="lg"
         className="w-full"
       >
-        <Link to="/auth">Commencer</Link>
+        <Link to={ctaTo}>{ctaLabel}</Link>
       </Button>
     </div>
   );
