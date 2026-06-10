@@ -2,6 +2,48 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PricingCard from "@/components/PricingCard";
 
+const aLaCarte = [
+  {
+    title: "Supports physiques QR Code",
+    price: "à partir de 9€",
+    desc: "Carton de table, chevalet ou affiche d'entrée. Fichiers PDF haute résolution prêts à imprimer, personnalisés avec votre événement.",
+  },
+  {
+    title: "Album digital PDF",
+    price: "14€",
+    desc: "Sélectionnez vos meilleures photos et recevez un beau PDF élégant, prêt à partager ou à imprimer.",
+  },
+  {
+    title: "Album photo imprimé",
+    price: "à partir de 29€",
+    desc: "Un vrai album photo livré chez vous. En partenariat avec des imprimeurs professionnels.",
+  },
+  {
+    title: "Stockage longue durée",
+    price: "4€/mois",
+    desc: "Vos photos conservées 2 ans au lieu de 60 jours.",
+  },
+];
+
+const faq = [
+  {
+    q: "Combien de temps mes photos sont-elles conservées ?",
+    a: "60 jours après l'événement pour les offres Free et Premium. 60 jours également pour le Pro, extensible avec l'option stockage longue durée.",
+  },
+  {
+    q: "Puis-je changer de formule ?",
+    a: "Oui, à tout moment. L'upgrade est immédiat.",
+  },
+  {
+    q: "Y a-t-il des frais cachés ?",
+    a: "Non. Le prix affiché est le prix final.",
+  },
+  {
+    q: "Le paiement est-il sécurisé ?",
+    a: "Oui, via les standards de chiffrement actuels.",
+  },
+];
+
 const Pricing = () => {
   return (
     <div className="min-h-screen">
@@ -12,27 +54,29 @@ const Pricing = () => {
           {/* Hero */}
           <div className="text-center mb-16 animate-fade-in">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Des tarifs <span className="bg-gradient-hero bg-clip-text text-transparent">transparents</span>
+              Des tarifs <span className="bg-gradient-hero bg-clip-text text-transparent">simples et transparents</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Choisissez la formule qui correspond à vos besoins. Pas de frais cachés, pas de surprise.
+              Commencez gratuitement. Upgradez quand vous en avez besoin.
             </p>
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-24">
             <PricingCard
               name="Free Test"
               price="Gratuit"
-              description="Parfait pour tester le service"
+              description="Pour découvrir le service"
               features={[
                 "1 événement",
-                "Jusqu'à 15 photos",
-                "QR Code personnalisable",
-                "Album partagé",
-                "Téléchargement des photos",
+                "15 photos maximum",
+                "QR Code unique",
+                "Galerie partagée",
+                "Téléchargement ZIP",
                 "Support par email",
               ]}
+              ctaLabel="Commencer gratuitement"
+              ctaTo="/auth"
             />
 
             <PricingCard
@@ -41,116 +85,77 @@ const Pricing = () => {
               period="événement"
               description="Pour un événement mémorable"
               features={[
-                "1 événement illimité",
+                "1 événement",
                 "Photos illimitées",
-                "QR Code personnalisé premium",
-                "Albums personnalisés",
-                "Diaporama automatique (bientôt disponible)",
-                "Création de clips vidéo (bientôt disponible)",
-                "Filtres par invité (bientôt disponible)",
-                "Support prioritaire 24/7",
+                "QR Code premium personnalisé",
+                "Galerie haute qualité",
+                "Téléchargement ZIP organisateur",
+                "Albums personnalisés par invité (bientôt disponible)",
+                "Tri intelligent par IA (bientôt disponible)",
+                "Support prioritaire",
               ]}
               highlighted={true}
               badge="Populaire"
+              ctaLabel="Créer mon événement"
+              ctaTo="/auth"
             />
 
             <PricingCard
               name="Pro Events"
               price="149€"
               period="mois"
-              description="Pour les professionnels"
+              description="Pour les photographes et professionnels de l'événementiel"
               features={[
                 "Événements illimités",
-                "Tout illimité",
-                "Marque personnalisable",
-                "Analytics avancés",
-                "API access",
-                "Albums privés multiples",
+                "Photos illimitées",
+                "Branding personnalisé à votre nom",
+                "Gestion multi-événements",
+                "Galeries privées par client",
                 "Export haute qualité",
-                "Support dédié premium",
-                "Formation personnalisée",
+                "Analytics de base",
+                "Support dédié",
               ]}
               badge="Recommandé"
+              ctaLabel="Nous contacter"
+              ctaTo="/contact"
             />
           </div>
 
           {/* Options à la carte */}
-          <div className="max-w-6xl mx-auto mb-20">
+          <div className="max-w-6xl mx-auto mb-24">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Options <span className="bg-gradient-hero bg-clip-text text-transparent">à la carte</span>
+                Personnalisez votre <span className="bg-gradient-hero bg-clip-text text-transparent">expérience</span>
               </h2>
               <p className="text-muted-foreground">
-                Complétez votre formule avec des services additionnels.
+                Ajoutez ce dont vous avez besoin, sans vous engager.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                {
-                  title: "Support physique QR Code",
-                  desc: "Carton de table, chevalet ou affiche d'entrée. Fichiers PDF fournis.",
-                  price: "à partir de 9€",
-                },
-                {
-                  title: "Album photo digital PDF",
-                  desc: "Un album numérique au format PDF, prêt à partager.",
-                  price: "14€",
-                },
-                {
-                  title: "Album photo imprimé",
-                  desc: "Album imprimé de qualité, livré à domicile.",
-                  price: "à partir de 29€",
-                },
-                {
-                  title: "Stockage longue durée",
-                  desc: "Conservez vos photos pendant 2 ans en toute sécurité.",
-                  price: "4€/mois",
-                },
-              ].map((opt) => (
+              {aLaCarte.map((opt) => (
                 <div
                   key={opt.title}
-                  className="p-6 bg-card rounded-2xl border border-border shadow-soft hover:shadow-card transition-all"
+                  className="p-6 bg-card rounded-2xl border border-border shadow-soft hover:shadow-card hover:-translate-y-1 transition-all"
                 >
                   <h3 className="font-semibold text-lg mb-2">{opt.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-4">{opt.desc}</p>
-                  <p className="font-bold text-primary">{opt.price}</p>
+                  <p className="font-bold text-primary mb-3">{opt.price}</p>
+                  <p className="text-sm text-muted-foreground">{opt.desc}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* FAQ Section */}
+          {/* FAQ */}
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-12">Questions fréquentes</h2>
             <div className="space-y-6">
-              <div className="p-6 bg-card rounded-xl border border-border shadow-soft">
-                <h3 className="font-semibold text-lg mb-2">Puis-je changer de formule ?</h3>
-                <p className="text-muted-foreground">
-                  Oui, vous pouvez upgrader ou downgrader votre formule à tout moment. Les changements sont immédiats.
-                </p>
-              </div>
-
-              <div className="p-6 bg-card rounded-xl border border-border shadow-soft">
-                <h3 className="font-semibold text-lg mb-2">Y a-t-il des frais supplémentaires ?</h3>
-                <p className="text-muted-foreground">
-                  Non, tous les tarifs affichés sont tout compris. Aucun frais caché ou surprise.
-                </p>
-              </div>
-
-              <div className="p-6 bg-card rounded-xl border border-border shadow-soft">
-                <h3 className="font-semibold text-lg mb-2">Combien de temps les photos sont conservées ?</h3>
-                <p className="text-muted-foreground">
-                  Vos photos sont conservées 60 jours après l'événement. Option stockage longue durée disponible.
-                </p>
-              </div>
-
-              <div className="p-6 bg-card rounded-xl border border-border shadow-soft">
-                <h3 className="font-semibold text-lg mb-2">Le paiement est-il sécurisé ?</h3>
-                <p className="text-muted-foreground">
-                  Oui, nous utilisons les dernières technologies de cryptage pour garantir la sécurité de vos paiements.
-                </p>
-              </div>
+              {faq.map((item) => (
+                <div key={item.q} className="p-6 bg-card rounded-xl border border-border shadow-soft">
+                  <h3 className="font-semibold text-lg mb-2">{item.q}</h3>
+                  <p className="text-muted-foreground">{item.a}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
