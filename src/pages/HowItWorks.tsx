@@ -3,8 +3,10 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { QrCode, Users, Upload, Download, Play, Heart } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const HowItWorks = () => {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen">
       <Header />
@@ -14,33 +16,30 @@ const HowItWorks = () => {
           {/* Hero */}
           <div className="text-center mb-20 animate-fade-in">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Comment ça <span className="bg-gradient-hero bg-clip-text text-transparent">fonctionne</span> ?
+              {t("how.title1")}{" "}
+              <span className="bg-gradient-hero bg-clip-text text-transparent">{t("how.title2")}</span>{" "}
+              {t("how.title3")}
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              QR Memories simplifie le partage de photos lors de vos événements. Découvrez comment en 3 étapes simples.
-            </p>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">{t("how.subtitle")}</p>
           </div>
 
           {/* Steps */}
           <div className="max-w-4xl mx-auto space-y-20">
-            {/* Step 1 */}
             <div className="flex flex-col md:flex-row gap-8 items-center">
               <div className="flex-1 space-y-4">
                 <div className="w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-card">
                   1
                 </div>
-                <h2 className="text-3xl font-bold">Créez votre événement</h2>
-                <p className="text-lg text-muted-foreground">
-                  Inscrivez-vous en quelques secondes et créez votre événement. Indiquez le nom, la date, et personnalisez votre QR Code.
-                </p>
+                <h2 className="text-3xl font-bold">{t("how.step1Title")}</h2>
+                <p className="text-lg text-muted-foreground">{t("how.step1Desc")}</p>
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2">
                     <QrCode className="w-5 h-5 text-primary" />
-                    <span>Obtenez votre QR Code unique</span>
+                    <span>{t("how.step1B1")}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-primary" />
-                    <span>Invitez autant de personnes que vous voulez</span>
+                    <span>{t("how.step1B2")}</span>
                   </li>
                 </ul>
               </div>
@@ -51,24 +50,21 @@ const HowItWorks = () => {
               </div>
             </div>
 
-            {/* Step 2 */}
             <div className="flex flex-col md:flex-row-reverse gap-8 items-center">
               <div className="flex-1 space-y-4">
                 <div className="w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-card">
                   2
                 </div>
-                <h2 className="text-3xl font-bold">Vos invités participent</h2>
-                <p className="text-lg text-muted-foreground">
-                  Partagez le QR Code (affiché à l'événement, envoyé par mail, etc.). Vos invités le scannent et partagent leurs photos instantanément.
-                </p>
+                <h2 className="text-3xl font-bold">{t("how.step2Title")}</h2>
+                <p className="text-lg text-muted-foreground">{t("how.step2Desc")}</p>
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2">
                     <Upload className="w-5 h-5 text-primary" />
-                    <span>Aucune application à télécharger</span>
+                    <span>{t("how.step2B1")}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-primary" />
-                    <span>Fonctionne sur tous les smartphones</span>
+                    <span>{t("how.step2B2")}</span>
                   </li>
                 </ul>
               </div>
@@ -79,28 +75,25 @@ const HowItWorks = () => {
               </div>
             </div>
 
-            {/* Step 3 */}
             <div className="flex flex-col md:flex-row gap-8 items-center">
               <div className="flex-1 space-y-4">
                 <div className="w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-card">
                   3
                 </div>
-                <h2 className="text-3xl font-bold">Profitez de vos souvenirs</h2>
-                <p className="text-lg text-muted-foreground">
-                  Accédez à toutes les photos dans votre espace personnel. Téléchargez-les, créez des albums personnalisés ou générez un diaporama automatique.
-                </p>
+                <h2 className="text-3xl font-bold">{t("how.step3Title")}</h2>
+                <p className="text-lg text-muted-foreground">{t("how.step3Desc")}</p>
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2">
                     <Download className="w-5 h-5 text-primary" />
-                    <span>Téléchargement en masse</span>
+                    <span>{t("how.step3B1")}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Play className="w-5 h-5 text-primary" />
-                    <span>Création de clips vidéo automatiques</span>
+                    <span>{t("how.step3B2")}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Heart className="w-5 h-5 text-primary" />
-                    <span>Sélection de vos favoris</span>
+                    <span>{t("how.step3B3")}</span>
                   </li>
                 </ul>
               </div>
@@ -115,11 +108,9 @@ const HowItWorks = () => {
           {/* CTA */}
           <div className="text-center mt-20">
             <div className="inline-block p-12 bg-gradient-hero rounded-3xl shadow-card">
-              <h2 className="text-3xl font-bold text-white mb-4">
-                Convaincu ? Créez votre premier événement !
-              </h2>
+              <h2 className="text-3xl font-bold text-white mb-4">{t("how.ctaTitle")}</h2>
               <Button asChild variant="secondary" size="lg">
-                <Link to="/contact">Commencer gratuitement</Link>
+                <Link to="/contact">{t("how.ctaButton")}</Link>
               </Button>
             </div>
           </div>
