@@ -8,8 +8,10 @@ import qrIcon from "@/assets/qr-icon.jpg";
 import photosIcon from "@/assets/photos-icon.jpg";
 import albumIcon from "@/assets/album-icon.jpg";
 import { Sparkles, Camera, Share2, Layers, Palette, Image as ImageIcon } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen">
       <Header />
@@ -31,21 +33,20 @@ const Index = () => {
           <div className="max-w-4xl mx-auto space-y-8">
             <h1 className="text-5xl md:text-7xl font-bold leading-tight">
               <span className="bg-gradient-hero bg-clip-text text-transparent">
-                Scannez. Partagez.
+                {t("home.heroTitle1")}
               </span>
               <br />
-              Revivez vos souvenirs.
+              {t("home.heroTitle2")}
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-              Collectez et partagez les photos de vos événements via un simple QR Code.
-              Pas d'application, juste de la magie.
+              {t("home.heroSubtitle")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild variant="hero" size="lg" className="text-lg">
-                <Link to="/auth">Créer mon album événement</Link>
+                <Link to="/auth">{t("home.ctaCreate")}</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="text-lg">
-                <Link to="/how-it-works">Découvrir comment ça marche</Link>
+                <Link to="/how-it-works">{t("home.ctaDiscover")}</Link>
               </Button>
             </div>
           </div>
@@ -57,10 +58,11 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Simple comme <span className="bg-gradient-hero bg-clip-text text-transparent">1, 2, 3</span>
+              {t("home.simpleTitle")}{" "}
+              <span className="bg-gradient-hero bg-clip-text text-transparent">{t("home.simpleNumbers")}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              En quelques secondes, créez votre album partagé et récupérez tous les souvenirs de vos invités.
+              {t("home.simpleSubtitle")}
             </p>
           </div>
 
@@ -68,20 +70,20 @@ const Index = () => {
             <FeatureCard
               step={1}
               icon={<img src={qrIcon} alt="QR Code" className="w-20 h-20 rounded-xl" />}
-              title="Créez votre événement"
-              description="En quelques clics, configurez votre album événement et obtenez un QR Code unique à partager."
+              title={t("home.step1Title")}
+              description={t("home.step1Desc")}
             />
             <FeatureCard
               step={2}
-              icon={<img src={photosIcon} alt="Partage photos" className="w-20 h-20 rounded-xl" />}
-              title="Vos invités scannent"
-              description="Ils scannent le QR Code et partagent leurs photos instantanément, sans télécharger d'application."
+              icon={<img src={photosIcon} alt="" className="w-20 h-20 rounded-xl" />}
+              title={t("home.step2Title")}
+              description={t("home.step2Desc")}
             />
             <FeatureCard
               step={3}
-              icon={<img src={albumIcon} alt="Album" className="w-20 h-20 rounded-xl" />}
-              title="Profitez de vos souvenirs"
-              description="Toutes les photos apparaissent dans votre album partagé. Téléchargez-les ou créez un diaporama."
+              icon={<img src={albumIcon} alt="" className="w-20 h-20 rounded-xl" />}
+              title={t("home.step3Title")}
+              description={t("home.step3Desc")}
             />
           </div>
         </div>
@@ -92,7 +94,8 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center space-y-12">
             <h2 className="text-4xl md:text-5xl font-bold">
-              Pourquoi choisir <span className="bg-gradient-hero bg-clip-text text-transparent">QR Memories</span> ?
+              {t("home.whyTitle")}{" "}
+              <span className="bg-gradient-hero bg-clip-text text-transparent">QR Memories</span> ?
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -100,30 +103,24 @@ const Index = () => {
                 <div className="w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto">
                   <Sparkles className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold">Ultra simple</h3>
-                <p className="text-muted-foreground">
-                  Pas d'application à télécharger. Un simple scan suffit.
-                </p>
+                <h3 className="text-xl font-semibold">{t("home.benefit1Title")}</h3>
+                <p className="text-muted-foreground">{t("home.benefit1Desc")}</p>
               </div>
 
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto">
                   <Camera className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold">Photos illimitées</h3>
-                <p className="text-muted-foreground">
-                  Collectez autant de photos que vous le souhaitez.
-                </p>
+                <h3 className="text-xl font-semibold">{t("home.benefit2Title")}</h3>
+                <p className="text-muted-foreground">{t("home.benefit2Desc")}</p>
               </div>
 
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto">
                   <Share2 className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold">Partage instantané</h3>
-                <p className="text-muted-foreground">
-                  Accédez à tous vos souvenirs en temps réel.
-                </p>
+                <h3 className="text-xl font-semibold">{t("home.benefit3Title")}</h3>
+                <p className="text-muted-foreground">{t("home.benefit3Desc")}</p>
               </div>
             </div>
           </div>
@@ -137,15 +134,15 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
               <div className="space-y-6">
                 <h2 className="text-3xl md:text-4xl font-bold">
-                  Vous êtes <span className="bg-gradient-hero bg-clip-text text-transparent">photographe ou wedding planner</span> ?
+                  {t("home.proTitle")}{" "}
+                  <span className="bg-gradient-hero bg-clip-text text-transparent">
+                    {t("home.proHighlight")}
+                  </span>{" "}
+                  {t("home.proQuestion")}
                 </h2>
-                <p className="text-lg text-muted-foreground">
-                  QR Memories s'intègre directement à votre offre. Proposez à vos clients un espace de collecte photos
-                  brandé à votre nom, sans effort supplémentaire. Simplifiez votre livraison de galeries et devenez
-                  prescripteur.
-                </p>
+                <p className="text-lg text-muted-foreground">{t("home.proDesc")}</p>
                 <Button asChild variant="hero" size="lg">
-                  <Link to="/pricing">Découvrir l'offre Pro</Link>
+                  <Link to="/pricing">{t("home.proCta")}</Link>
                 </Button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-1 gap-4">
@@ -154,8 +151,8 @@ const Index = () => {
                     <Layers className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">Multi-événements</h3>
-                    <p className="text-sm text-muted-foreground">Gérez tous vos clients en un seul espace.</p>
+                    <h3 className="font-semibold">{t("home.proF1Title")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("home.proF1Desc")}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border">
@@ -163,8 +160,8 @@ const Index = () => {
                     <Palette className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">Branding personnalisé</h3>
-                    <p className="text-sm text-muted-foreground">Vos couleurs, votre logo, votre identité.</p>
+                    <h3 className="font-semibold">{t("home.proF2Title")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("home.proF2Desc")}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border">
@@ -172,8 +169,8 @@ const Index = () => {
                     <ImageIcon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">Galerie pro</h3>
-                    <p className="text-sm text-muted-foreground">Livraison soignée et expérience client premium.</p>
+                    <h3 className="font-semibold">{t("home.proF3Title")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("home.proF3Desc")}</p>
                   </div>
                 </div>
               </div>
@@ -187,13 +184,11 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center space-y-8 p-12 bg-gradient-hero rounded-3xl shadow-card">
             <h2 className="text-4xl md:text-5xl font-bold text-white">
-              Prêt à immortaliser votre événement ?
+              {t("home.finalCtaTitle")}
             </h2>
-            <p className="text-xl text-white/90">
-              Rejoignez des milliers d'organisateurs qui ont déjà choisi QR Memories pour leurs événements.
-            </p>
+            <p className="text-xl text-white/90">{t("home.finalCtaDesc")}</p>
             <Button asChild variant="secondary" size="lg" className="text-lg">
-              <Link to="/auth">Créer mon événement gratuitement</Link>
+              <Link to="/auth">{t("home.finalCta")}</Link>
             </Button>
           </div>
         </div>
