@@ -67,7 +67,7 @@ const Auth = () => {
         email: data.email,
         password: data.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: { full_name: data.fullName },
         },
       });
@@ -99,7 +99,7 @@ const Auth = () => {
     } catch (err: any) {
       toast({
         title: t("auth.errorTitle"),
-        description: err.errors?.[0]?.message || err.message || t("auth.errorInvalidCreds"),
+        description: err.errors?.[0]?.message || t("auth.errorInvalidCreds"),
         variant: "destructive",
       });
     } finally {
