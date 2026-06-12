@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import logoAsset from "@/assets/qr-memories-logo.png.asset.json";
 
 const Header = () => {
   const location = useLocation();
