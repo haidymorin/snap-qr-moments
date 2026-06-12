@@ -72,7 +72,14 @@ const Auth = () => {
         },
       });
       if (error) throw error;
-      setSignUpSuccess(true);
+      // Email confirmation is disabled — sign the user in immediately.
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+      if (signInError) throw signInError;
+      toast({ title: t("auth.welcomeBack"), description: t("auth.welcomeBackDesc") });
+      navigate("/dashboard", { replace: true });
     } catch (err: any) {
       toast({
         title: t("auth.errorTitle"),
