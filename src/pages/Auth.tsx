@@ -99,7 +99,7 @@ const Auth = () => {
     } catch (err: any) {
       toast({
         title: t("auth.errorTitle"),
-        description: err.errors?.[0]?.message || err.message || t("auth.errorInvalidCreds"),
+        description: err.errors?.[0]?.message || t("auth.errorInvalidCreds"),
         variant: "destructive",
       });
     } finally {
