@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import MediaTabs, { MediaFilter, PlayOverlay } from "@/components/MediaTabs";
 import { Calendar, Download, ArrowLeft, Copy, Check, Loader2, X } from "lucide-react";
 
 interface EventRow {
@@ -19,11 +20,12 @@ interface EventRow {
   unique_code: string;
   user_id: string;
 }
-interface PhotoRow {
+interface MediaRow {
   id: string;
   url: string;
   thumbnail_url: string | null;
   file_name: string;
+  media_type: string;
 }
 
 const PAGE_SIZE = 24;
@@ -36,14 +38,15 @@ const EventDetail = () => {
   const qrRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [event, setEvent] = useState<EventRow | null>(null);
-  const [photos, setPhotos] = useState<PhotoRow[]>([]);
-  const [photoCount, setPhotoCount] = useState(0);
+  const [media, setMedia] = useState<MediaRow[]>([]);
+  const [filter, setFilter] = useState<MediaFilter>("all");
+  const [counts, setCounts] = useState({ all: 0, photo: 0, video: 0 });
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [zipping, setZipping] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [lightbox, setLightbox] = useState<PhotoRow | null>(null);
+  const [lightbox, setLightbox] = useState<MediaRow | null>(null);
 
   const guestUrl = id ? `${window.location.origin}/event/${id}` : "";
 
@@ -52,15 +55,17 @@ const EventDetail = () => {
   }, [user, loading, navigate]);
 
   const fetchPage = useCallback(
-    async (from: number) => {
-      if (!id) return [] as PhotoRow[];
-      const { data } = await supabase
+    async (from: number, activeFilter: MediaFilter) => {
+      if (!id) return [] as MediaRow[];
+      let query = supabase
         .from("photos")
-        .select("id, url, thumbnail_url, file_name")
-        .eq("event_id", id)
+        .select("id, url, thumbnail_url, file_name, media_type")
+        .eq("event_id", id);
+      if (activeFilter !== "all") query = query.eq("media_type", activeFilter);
+      const { data } = await query
         .order("uploaded_at", { ascending: false })
         .range(from, from + PAGE_SIZE - 1);
-      const rows = (data ?? []) as PhotoRow[];
+      const rows = (data ?? []) as MediaRow[];
       setHasMore(rows.length === PAGE_SIZE);
       return rows;
     },
@@ -82,26 +87,39 @@ const EventDetail = () => {
         return;
       }
       setEvent(ev);
-      const { count } = await supabase
-        .from("photos")
-        .select("id", { count: "exact", head: true })
-        .eq("event_id", id);
-      setPhotoCount(count ?? 0);
-      setPhotos(await fetchPage(0));
+      const [photoRes, videoRes] = await Promise.all([
+        supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "photo"),
+        supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "video"),
+      ]);
+      const photo = photoRes.count ?? 0;
+      const video = videoRes.count ?? 0;
+      setCounts({ photo, video, all: photo + video });
+      setMedia(await fetchPage(0, "all"));
       setFetching(false);
     })();
   }, [user, id, navigate, toast, fetchPage]);
 
+  // Changement d'onglet : filtrage côté serveur, pagination remise à zéro
+  const changeFilter = async (next: MediaFilter) => {
+    if (next === filter) return;
+    setFilter(next);
+    setHasMore(true);
+    setMedia([]);
+    setLoadingMore(true);
+    setMedia(await fetchPage(0, next));
+    setLoadingMore(false);
+  };
+
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore) return;
     setLoadingMore(true);
-    const rows = await fetchPage(photos.length);
-    setPhotos((prev) => {
+    const rows = await fetchPage(media.length, filter);
+    setMedia((prev) => {
       const seen = new Set(prev.map((p) => p.id));
       return [...prev, ...rows.filter((r) => !seen.has(r.id))];
     });
     setLoadingMore(false);
-  }, [fetchPage, hasMore, loadingMore, photos.length]);
+  }, [fetchPage, filter, hasMore, loadingMore, media.length]);
 
   useEffect(() => {
     const node = sentinelRef.current;
@@ -132,29 +150,28 @@ const EventDetail = () => {
   };
 
   const downloadZip = async () => {
-    if (photoCount === 0) {
-      toast({ title: "Aucune photo à télécharger" });
+    if (counts.all === 0) {
+      toast({ title: "Aucun fichier à télécharger" });
       return;
     }
     setZipping(true);
     try {
       // Récupère la liste complète page par page (jamais tout d'un coup)
-      const all: PhotoRow[] = [];
+      const all: MediaRow[] = [];
       for (let from = 0; ; from += 200) {
         const { data } = await supabase
           .from("photos")
-          .select("id, url, thumbnail_url, file_name")
+          .select("id, url, thumbnail_url, file_name, media_type")
           .eq("event_id", id!)
           .order("uploaded_at", { ascending: false })
           .range(from, from + 199);
-        const rows = (data ?? []) as PhotoRow[];
+        const rows = (data ?? []) as MediaRow[];
         all.push(...rows);
         if (rows.length < 200) break;
       }
 
       const zip = new JSZip();
       const used = new Set<string>();
-      // Téléchargement par lots de 4 pour ménager le réseau
       for (let i = 0; i < all.length; i += 4) {
         await Promise.all(
           all.slice(i, i + 4).map(async (p) => {
@@ -173,7 +190,7 @@ const EventDetail = () => {
         );
       }
       const content = await zip.generateAsync({ type: "blob" });
-      saveAs(content, `${event?.name.replace(/\s+/g, "-")}-photos.zip`);
+      saveAs(content, `${event?.name.replace(/\s+/g, "-")}-souvenirs.zip`);
     } catch (err: any) {
       toast({ title: "Erreur", description: err.message, variant: "destructive" });
     } finally {
@@ -235,29 +252,38 @@ const EventDetail = () => {
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
             <h2 className="text-2xl font-bold">
-              Galerie <span className="text-muted-foreground text-lg font-normal">({photoCount})</span>
+              Galerie <span className="text-muted-foreground text-lg font-normal">({counts.all})</span>
             </h2>
-            <Button variant="outline" onClick={downloadZip} disabled={zipping || photoCount === 0}>
-              <Download className="w-4 h-4" /> {zipping ? "Préparation..." : "Tout télécharger (ZIP)"}
-            </Button>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <MediaTabs value={filter} onChange={changeFilter} counts={counts} />
+              <Button variant="outline" onClick={downloadZip} disabled={zipping || counts.all === 0}>
+                <Download className="w-4 h-4" /> {zipping ? "Préparation..." : "Tout télécharger (ZIP)"}
+              </Button>
+            </div>
           </div>
 
-          {photoCount === 0 ? (
+          {media.length === 0 && !loadingMore ? (
             <div className="text-center py-16 bg-card rounded-2xl border border-border">
-              <p className="text-muted-foreground">Aucune photo pour l'instant. Partagez le QR code à vos invités !</p>
+              <p className="text-muted-foreground">
+                {filter === "video"
+                  ? "Aucune vidéo pour l'instant."
+                  : filter === "photo"
+                    ? "Aucune photo pour l'instant."
+                    : "Aucun souvenir pour l'instant. Partagez le QR code à vos invités !"}
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {photos.map((p) => (
+              {media.map((p) => (
                 <button
                   key={p.id}
                   type="button"
                   onClick={() => setLightbox(p)}
                   style={{ aspectRatio: "1 / 1" }}
-                  className="w-full overflow-hidden rounded-xl bg-muted border border-border shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300"
+                  className="relative w-full overflow-hidden rounded-xl bg-muted border border-border shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300"
                 >
                   <img
-                    src={p.thumbnail_url ?? p.url}
+                    src={p.thumbnail_url ?? (p.media_type === "video" ? undefined : p.url)}
                     alt={p.file_name}
                     loading="lazy"
                     decoding="async"
@@ -265,6 +291,7 @@ const EventDetail = () => {
                     height={400}
                     className="w-full h-full object-cover"
                   />
+                  {p.media_type === "video" && <PlayOverlay />}
                 </button>
               ))}
             </div>
@@ -287,13 +314,25 @@ const EventDetail = () => {
             >
               <X className="w-6 h-6" />
             </button>
-            <img
-              src={lightbox.url}
-              alt={lightbox.file_name}
-              decoding="async"
-              className="max-h-[90vh] max-w-full object-contain rounded-xl"
-              onClick={(e) => e.stopPropagation()}
-            />
+            {lightbox.media_type === "video" ? (
+              <video
+                src={lightbox.url}
+                poster={lightbox.thumbnail_url ?? undefined}
+                controls
+                playsInline
+                preload="none"
+                className="max-h-[90vh] max-w-full rounded-xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <img
+                src={lightbox.url}
+                alt={lightbox.file_name}
+                decoding="async"
+                className="max-h-[90vh] max-w-full object-contain rounded-xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            )}
           </div>
         )}
       </main>

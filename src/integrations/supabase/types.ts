@@ -90,6 +90,7 @@ export type Database = {
           event_id: string
           file_name: string
           id: string
+          media_type: string
           storage_path: string
           thumbnail_url: string | null
           uploaded_at: string
@@ -99,6 +100,7 @@ export type Database = {
           event_id: string
           file_name: string
           id?: string
+          media_type?: string
           storage_path: string
           thumbnail_url?: string | null
           uploaded_at?: string
@@ -108,6 +110,7 @@ export type Database = {
           event_id?: string
           file_name?: string
           id?: string
+          media_type?: string
           storage_path?: string
           thumbnail_url?: string | null
           uploaded_at?: string
