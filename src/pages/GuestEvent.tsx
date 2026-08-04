@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { compressImage } from "@/lib/imageCompression";
+import { generateVideoPoster } from "@/lib/videoPoster";
+import MediaTabs, { MediaFilter, PlayOverlay } from "@/components/MediaTabs";
 import { Calendar, Camera, Check, Loader2, X } from "lucide-react";
 
 interface EventRow {
@@ -13,15 +15,17 @@ interface EventRow {
   event_date: string;
   event_type: string;
 }
-interface PhotoRow {
+interface MediaRow {
   id: string;
   url: string;
   thumbnail_url: string | null;
   file_name: string;
+  media_type: string;
 }
 
-const MAX_FILE_SIZE = 25 * 1024 * 1024;
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+const MAX_IMAGE_SIZE = 25 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
 const PAGE_SIZE = 24;
 const CONCURRENCY = 3;
 
@@ -31,7 +35,9 @@ const GuestEvent = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [event, setEvent] = useState<EventRow | null>(null);
-  const [photos, setPhotos] = useState<PhotoRow[]>([]);
+  const [media, setMedia] = useState<MediaRow[]>([]);
+  const [filter, setFilter] = useState<MediaFilter>("all");
+  const [counts, setCounts] = useState({ all: 0, photo: 0, video: 0 });
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -41,50 +47,69 @@ const GuestEvent = () => {
   const [total, setTotal] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successText, setSuccessText] = useState("");
-  const [lightbox, setLightbox] = useState<PhotoRow | null>(null);
+  const [lightbox, setLightbox] = useState<MediaRow | null>(null);
 
   const fetchPage = useCallback(
-    async (from: number) => {
-      if (!id) return [] as PhotoRow[];
-      const { data } = await supabase
+    async (from: number, activeFilter: MediaFilter) => {
+      if (!id) return [] as MediaRow[];
+      let query = supabase
         .from("photos")
-        .select("id, url, thumbnail_url, file_name")
-        .eq("event_id", id)
+        .select("id, url, thumbnail_url, file_name, media_type")
+        .eq("event_id", id);
+      if (activeFilter !== "all") query = query.eq("media_type", activeFilter);
+      const { data } = await query
         .order("uploaded_at", { ascending: false })
         .range(from, from + PAGE_SIZE - 1);
-      const rows = (data ?? []) as PhotoRow[];
+      const rows = (data ?? []) as MediaRow[];
       setHasMore(rows.length === PAGE_SIZE);
       return rows;
     },
     [id]
   );
 
-  const reloadFirstPage = useCallback(async () => {
-    const rows = await fetchPage(0);
-    setPhotos(rows);
-  }, [fetchPage]);
+  const loadCounts = useCallback(async () => {
+    if (!id) return;
+    const [photoRes, videoRes] = await Promise.all([
+      supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "photo"),
+      supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "video"),
+    ]);
+    const photo = photoRes.count ?? 0;
+    const video = videoRes.count ?? 0;
+    setCounts({ photo, video, all: photo + video });
+  }, [id]);
 
   useEffect(() => {
     if (!id) return;
     (async () => {
       const { data: ev } = await supabase.from("events").select("*").eq("id", id).maybeSingle();
       setEvent(ev);
-      const rows = await fetchPage(0);
-      setPhotos(rows);
+      await loadCounts();
+      setMedia(await fetchPage(0, "all"));
       setLoading(false);
     })();
-  }, [id, fetchPage]);
+  }, [id, fetchPage, loadCounts]);
+
+  // Changement d'onglet : on repart de la page 0 côté serveur
+  const changeFilter = async (next: MediaFilter) => {
+    if (next === filter) return;
+    setFilter(next);
+    setHasMore(true);
+    setMedia([]);
+    setLoadingMore(true);
+    setMedia(await fetchPage(0, next));
+    setLoadingMore(false);
+  };
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasMore) return;
     setLoadingMore(true);
-    const rows = await fetchPage(photos.length);
-    setPhotos((prev) => {
+    const rows = await fetchPage(media.length, filter);
+    setMedia((prev) => {
       const seen = new Set(prev.map((p) => p.id));
       return [...prev, ...rows.filter((r) => !seen.has(r.id))];
     });
     setLoadingMore(false);
-  }, [fetchPage, hasMore, loadingMore, photos.length]);
+  }, [fetchPage, filter, hasMore, loadingMore, media.length]);
 
   useEffect(() => {
     const node = sentinelRef.current;
@@ -99,10 +124,19 @@ const GuestEvent = () => {
     return () => obs.disconnect();
   }, [loadMore, hasMore]);
 
-  const uploadOne = async (file: File) => {
-    if (!ALLOWED_TYPES.includes(file.type) || file.size > MAX_FILE_SIZE) {
-      throw new Error("invalid");
-    }
+  const uploadThumb = async (uuid: string, thumb: Blob | null) => {
+    if (!thumb) return null;
+    const thumbPath = `${id}/thumbs/${uuid}.jpg`;
+    const { error } = await supabase.storage.from("event-photos").upload(thumbPath, thumb, {
+      contentType: "image/jpeg",
+      upsert: false,
+    });
+    if (error) return null;
+    return supabase.storage.from("event-photos").getPublicUrl(thumbPath).data.publicUrl;
+  };
+
+  const uploadImage = async (file: File) => {
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type) || file.size > MAX_IMAGE_SIZE) throw new Error("invalid");
     const { full, thumb, fallback } = await compressImage(file);
     const uuid = crypto.randomUUID();
     const ext = fallback ? file.name.split(".").pop() ?? "jpg" : "jpg";
@@ -113,33 +147,64 @@ const GuestEvent = () => {
       upsert: false,
     });
     if (upErr) throw upErr;
-    const { data: pub } = supabase.storage.from("event-photos").getPublicUrl(path);
 
-    let thumbnailUrl: string | null = null;
-    if (thumb) {
-      const thumbPath = `${id}/thumbs/${uuid}.jpg`;
-      const { error: tErr } = await supabase.storage.from("event-photos").upload(thumbPath, thumb, {
-        contentType: "image/jpeg",
-        upsert: false,
-      });
-      if (!tErr) {
-        thumbnailUrl = supabase.storage.from("event-photos").getPublicUrl(thumbPath).data.publicUrl;
-      }
-    }
-
+    const thumbnailUrl = await uploadThumb(uuid, thumb);
     const { error: dbErr } = await supabase.from("photos").insert({
       event_id: id!,
-      url: pub.publicUrl,
+      url: supabase.storage.from("event-photos").getPublicUrl(path).data.publicUrl,
       thumbnail_url: thumbnailUrl,
       file_name: file.name,
       storage_path: path,
+      media_type: "photo",
+    });
+    if (dbErr) throw dbErr;
+  };
+
+  const uploadVideo = async (file: File) => {
+    const uuid = crypto.randomUUID();
+    const { thumb } = await generateVideoPoster(file);
+    const ext = file.name.split(".").pop() ?? "mp4";
+    const path = `${id}/${uuid}.${ext}`;
+
+    // La vidéo est envoyée telle quelle, sans compression
+    const { error: upErr } = await supabase.storage.from("event-photos").upload(path, file, {
+      contentType: file.type || "video/mp4",
+      upsert: false,
+    });
+    if (upErr) throw upErr;
+
+    const thumbnailUrl = await uploadThumb(uuid, thumb);
+    const { error: dbErr } = await supabase.from("photos").insert({
+      event_id: id!,
+      url: supabase.storage.from("event-photos").getPublicUrl(path).data.publicUrl,
+      thumbnail_url: thumbnailUrl,
+      file_name: file.name,
+      storage_path: path,
+      media_type: "video",
     });
     if (dbErr) throw dbErr;
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !id || !event) return;
-    const files = Array.from(e.target.files);
+    const selected = Array.from(e.target.files);
+    if (selected.length === 0) return;
+
+    // Vidéos trop lourdes : rejetées immédiatement, les autres fichiers continuent
+    const files = selected.filter((file) => {
+      if (file.type.startsWith("video/") && file.size > MAX_VIDEO_SIZE) {
+        toast({
+          title: `${file.name} ignoré`,
+          description:
+            "Cette vidéo est trop lourde (max 50 Mo). Filmez des séquences plus courtes, environ 20 secondes.",
+          variant: "destructive",
+        });
+        return false;
+      }
+      return true;
+    });
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
     if (files.length === 0) return;
 
     setUploading(true);
@@ -156,7 +221,11 @@ const GuestEvent = () => {
       while (index < files.length) {
         const file = files[index++];
         try {
-          await uploadOne(file);
+          if (file.type.startsWith("video/")) {
+            await uploadVideo(file);
+          } else {
+            await uploadImage(file);
+          }
           ok++;
         } catch {
           failed++;
@@ -173,21 +242,22 @@ const GuestEvent = () => {
 
     setUploading(false);
     setPhase("idle");
-    if (fileInputRef.current) fileInputRef.current.value = "";
 
     if (ok > 0) {
       setSuccessText(
         failed > 0
-          ? `${ok} photo${ok > 1 ? "s" : ""} envoyée${ok > 1 ? "s" : ""}, ${failed} ont échoué`
-          : "Vos photos ont bien été partagées ! 🎉"
+          ? `${ok} fichier${ok > 1 ? "s" : ""} envoyé${ok > 1 ? "s" : ""}, ${failed} ont échoué`
+          : "Vos souvenirs ont bien été partagés ! 🎉"
       );
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 4000);
-      reloadFirstPage();
+      await loadCounts();
+      setHasMore(true);
+      setMedia(await fetchPage(0, filter));
     } else {
       toast({
         title: "Envoi impossible",
-        description: `${failed} photo${failed > 1 ? "s" : ""} n'ont pas pu être envoyée${failed > 1 ? "s" : ""}.`,
+        description: `${failed} fichier${failed > 1 ? "s" : ""} n'ont pas pu être envoyé${failed > 1 ? "s" : ""}.`,
         variant: "destructive",
       });
     }
@@ -241,7 +311,7 @@ const GuestEvent = () => {
               ) : uploading ? (
                 <div className="py-4">
                   <p className="text-lg font-semibold mb-3">
-                    {phase === "compressing" ? "Préparation des photos..." : "Envoi en cours..."}
+                    {phase === "compressing" ? "Préparation des fichiers..." : "Envoi en cours..."}
                   </p>
                   <Progress value={total ? (done / total) * 100 : 0} className="mb-3" />
                   <p className="text-sm text-muted-foreground">
@@ -253,7 +323,7 @@ const GuestEvent = () => {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/*"
+                    accept="image/*,video/*"
                     multiple
                     onChange={handleUpload}
                     className="hidden"
@@ -269,7 +339,10 @@ const GuestEvent = () => {
                     <Camera className="w-6 h-6" /> Ajouter mes photos
                   </Button>
                   <p className="text-xs text-muted-foreground mt-3">
-                    Plusieurs photos à la fois · Aucune inscription requise
+                    Photos et vidéos · vidéos limitées à 50 Mo (environ 20 secondes)
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Plusieurs fichiers à la fois · Aucune inscription requise
                   </p>
                 </>
               )}
@@ -277,25 +350,35 @@ const GuestEvent = () => {
           </div>
 
           {/* Gallery */}
-          <h2 className="text-xl font-bold mb-4">
-            Album partagé <span className="text-muted-foreground font-normal">({photos.length})</span>
-          </h2>
-          {photos.length === 0 ? (
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <h2 className="text-xl font-bold">
+              Album partagé <span className="text-muted-foreground font-normal">({counts.all})</span>
+            </h2>
+            <MediaTabs value={filter} onChange={changeFilter} counts={counts} />
+          </div>
+
+          {media.length === 0 && !loadingMore ? (
             <div className="text-center py-12 bg-card rounded-2xl border border-border">
-              <p className="text-muted-foreground">Soyez le premier à partager une photo !</p>
+              <p className="text-muted-foreground">
+                {filter === "video"
+                  ? "Aucune vidéo pour l'instant."
+                  : filter === "photo"
+                    ? "Aucune photo pour l'instant."
+                    : "Soyez le premier à partager un souvenir !"}
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {photos.map((p) => (
+              {media.map((p) => (
                 <button
                   key={p.id}
                   type="button"
                   onClick={() => setLightbox(p)}
                   style={{ aspectRatio: "1 / 1" }}
-                  className="w-full overflow-hidden rounded-xl bg-muted border border-border shadow-soft hover:shadow-card transition-all"
+                  className="relative w-full overflow-hidden rounded-xl bg-muted border border-border shadow-soft hover:shadow-card transition-all"
                 >
                   <img
-                    src={p.thumbnail_url ?? p.url}
+                    src={p.thumbnail_url ?? (p.media_type === "video" ? undefined : p.url)}
                     alt={p.file_name}
                     loading="lazy"
                     decoding="async"
@@ -303,6 +386,7 @@ const GuestEvent = () => {
                     height={400}
                     className="w-full h-full object-cover"
                   />
+                  {p.media_type === "video" && <PlayOverlay />}
                 </button>
               ))}
             </div>
@@ -325,13 +409,25 @@ const GuestEvent = () => {
             >
               <X className="w-6 h-6" />
             </button>
-            <img
-              src={lightbox.url}
-              alt={lightbox.file_name}
-              decoding="async"
-              className="max-h-[90vh] max-w-full object-contain rounded-xl"
-              onClick={(e) => e.stopPropagation()}
-            />
+            {lightbox.media_type === "video" ? (
+              <video
+                src={lightbox.url}
+                poster={lightbox.thumbnail_url ?? undefined}
+                controls
+                playsInline
+                preload="none"
+                className="max-h-[90vh] max-w-full rounded-xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <img
+                src={lightbox.url}
+                alt={lightbox.file_name}
+                decoding="async"
+                className="max-h-[90vh] max-w-full object-contain rounded-xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            )}
           </div>
         )}
 
