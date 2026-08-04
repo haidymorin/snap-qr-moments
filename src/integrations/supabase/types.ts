@@ -91,6 +91,7 @@ export type Database = {
           file_name: string
           id: string
           storage_path: string
+          thumbnail_url: string | null
           uploaded_at: string
           url: string
         }
@@ -99,6 +100,7 @@ export type Database = {
           file_name: string
           id?: string
           storage_path: string
+          thumbnail_url?: string | null
           uploaded_at?: string
           url: string
         }
@@ -107,6 +109,7 @@ export type Database = {
           file_name?: string
           id?: string
           storage_path?: string
+          thumbnail_url?: string | null
           uploaded_at?: string
           url?: string
         }
