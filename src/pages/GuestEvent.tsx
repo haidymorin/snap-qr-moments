@@ -52,14 +52,12 @@ const GuestEvent = () => {
   const fetchPage = useCallback(
     async (from: number, activeFilter: MediaFilter) => {
       if (!id) return [] as MediaRow[];
-      let query = supabase
-        .from("photos")
-        .select("id, url, thumbnail_url, file_name, media_type")
-        .eq("event_id", id);
-      if (activeFilter !== "all") query = query.eq("media_type", activeFilter);
-      const { data } = await query
-        .order("uploaded_at", { ascending: false })
-        .range(from, from + PAGE_SIZE - 1);
+      const { data } = await supabase.rpc("guest_list_media", {
+        p_event_id: id,
+        p_media: activeFilter,
+        p_limit: PAGE_SIZE,
+        p_offset: from,
+      });
       const rows = (data ?? []) as MediaRow[];
       setHasMore(rows.length === PAGE_SIZE);
       return rows;
