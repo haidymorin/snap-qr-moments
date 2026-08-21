@@ -68,18 +68,19 @@ const GuestEvent = () => {
   const loadCounts = useCallback(async () => {
     if (!id) return;
     const [photoRes, videoRes] = await Promise.all([
-      supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "photo"),
-      supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "video"),
+      supabase.rpc("guest_count_media", { p_event_id: id, p_media: "photo" }),
+      supabase.rpc("guest_count_media", { p_event_id: id, p_media: "video" }),
     ]);
-    const photo = photoRes.count ?? 0;
-    const video = videoRes.count ?? 0;
+    const photo = (photoRes.data as number | null) ?? 0;
+    const video = (videoRes.data as number | null) ?? 0;
     setCounts({ photo, video, all: photo + video });
   }, [id]);
 
   useEffect(() => {
     if (!id) return;
     (async () => {
-      const { data: ev } = await supabase.from("events").select("*").eq("id", id).maybeSingle();
+      const { data: evRows } = await supabase.rpc("guest_get_event", { p_event_id: id });
+      const ev = Array.isArray(evRows) ? evRows[0] ?? null : null;
       setEvent(ev);
       await loadCounts();
       setMedia(await fetchPage(0, "all"));
