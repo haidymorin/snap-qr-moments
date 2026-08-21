@@ -152,7 +152,39 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      guest_count_media: {
+        Args: { p_event_id: string; p_media?: string }
+        Returns: number
+      }
+      guest_get_event: {
+        Args: { p_event_id: string }
+        Returns: {
+          event_date: string
+          event_type: string
+          id: string
+          name: string
+        }[]
+      }
+      guest_list_media: {
+        Args: {
+          p_event_id: string
+          p_limit?: number
+          p_media?: string
+          p_offset?: number
+        }
+        Returns: {
+          file_name: string
+          id: string
+          media_type: string
+          thumbnail_url: string
+          uploaded_at: string
+          url: string
+        }[]
+      }
+      guest_self_register: {
+        Args: { p_email?: string; p_event_id: string; p_phone?: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
