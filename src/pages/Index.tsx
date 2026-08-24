@@ -128,12 +128,12 @@ function PhotoWall() {
           style={{ opacity: title ? 1 : 0, transform: title ? "none" : "translateY(14px)" }}
         >
           <p className="eyebrow mt-4">{t("home.heroEyebrow")}</p>
-          <h1 className="mt-3 text-[clamp(46px,8.4vw,104px)]">
+          <h1 className="mt-3 text-[clamp(46px,8.4vw,104px)] text-wrap balance">
             {t("home.heroTitle1")}
             <br />
             {t("home.heroTitle2")}
           </h1>
-          <p className="mx-auto mt-6 max-w-[46ch] text-[clamp(16px,1.7vw,18px)] text-muted-foreground">
+          <p className="mx-auto mt-6 max-w-[50ch] text-[clamp(16px,1.7vw,18px)] text-muted-foreground leading-relaxed">
             {t("home.heroSubtitle")}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -190,7 +190,7 @@ const Index = () => {
         <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <div className="mx-auto mb-[clamp(32px,4.2vw,52px)] max-w-2xl text-center">
             <p className="eyebrow">{t("home.stepsEyebrow")}</p>
-            <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)]">
+            <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">
               {t("home.stepsTitle1")}
               <br />
               {t("home.stepsTitle2")}
@@ -200,11 +200,11 @@ const Index = () => {
             {steps.map((s, i) => (
               <div
                 key={i}
-                className="border-b border-border px-7 pb-8 pt-7 md:border-r md:last:border-r-0"
+                className="border-b border-border px-7 pb-10 pt-8 md:border-r md:last:border-r-0"
               >
                 <div className="label-mono text-foreground">{s.n}</div>
-                <h3 className="mb-2 mt-3 text-[30px]">{s.title}</h3>
-                <p className="text-[15.5px] text-muted-foreground">{s.text}</p>
+                <h3 className="mb-3 mt-4 text-[clamp(24px,2.2vw,32px)] text-wrap balance">{s.title}</h3>
+                <p className="text-[15.5px] leading-relaxed text-muted-foreground">{s.text}</p>
               </div>
             ))}
           </div>
@@ -217,12 +217,12 @@ const Index = () => {
           <div className="grid items-center gap-[clamp(28px,5vw,58px)] lg:grid-cols-2">
             <div>
               <p className="eyebrow text-night-foreground">{t("home.aiEyebrow")}</p>
-              <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)]">
+              <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">
                 {t("home.aiTitle1")}
                 <br />
                 {t("home.aiTitle2")}
               </h2>
-              <p className="mt-5 max-w-[47ch] text-night-muted">{t("home.aiDesc")}</p>
+              <p className="mt-5 max-w-[50ch] leading-relaxed text-night-foreground opacity-85">{t("home.aiDesc")}</p>
 
               <div className="mt-6 flex flex-wrap items-center gap-4 border border-night-border bg-night-surface px-5 py-4">
                 <div
@@ -230,8 +230,8 @@ const Index = () => {
                   style={{ background: "linear-gradient(150deg,#8A6A46,#3A2E22)" }}
                 />
                 <div className="min-w-[210px] flex-1">
-                  <strong className="block text-[15px] font-semibold">{t("home.selfieTitle")}</strong>
-                  <span className="text-[14px] text-night-muted">{t("home.selfieDesc")}</span>
+                  <strong className="block text-[15px] font-semibold text-night-foreground">{t("home.selfieTitle")}</strong>
+                  <span className="text-[14px] text-night-foreground opacity-70">{t("home.selfieDesc")}</span>
                 </div>
               </div>
 
@@ -269,13 +269,13 @@ const Index = () => {
           <div className="grid items-center gap-[clamp(28px,5vw,58px)] lg:grid-cols-2">
             <div>
               <p className="eyebrow">{t("home.guestbookEyebrow")}</p>
-              <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)]">
+              <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">
                 {t("home.guestbookTitle1")}
                 <br />
                 {t("home.guestbookTitle2")}
               </h2>
-              <p className="mt-5 max-w-[47ch] text-muted-foreground">{t("home.guestbookP1")}</p>
-              <p className="mt-4 max-w-[47ch] text-muted-foreground">{t("home.guestbookP2")}</p>
+              <p className="mt-5 max-w-[50ch] leading-relaxed text-foreground opacity-80">{t("home.guestbookP1")}</p>
+              <p className="mt-4 max-w-[50ch] leading-relaxed text-foreground opacity-80">{t("home.guestbookP2")}</p>
             </div>
 
             <figure className="m-0 border border-border bg-card p-[clamp(26px,3.6vw,42px)]">
@@ -319,8 +319,8 @@ const Index = () => {
         <div className="relative z-10 mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <div className="mx-auto mb-[clamp(32px,4.2vw,52px)] max-w-2xl text-center">
             <p className="eyebrow">{t("home.objEyebrow")}</p>
-            <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)]">{t("home.objTitle")}</h2>
-            <p className="mx-auto mt-4 max-w-[54ch] text-muted-foreground">{t("home.objDesc")}</p>
+            <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">{t("home.objTitle")}</h2>
+            <p className="mx-auto mt-4 max-w-[54ch] leading-relaxed text-foreground opacity-80">{t("home.objDesc")}</p>
           </div>
 
           <div className="grid gap-[clamp(13px,1.7vw,20px)] sm:grid-cols-2 xl:grid-cols-4">
@@ -331,12 +331,12 @@ const Index = () => {
                     {o.tag}
                   </span>
                 </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <h3 className="mb-2 text-[28px]">{o.title}</h3>
-                  <p className="mb-4 flex-1 text-[14.5px] leading-relaxed text-muted-foreground">{o.text}</p>
-                  <div className="flex items-baseline justify-between border-t border-border pt-3">
-                    <span className="font-display text-[30px]">{o.price}</span>
-                    <Link to="/pricing" className="label-mono border-b border-foreground pb-0.5 text-foreground">
+                <div className="flex flex-1 flex-col p-6">
+                  <h3 className="mb-3 text-[clamp(22px,2vw,28px)] text-wrap balance text-foreground">{o.title}</h3>
+                  <p className="mb-4 flex-1 text-[14.5px] leading-relaxed text-foreground opacity-80">{o.text}</p>
+                  <div className="flex items-baseline justify-between border-t border-border pt-4">
+                    <span className="font-display text-[clamp(28px,2.8vw,32px)]">{o.price}</span>
+                    <Link to="/pricing" className="label-mono border-b border-foreground pb-0.5 text-foreground hover:opacity-70 transition-opacity">
                       {t("home.see")}
                     </Link>
                   </div>
@@ -352,8 +352,8 @@ const Index = () => {
         <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <div className="bg-primary px-8 py-[clamp(44px,6vw,76px)] text-center text-primary-foreground">
             <p className="eyebrow text-primary-foreground">{t("home.finalEyebrow")}</p>
-            <h2 className="mx-auto mt-3 max-w-[20ch] text-[clamp(32px,5vw,58px)]">{t("home.finalTitle")}</h2>
-            <p className="mx-auto mt-5 max-w-[46ch] opacity-80">{t("home.finalDesc")}</p>
+            <h2 className="mx-auto mt-3 max-w-[22ch] text-[clamp(32px,5vw,58px)] text-wrap balance">{t("home.finalTitle")}</h2>
+            <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed opacity-90">{t("home.finalDesc")}</p>
             <Link
               to="/auth"
               className="mt-8 inline-flex min-h-[48px] items-center border border-primary-foreground bg-primary-foreground px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-transparent hover:text-primary-foreground"
