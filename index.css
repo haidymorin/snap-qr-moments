@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Système de design QR Memories.
+   Fond greige, encre chaude, aucune couleur d'accent.
+   Toute la couleur du site vient des photos.
+   Toutes les couleurs sont en HSL. */
+
+@layer base {
+  :root {
+    --background: 40 20% 91%;
+    --foreground: 50 9% 14%;
+
+    --card: 40 27% 96%;
+    --card-foreground: 50 9% 14%;
+
+    --popover: 40 27% 96%;
+    --popover-foreground: 50 9% 14%;
+
+    --primary: 50 9% 14%;
+    --primary-foreground: 40 20% 91%;
+
+    --secondary: 40 18% 87%;
+    --secondary-foreground: 50 9% 14%;
+
+    --muted: 40 18% 87%;
+    --muted-foreground: 47 5% 37%;
+
+    --accent: 40 18% 87%;
+    --accent-foreground: 50 9% 14%;
+
+    --destructive: 4 55% 42%;
+    --destructive-foreground: 40 27% 96%;
+
+    --border: 39 16% 82%;
+    --input: 39 16% 82%;
+    --ring: 50 9% 14%;
+
+    --radius: 0rem;
+
+    /* Les anciens dégradés deviennent des aplats.
+       Les composants qui les utilisent encore restent cohérents. */
+    --gradient-hero: hsl(50 9% 14%);
+    --gradient-card: hsl(40 27% 96%);
+    --shadow-soft: none;
+    --shadow-card: none;
+    --transition-smooth: all 0.2s cubic-bezier(0.2, 0.7, 0.3, 1);
+
+    /* Section sombre : la galerie, là où les photos ressortent */
+    --night: 40 6% 10%;
+    --night-surface: 40 4% 13%;
+    --night-foreground: 40 26% 93%;
+    --night-muted: 40 6% 59%;
+    --night-border: 36 6% 17%;
+  }
+
+  .dark {
+    --background: 40 6% 10%;
+    --foreground: 40 26% 93%;
+
+    --card: 40 4% 13%;
+    --card-foreground: 40 26% 93%;
+
+    --popover: 40 4% 13%;
+    --popover-foreground: 40 26% 93%;
+
+    --primary: 40 26% 93%;
+    --primary-foreground: 40 6% 10%;
+
+    --secondary: 36 6% 17%;
+    --secondary-foreground: 40 26% 93%;
+
+    --muted: 36 6% 17%;
+    --muted-foreground: 40 6% 59%;
+
+    --accent: 36 6% 17%;
+    --accent-foreground: 40 26% 93%;
+
+    --destructive: 4 45% 48%;
+    --destructive-foreground: 40 26% 93%;
+
+    --border: 36 6% 17%;
+    --input: 36 6% 17%;
+    --ring: 40 26% 93%;
+
+    --gradient-hero: hsl(40 26% 93%);
+    --gradient-card: hsl(40 4% 13%);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: "DM Serif Display", Georgia, serif;
+    font-weight: 400;
+    line-height: 1.03;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  /* Petites étiquettes techniques : chiffres, codes, numéros d'étape.
+     Le seul endroit où la police à chasse fixe apparaît. */
+  .label-mono {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    @apply text-muted-foreground;
+  }
+
+  /* La ligne en italique posée au-dessus des grands titres */
+  .eyebrow {
+    font-family: "DM Serif Display", Georgia, serif;
+    font-style: italic;
+    @apply text-[clamp(17px,2vw,22px)] text-foreground;
+  }
+
+  /* Le mot posé en très grand derrière une section */
+  .giant-word {
+    font-family: "DM Serif Display", Georgia, serif;
+    line-height: 0.78;
+    letter-spacing: -0.04em;
+    @apply pointer-events-none select-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-foreground;
+    opacity: 0.09;
+  }
+}
