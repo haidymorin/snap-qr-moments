@@ -13,11 +13,6 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        display: ['"DM Serif Display"', 'Georgia', 'serif'],
-        sans: ['"Montserrat"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -52,13 +47,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        night: {
-          DEFAULT: "hsl(var(--night))",
-          surface: "hsl(var(--night-surface))",
-          foreground: "hsl(var(--night-foreground))",
-          muted: "hsl(var(--night-muted))",
-          border: "hsl(var(--night-border))",
-        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -71,15 +59,9 @@ export default {
         },
       },
       borderRadius: {
-        none: "0",
-        sm: "0",
-        DEFAULT: "0",
-        md: "0",
-        lg: "0",
-        xl: "0",
-        "2xl": "0",
-        "3xl": "0",
-        full: "9999px",
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {
