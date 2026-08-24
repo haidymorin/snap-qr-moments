@@ -27,48 +27,86 @@ const translations: Record<Lang, Dict> = {
       by: "par QR Memories",
     },
     home: {
-      heroTitle1: "Scannez. Partagez.",
-      heroTitle2: "Revivez vos souvenirs.",
+      counterSingular: "photo déposée",
+      counterPlural: "photos déposées",
+      replay: "↻ Rejouer",
+
+      heroEyebrow: "Le mariage vu par vos invités",
+      heroTitle1: "Leurs photos, leurs mots,",
+      heroTitle2: "votre album.",
       heroSubtitle:
-        "Collectez et partagez les photos de vos événements via un simple QR Code. Pas d'application, juste de la magie.",
-      ctaCreate: "Créer mon album événement",
-      ctaDiscover: "Découvrir comment ça marche",
-      simpleTitle: "Simple comme",
-      simpleNumbers: "1, 2, 3",
-      simpleSubtitle:
-        "En quelques secondes, créez votre album partagé et récupérez tous les souvenirs de vos invités.",
-      step1Title: "Créez votre événement",
+        "Un QR code sur les tables. Vos invités déposent leurs photos sans rien installer, le tri se fait tout seul, et il en reste un objet que vous gardez.",
+      ctaCreate: "Créer mon événement",
+      ctaDiscover: "Voir comment ça marche",
+
+      stepsEyebrow: "Sans application, sans compte",
+      stepsTitle1: "Rien à installer,",
+      stepsTitle2: "rien à demander.",
+      step1Num: "01 · AVANT",
+      step1Title: "Vous posez le QR",
       step1Desc:
-        "En quelques clics, configurez votre album événement et obtenez un QR Code unique à partager.",
-      step2Title: "Vos invités scannent",
+        "Un panneau à l'entrée et un petit carton sur chaque table. Nous fournissons les fichiers à imprimer, aux couleurs de votre événement.",
+      step2Num: "02 · PENDANT",
+      step2Title: "Ils déposent, ça s'affiche",
       step2Desc:
-        "Ils scannent le QR Code et partagent leurs photos instantanément, sans télécharger d'application.",
-      step3Title: "Profitez de vos souvenirs",
+        "Vos invités scannent et envoient. Aucune application, aucun compte à créer. Le diaporama projette les photos en direct sur grand écran.",
+      step3Num: "03 · APRÈS",
+      step3Title: "Le tri se fait tout seul",
       step3Desc:
-        "Toutes les photos apparaissent dans votre album partagé. Téléchargez-les ou créez un diaporama.",
-      whyTitle: "Pourquoi choisir",
-      benefit1Title: "Ultra simple",
-      benefit1Desc: "Pas d'application à télécharger. Un simple scan suffit.",
-      benefit2Title: "Photos illimitées",
-      benefit2Desc: "Collectez autant de photos que vous le souhaitez.",
-      benefit3Title: "Partage instantané",
-      benefit3Desc: "Accédez à tous vos souvenirs en temps réel.",
-      proTitle: "Vous êtes",
-      proHighlight: "photographe ou wedding planner",
-      proQuestion: "?",
-      proDesc:
-        "QR Memories s'intègre directement à votre offre. Proposez à vos clients un espace de collecte photos brandé à votre nom, sans effort supplémentaire. Simplifiez votre livraison de galeries et devenez prescripteur.",
-      proCta: "Découvrir l'offre Pro",
-      proF1Title: "Multi-événements",
-      proF1Desc: "Gérez tous vos clients en un seul espace.",
-      proF2Title: "Branding personnalisé",
-      proF2Desc: "Vos couleurs, votre logo, votre identité.",
-      proF3Title: "Galerie pro",
-      proF3Desc: "Livraison soignée et expérience client premium.",
-      finalCtaTitle: "Prêt à immortaliser votre événement ?",
-      finalCtaDesc:
-        "Rejoignez des milliers d'organisateurs qui ont déjà choisi QR Memories pour leurs événements.",
-      finalCta: "Créer mon événement gratuitement",
+        "Les doublons et les photos ratées disparaissent. Chaque invité retrouve celles où il apparaît, et vous n'avez plus qu'à choisir l'objet.",
+
+      aiEyebrow: "Le tri par intelligence artificielle",
+      aiTitle1: "Trois cents photos.",
+      aiTitle2: "Les vôtres, en trente secondes.",
+      aiDesc:
+        "L'IA écarte les doublons, les flous et les photos ratées. Elle reconnaît ensuite les visages, et chaque invité repart avec sa propre galerie sans avoir créé de compte.",
+      selfieTitle: "« Prenez-vous en photo »",
+      selfieDesc:
+        "Un selfie, et vous récupérez toutes vos photos de la soirée. C'est aussi votre accord : sans lui, votre visage n'est jamais analysé.",
+      aiCta: "Essayer sur mon événement",
+      gridFull: "Galerie complète · 247 photos",
+      gridMatched: "↓ Après reconnaissance · 34 photos de Camille",
+
+      guestbookEyebrow: "Le livre d'or",
+      guestbookTitle1: "Ce que personne",
+      guestbookTitle2: "n'ose dire à voix haute.",
+      guestbookP1:
+        "Sur la même page, vos invités laissent un mot. Écrit, en voix, ou en vidéo. Chaque message est relié à son auteur, et dans l'album leurs mots se posent en face de leur photo.",
+      guestbookP2:
+        "Un message vocal ne s'imprime pas. Alors un petit QR s'imprime à sa place. Dix ans plus tard, vous scannez la page et vous entendez sa voix.",
+      quoteText:
+        "Ma chérie, je n'ai pas trouvé les mots hier soir. Alors je te les écris ici, pendant que tu danses.",
+      quoteAuthor: "Jeanne, sa grand-mère",
+      quoteMeta: "22 h 14 · Table 3",
+
+      objEyebrow: "Ce qu'il en reste",
+      objTitle: "Un souvenir qui se touche.",
+      objDesc:
+        "Une galerie s'oublie au bout de six mois. Un objet posé sur une table, non. Tout se commande après l'événement, une fois les photos triées.",
+      onQuote: "Sur devis",
+      see: "Voir",
+      obj1Tag: "Le lendemain",
+      obj1Title: "L'album PDF",
+      obj1Desc:
+        "Vos meilleures photos mises en page, prêtes à envoyer à vos proches dès le lendemain de la fête.",
+      obj2Tag: "Le plus vendu",
+      obj2Title: "L'album souvenir",
+      obj2Desc:
+        "Format carré 20×20, couverture souple, 40 pages. Vos photos et les mots de vos invités en regard.",
+      obj3Tag: "À offrir",
+      obj3Title: "La gazette",
+      obj3Desc:
+        "Le journal de votre mariage, à distribuer à vos invités. Votre journée racontée sur quatre pages.",
+      obj4Tag: "L'objet",
+      obj4Title: "Le grand album",
+      obj4Desc:
+        "Format 30×30 qui s'ouvre à plat, papier épais, couverture toilée. Fabriqué par un imprimeur de photographes.",
+
+      finalEyebrow: "Votre date approche",
+      finalTitle: "Vos invités prendront des photos. Autant les garder.",
+      finalDesc:
+        "Créez votre événement en deux minutes et recevez votre QR code tout de suite. Le premier est gratuit.",
+      finalCta: "Créer mon événement",
     },
     how: {
       title1: "Comment ça",
@@ -169,48 +207,86 @@ const translations: Record<Lang, Dict> = {
       by: "by QR Memories",
     },
     home: {
-      heroTitle1: "Scan. Share.",
-      heroTitle2: "Relive your memories.",
+      counterSingular: "photo uploaded",
+      counterPlural: "photos uploaded",
+      replay: "↻ Replay",
+
+      heroEyebrow: "The wedding, seen by your guests",
+      heroTitle1: "Their photos, their words,",
+      heroTitle2: "your album.",
       heroSubtitle:
-        "Collect and share photos from your events through a simple QR Code. No app — just magic.",
-      ctaCreate: "Create my event album",
+        "A QR code on the tables. Your guests upload their photos without installing anything, the sorting happens on its own, and you keep something real at the end.",
+      ctaCreate: "Create my event",
       ctaDiscover: "See how it works",
-      simpleTitle: "As simple as",
-      simpleNumbers: "1, 2, 3",
-      simpleSubtitle:
-        "In seconds, create your shared album and gather every memory captured by your guests.",
-      step1Title: "Create your event",
+
+      stepsEyebrow: "No app, no account",
+      stepsTitle1: "Nothing to install,",
+      stepsTitle2: "nothing to ask for.",
+      step1Num: "01 · BEFORE",
+      step1Title: "You put up the QR",
       step1Desc:
-        "In a few clicks, set up your event album and get a unique QR Code to share.",
-      step2Title: "Your guests scan",
+        "One sign at the entrance and a small card on every table. We give you the print files, in your event colours.",
+      step2Num: "02 · DURING",
+      step2Title: "They upload, it appears",
       step2Desc:
-        "They scan the QR Code and share their photos instantly — no app download required.",
-      step3Title: "Enjoy your memories",
+        "Your guests scan and send. No app, no account to create. The live slideshow puts the photos on the big screen as they arrive.",
+      step3Num: "03 · AFTER",
+      step3Title: "The sorting happens on its own",
       step3Desc:
-        "Every photo appears in your shared album. Download them all or create a slideshow.",
-      whyTitle: "Why choose",
-      benefit1Title: "Effortlessly simple",
-      benefit1Desc: "No app to download. A simple scan is all it takes.",
-      benefit2Title: "Unlimited photos",
-      benefit2Desc: "Collect as many photos as you want.",
-      benefit3Title: "Instant sharing",
-      benefit3Desc: "Access all your memories in real time.",
-      proTitle: "Are you a",
-      proHighlight: "photographer or wedding planner",
-      proQuestion: "?",
-      proDesc:
-        "QR Memories integrates seamlessly into your offer. Provide your clients with a photo collection space branded with your identity — no extra effort required. Simplify gallery delivery and become the trusted recommendation.",
-      proCta: "Discover the Pro plan",
-      proF1Title: "Multi-events",
-      proF1Desc: "Manage all your clients in one place.",
-      proF2Title: "Custom branding",
-      proF2Desc: "Your colors, your logo, your identity.",
-      proF3Title: "Pro gallery",
-      proF3Desc: "Polished delivery and premium client experience.",
-      finalCtaTitle: "Ready to immortalize your event?",
-      finalCtaDesc:
-        "Join thousands of organizers who have already chosen QR Memories for their events.",
-      finalCta: "Create my event for free",
+        "Duplicates and bad shots disappear. Every guest finds the photos they appear in, and all you have to do is pick the object.",
+
+      aiEyebrow: "Sorting by artificial intelligence",
+      aiTitle1: "Three hundred photos.",
+      aiTitle2: "Yours, in thirty seconds.",
+      aiDesc:
+        "The AI removes duplicates, blurred shots and misfires. It then recognises faces, and every guest leaves with their own gallery without ever creating an account.",
+      selfieTitle: "\u201cTake a photo of yourself\u201d",
+      selfieDesc:
+        "One selfie, and you get back every photo of you from the night. It is also your consent: without it, your face is never analysed.",
+      aiCta: "Try it on my event",
+      gridFull: "Full gallery · 247 photos",
+      gridMatched: "↓ After recognition · 34 photos of Camille",
+
+      guestbookEyebrow: "The guest book",
+      guestbookTitle1: "What nobody",
+      guestbookTitle2: "dares say out loud.",
+      guestbookP1:
+        "On the same page, your guests leave a message. Written, spoken, or filmed. Each one is linked to its author, and in the album their words sit next to their photo.",
+      guestbookP2:
+        "A voice message cannot be printed. So a small QR is printed in its place. Ten years later, you scan the page and you hear her voice.",
+      quoteText:
+        "My darling, I could not find the words last night. So I am writing them here, while you dance.",
+      quoteAuthor: "Jeanne, her grandmother",
+      quoteMeta: "10:14 PM · Table 3",
+
+      objEyebrow: "What is left of it",
+      objTitle: "A memory you can hold.",
+      objDesc:
+        "A gallery is forgotten within six months. An object sitting on a table is not. Everything is ordered after the event, once the photos are sorted.",
+      onQuote: "On request",
+      see: "See",
+      obj1Tag: "Next morning",
+      obj1Title: "The PDF album",
+      obj1Desc:
+        "Your best photos laid out, ready to send to your family the morning after the party.",
+      obj2Tag: "Best seller",
+      obj2Title: "The keepsake album",
+      obj2Desc:
+        "Square 20×20, soft cover, 40 pages. Your photos and your guests' words side by side.",
+      obj3Tag: "To give away",
+      obj3Title: "The newspaper",
+      obj3Desc:
+        "Your wedding as a newspaper, to hand out to your guests. Your day told across four pages.",
+      obj4Tag: "The object",
+      obj4Title: "The large album",
+      obj4Desc:
+        "30×30 layflat, thick paper, cloth cover. Made by a printer who works for photographers.",
+
+      finalEyebrow: "Your date is coming",
+      finalTitle: "Your guests will take photos. You may as well keep them.",
+      finalDesc:
+        "Create your event in two minutes and get your QR code straight away. The first one is free.",
+      finalCta: "Create my event",
     },
     how: {
       title1: "How it",

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import logoAsset from "@/assets/qr-memories-logo.png.asset.json";
 
 const Header = () => {
   const location = useLocation();
@@ -33,13 +32,12 @@ const Header = () => {
   const ctaLabel = user ? t("nav.dashboard") : t("nav.cta");
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-[72px]">
           <Link to="/" className="flex items-center gap-2">
-            <img src={logoAsset.url} alt="QR Memories logo" className="h-8 w-auto" />
-            <span className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-              QR Memories
+            <span className="font-display text-[26px] text-foreground">
+              QR <em className="italic">Memories</em>
             </span>
           </Link>
 
@@ -48,8 +46,8 @@ const Header = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`text-sm font-medium transition-all duration-300 hover:text-primary ${
-                  isActive(item.path) ? "text-primary" : "text-muted-foreground"
+                className={`border-b border-transparent pb-1 text-[12.5px] font-medium uppercase tracking-[0.09em] transition-colors hover:border-foreground ${
+                  isActive(item.path) ? "text-foreground border-foreground" : "text-muted-foreground"
                 }`}
               >
                 {item.name}

@@ -64,7 +64,7 @@ const data: Record<Lang, {
       },
       {
         name: "Premium IA",
-        price: "79€",
+        price: "149€",
         period: "événement",
         description: "Idéal pour mariages et événements importants",
         features: [
@@ -111,7 +111,7 @@ const data: Record<Lang, {
     addOns: [
       {
         title: "Supports physiques QR Code",
-        price: "à partir de 9€",
+        price: "Inclus",
         description:
           "Carton de table, chevalet ou affiche d'entrée. Fichiers PDF haute résolution fournis, personnalisés avec le nom et la date de votre événement.",
       },
@@ -123,13 +123,13 @@ const data: Record<Lang, {
       },
       {
         title: "Album photo imprimé",
-        price: "à partir de 29€",
+        price: "à partir de 99€",
         description:
           "Un vrai album photo livré à votre domicile, fabriqué par des imprimeurs professionnels. Format personnalisable, qualité premium.",
       },
       {
         title: "Stockage longue durée",
-        price: "9,99€ /mois",
+        price: "39€ / an",
         description:
           "Prolongez la conservation de vos photos de 60 jours à 2 ans. Accès permanent à votre galerie, téléchargement à tout moment.",
       },
@@ -195,7 +195,7 @@ const data: Record<Lang, {
       },
       {
         name: "Premium AI",
-        price: "€79",
+        price: "€149",
         period: "event",
         description: "Ideal for weddings and milestone events",
         features: [
@@ -242,7 +242,7 @@ const data: Record<Lang, {
     addOns: [
       {
         title: "Physical QR Code displays",
-        price: "from €9",
+        price: "Included",
         description:
           "Table card, easel sign or entry poster. High-resolution PDF files included, customized with your event name and date.",
       },
@@ -254,13 +254,13 @@ const data: Record<Lang, {
       },
       {
         title: "Printed photo album",
-        price: "from €29",
+        price: "from €99",
         description:
           "A real photo album delivered to your door, crafted by professional printers. Customizable format, premium quality.",
       },
       {
         title: "Long-term storage",
-        price: "€9.99 /month",
+        price: "€39 / year",
         description:
           "Extend photo retention from 60 days to 2 years. Permanent gallery access, download anytime.",
       },
