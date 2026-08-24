@@ -99,15 +99,16 @@
     font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
     font-weight: 400;
     font-size: 17px;
-    line-height: 1.62;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, .font-display {
     font-family: "DM Serif Display", Georgia, serif;
     font-weight: 400;
-    line-height: 1.03;
-    letter-spacing: -0.015em;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
 }
@@ -119,16 +120,21 @@
     font-family: "JetBrains Mono", ui-monospace, monospace;
     font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
     @apply text-muted-foreground;
+    opacity: 0.85;
   }
 
   /* La ligne en italique posée au-dessus des grands titres */
   .eyebrow {
     font-family: "DM Serif Display", Georgia, serif;
     font-style: italic;
-    @apply text-[clamp(17px,2vw,22px)] text-foreground;
+    font-size: clamp(15px, 1.8vw, 20px);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    @apply text-foreground;
+    opacity: 0.9;
   }
 
   /* Le mot posé en très grand derrière une section */
@@ -137,6 +143,6 @@
     line-height: 0.78;
     letter-spacing: -0.04em;
     @apply pointer-events-none select-none absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-foreground;
-    opacity: 0.09;
+    opacity: 0.07;
   }
 }
