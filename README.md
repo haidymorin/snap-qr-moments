@@ -1,73 +1,111 @@
-# Welcome to your Lovable project
+# Memory Snapshots
 
-## Project info
+Crée un site web moderne, fluide et intuitif pour un projet nommé QR Memories (nom temporaire).
+Ce site permet aux organisateurs d’événements (mariages, anniversaires, soirées, etc.) de récupérer et partager les photos prises par leurs invités via un QR Code.
 
-**URL**: https://lovable.dev/projects/565d5771-d1ea-4672-8f7f-2e1604763b98
+L’objectif est de créer une interface simple, élégante et chaleureuse, qui donne envie de scanner et participer.
 
-## How can I edit this code?
+🏠 Page d’accueil
 
-There are several ways of editing your application.
+Message clair en haut : “Scannez. Partagez. Revivez vos souvenirs.”
 
-**Use Lovable**
+Section explicative :
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/565d5771-d1ea-4672-8f7f-2e1604763b98) and start prompting.
+Étape 1 : L’hôte crée son événement.
 
-Changes made via Lovable will be committed automatically to this repo.
+Étape 2 : Les invités scannent le QR Code.
 
-**Use your preferred IDE**
+Étape 3 : Les photos apparaissent automatiquement dans l’album partagé.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Ajoute une démo visuelle d’un QR code scanné → ouverture de l’album.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Bouton CTA : “Créer mon album événement”.
 
-Follow these steps:
+📸 Page “Mon Espace”
+
+Accessible via connexion (mail + code événement).
+
+Interface très simple :
+
+Album général de l’événement (toutes les photos envoyées par les invités).
+
+Albums personnalisés : possibilité de filtrer les photos par invité, par moment (cérémonie, soirée, brunch, etc.).
+
+Options innovantes :
+
+Téléchargement en masse.
+
+Sélection des favoris.
+
+Mode diaporama.
+
+Création d’un mini clip vidéo automatique à partir des meilleures photos.
+
+💡 Page “Fonctionnement”
+
+Design épuré et pédagogique (icônes, étapes).
+
+Montre à quel point c’est facile pour les invités : pas d’appli, juste un QR Code à scanner.
+
+💎 Page “Tarifs”
+
+Trois formules :
+
+Free Test : 1 événement / 100 photos max
+
+Premium Event : 1 événement illimité + albums personnalisés
+
+Pro Events : illimité pour les photographes ou organisateurs pros
+
+Style clair, avec encadrés et badges “Populaire” ou “Recommandé”.
+
+✉️ Page “Contact / Créer mon événement”
+
+Formulaire simple : Nom, email, type d’événement, date.
+
+Message automatique de confirmation.
+
+Possibilité d’ajouter un espace “chat” ou “FAQ instantanée”.
+
+🎨 Style visuel
+
+Palette douce : blanc, sable, doré clair ou lilas pastel.
+
+Design épuré, premium mais chaleureux.
+
+Icônes arrondies, photos en mosaïque avec effet “polaroid”.
+
+Animation légère au survol (hover).
+
+🧠 Objectif global
+
+Je veux un site qui :
+
+soit simple à utiliser (même pour des invités non-tech)
+
+rassure les organisateurs (interface propre, pro et sécurisée)
+
+mette en avant la magie des souvenirs partagés via QR Code.
+
+This project was built with [Lovable](https://lovable.dev).
+
+**Live app**: https://snap-qr-moments.lovable.app
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/565d5771-d1ea-4672-8f7f-2e1604763b98).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/565d5771-d1ea-4672-8f7f-2e1604763b98) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
