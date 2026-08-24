@@ -79,12 +79,31 @@ const translations: Record<Lang, Dict> = {
       quoteAuthor: "Jeanne, sa grand-mère",
       quoteMeta: "22 h 14 · Table 3",
 
+      plansEyebrow: "Ce que ça coûte",
+      plansTitle: "Un prix par événement.",
+      plansDesc:
+        "Pas d'abonnement, pas de commission sur vos photos. Vous choisissez une fois, avant la soirée.",
+      plan1Name: "Essentiel",
+      plan1Price: "59 €",
+      plan1Desc:
+        "Le QR code, la galerie partagée, le tri automatique des ratés et la signalétique à imprimer. Photos gardées trois mois.",
+      plan2Name: "Souvenir",
+      plan2Price: "179 €",
+      plan2Badge: "Le plus choisi",
+      plan2Desc:
+        "Tout l'Essentiel, plus le livre d'or, le tri par visage et le diaporama projeté pendant la fête. Photos gardées un an.",
+      plan3Name: "Héritage",
+      plan3Price: "390 €",
+      plan3Desc:
+        "Tout le Souvenir, plus l'album grand format et la gazette en cinquante exemplaires. Photos gardées trois ans.",
+      planDetail: "Le détail",
+
       objEyebrow: "Ce qu'il en reste",
       objTitle: "Un souvenir qui se touche.",
       objDesc:
         "Une galerie s'oublie au bout de six mois. Un objet posé sur une table, non. Tout se commande après l'événement, une fois les photos triées.",
       onQuote: "Sur devis",
-      see: "Voir",
+      see: "Voir les tarifs",
       obj1Tag: "Le lendemain",
       obj1Title: "L'album PDF",
       obj1Desc:
@@ -105,37 +124,63 @@ const translations: Record<Lang, Dict> = {
       finalEyebrow: "Votre date approche",
       finalTitle: "Vos invités prendront des photos. Autant les garder.",
       finalDesc:
-        "Créez votre événement en deux minutes et recevez votre QR code tout de suite. Le premier est gratuit.",
+        "Créez votre événement en deux minutes et recevez votre QR code tout de suite. Vous ne payez qu'au moment de l'ouvrir à vos invités.",
       finalCta: "Créer mon événement",
     },
     how: {
-      title1: "Comment ça",
-      title2: "fonctionne",
-      title3: "?",
+      eyebrow: "De la table au salon",
+      title1: "Quatre moments,",
+      title2: "et c'est tout.",
       subtitle:
-        "QR Memories simplifie le partage de photos lors de vos événements. Découvrez comment en 3 étapes simples.",
-      step1Title: "Créez votre événement",
-      step1Desc:
-        "Inscrivez-vous en quelques secondes et créez votre événement. Indiquez le nom, la date, et personnalisez votre QR Code.",
-      step1B1: "Obtenez votre QR Code unique",
-      step1B2: "Invitez autant de personnes que vous voulez",
-      step2Title: "Vos invités participent",
-      step2Desc:
-        "Partagez le QR Code (affiché à l'événement, envoyé par mail, etc.). Vos invités le scannent et partagent leurs photos instantanément.",
-      step2B1: "Aucune application à télécharger",
-      step2B2: "Fonctionne sur tous les smartphones",
-      step3Title: "Profitez de vos souvenirs",
-      step3Desc:
-        "Accédez à toutes les photos dans votre espace personnel. Téléchargez-les, créez des albums personnalisés ou générez un diaporama automatique.",
-      step3B1: "Téléchargement en masse",
-      step3B2: "Création de clips vidéo automatiques",
-      step3B3: "Sélection de vos favoris",
-      ctaTitle: "Convaincu ? Créez votre premier événement !",
-      ctaButton: "Commencer gratuitement",
+        "Vous préparez le QR code avant la fête. Le reste se passe pendant la soirée, puis tout seul, pendant que vous dormez.",
+
+      c1Num: "01 · Avant",
+      c1Title: "Vous créez l'événement.",
+      c1Desc:
+        "Le nom, la date, et c'est prêt. Votre QR code arrive tout de suite, avec les fichiers à imprimer : le panneau d'accueil et les chevalets à poser sur les tables.",
+      c1B1: "Deux minutes, sans configuration",
+      c1B2: "Un QR code unique, aux couleurs de votre événement",
+      c1B3: "La signalétique à imprimer, incluse dans tous les paliers",
+
+      c2Num: "02 · Pendant",
+      c2Title: "Vos invités déposent.",
+      c2Desc:
+        "Ils scannent le carton posé devant eux, la page s'ouvre, ils choisissent leurs photos. Pas d'application à installer, pas de compte à créer, pas de mot de passe à retenir.",
+      c2B1: "Photos et vidéos illimitées",
+      c2B2: "Fonctionne sur tous les téléphones, même les vieux",
+      c2B3: "Le diaporama projeté pendant la soirée donne envie de participer",
+
+      c3Num: "03 · La nuit même",
+      c3Title: "L'IA fait le tri.",
+      c3Desc:
+        "Les doublons partent, les photos floues aussi, celles où personne ne regarde l'objectif également. Puis chaque invité prend un selfie et retrouve les photos où il apparaît.",
+      c3B1: "Doublons, flous et ratés retirés automatiquement",
+      c3B2: "Un selfie suffit pour retrouver ses propres photos",
+      c3B3: "Les invités qui ne veulent pas être identifiés ne le sont pas",
+      c3Caption: "Six photos retenues sur vingt-quatre, pour un invité donné.",
+
+      c4Num: "04 · Après",
+      c4Title: "Il en reste quelque chose.",
+      c4Desc:
+        "Une galerie s'oublie au bout de six mois. Un album posé sur une table, non. Vous commandez quand vous voulez, une fois les photos triées, et rien ne vous oblige à décider maintenant.",
+      c4Link: "Voir ce que ça coûte",
+      objA: "L'album",
+      objB: "La gazette",
+      objC: "Le PDF",
+
+      ctaEyebrow: "Votre date approche",
+      ctaTitle: "Vos invités prendront des photos. Autant les garder.",
+      ctaDesc:
+        "Créez votre événement et recevez votre QR code tout de suite. Vous ne payez qu'au moment de l'ouvrir aux invités.",
+      ctaButton: "Créer mon événement",
     },
     pricing: {
-      title: "Des tarifs simples et transparents",
-      subtitle: "Commencez gratuitement. Upgradez quand vous en avez besoin.",
+      eyebrow: "Un prix par événement, pas d'abonnement",
+      title: "Trois façons de garder votre soirée.",
+      subtitle:
+        "Vous payez une fois, pour un événement. Les objets imprimés se commandent après, une fois les photos triées.",
+      extrasEyebrow: "À commander ensuite",
+      extrasTitle: "Les objets, à la carte.",
       tabIndiv: "Particuliers",
       tabPro: "Professionnels",
       addonsTitle: "Personnalisez votre expérience",
@@ -259,12 +304,31 @@ const translations: Record<Lang, Dict> = {
       quoteAuthor: "Jeanne, her grandmother",
       quoteMeta: "10:14 PM · Table 3",
 
+      plansEyebrow: "What it costs",
+      plansTitle: "One price per event.",
+      plansDesc:
+        "No subscription, no commission on your photos. You choose once, before the night.",
+      plan1Name: "Essential",
+      plan1Price: "€59",
+      plan1Desc:
+        "The QR code, the shared gallery, automatic clean-up of the misfires and printable signage. Photos kept three months.",
+      plan2Name: "Keepsake",
+      plan2Price: "€179",
+      plan2Badge: "Most chosen",
+      plan2Desc:
+        "Everything in Essential, plus the guest book, face sorting and the slideshow projected during the party. Photos kept one year.",
+      plan3Name: "Heirloom",
+      plan3Price: "€390",
+      plan3Desc:
+        "Everything in Keepsake, plus the large-format album and fifty copies of the newspaper. Photos kept three years.",
+      planDetail: "The detail",
+
       objEyebrow: "What is left of it",
       objTitle: "A memory you can hold.",
       objDesc:
         "A gallery is forgotten within six months. An object sitting on a table is not. Everything is ordered after the event, once the photos are sorted.",
       onQuote: "On request",
-      see: "See",
+      see: "See pricing",
       obj1Tag: "Next morning",
       obj1Title: "The PDF album",
       obj1Desc:
@@ -285,37 +349,63 @@ const translations: Record<Lang, Dict> = {
       finalEyebrow: "Your date is coming",
       finalTitle: "Your guests will take photos. You may as well keep them.",
       finalDesc:
-        "Create your event in two minutes and get your QR code straight away. The first one is free.",
+        "Create your event in two minutes and get your QR code straight away. You only pay when you open it to your guests.",
       finalCta: "Create my event",
     },
     how: {
-      title1: "How it",
-      title2: "works",
-      title3: "",
+      eyebrow: "From the table to the living room",
+      title1: "Four moments,",
+      title2: "and that's it.",
       subtitle:
-        "QR Memories makes photo sharing at your events effortless. Discover how in 3 simple steps.",
-      step1Title: "Create your event",
-      step1Desc:
-        "Sign up in seconds and create your event. Set the name, the date, and customize your QR Code.",
-      step1B1: "Get your unique QR Code",
-      step1B2: "Invite as many guests as you want",
-      step2Title: "Your guests join in",
-      step2Desc:
-        "Share the QR Code (displayed at the venue, sent by email, etc.). Guests scan it and share their photos instantly.",
-      step2B1: "No app to download",
-      step2B2: "Works on every smartphone",
-      step3Title: "Enjoy your memories",
-      step3Desc:
-        "Access every photo in your private space. Download them, create custom albums, or generate an automatic slideshow.",
-      step3B1: "Bulk download",
-      step3B2: "Automatic video clip creation",
-      step3B3: "Select your favorites",
-      ctaTitle: "Convinced? Create your first event!",
-      ctaButton: "Start for free",
+        "You set the QR code up before the party. The rest happens during the night, then on its own, while you sleep.",
+
+      c1Num: "01 · Before",
+      c1Title: "You create the event.",
+      c1Desc:
+        "The name, the date, and it's ready. Your QR code arrives straight away, along with the files to print: the welcome sign and the cards to stand on the tables.",
+      c1B1: "Two minutes, no setup",
+      c1B2: "A unique QR code, in your event's colours",
+      c1B3: "Printable signage, included in every plan",
+
+      c2Num: "02 · During",
+      c2Title: "Your guests upload.",
+      c2Desc:
+        "They scan the card in front of them, the page opens, they pick their photos. No app to install, no account to create, no password to remember.",
+      c2B1: "Unlimited photos and videos",
+      c2B2: "Works on every phone, even the old ones",
+      c2B3: "The slideshow running during the party makes people want to join in",
+
+      c3Num: "03 · That same night",
+      c3Title: "The AI sorts it out.",
+      c3Desc:
+        "Duplicates go, so do the blurry shots and the ones where nobody is looking at the lens. Then each guest takes a selfie and finds the photos they appear in.",
+      c3B1: "Duplicates, blur and misfires removed automatically",
+      c3B2: "One selfie is enough to find your own photos",
+      c3B3: "Guests who would rather not be identified simply aren't",
+      c3Caption: "Six photos kept out of twenty-four, for one given guest.",
+
+      c4Num: "04 · After",
+      c4Title: "Something is left of it.",
+      c4Desc:
+        "A gallery is forgotten within six months. An album sitting on a table is not. You order whenever you like, once the photos are sorted, and nothing forces you to decide now.",
+      c4Link: "See what it costs",
+      objA: "The album",
+      objB: "The newspaper",
+      objC: "The PDF",
+
+      ctaEyebrow: "Your date is coming up",
+      ctaTitle: "Your guests will take photos. You may as well keep them.",
+      ctaDesc:
+        "Create your event and get your QR code right away. You only pay when you open it to your guests.",
+      ctaButton: "Create my event",
     },
     pricing: {
-      title: "Simple, transparent pricing",
-      subtitle: "Start for free. Upgrade whenever you need to.",
+      eyebrow: "One price per event, no subscription",
+      title: "Three ways to keep your night.",
+      subtitle:
+        "You pay once, for one event. Printed objects are ordered afterwards, once the photos are sorted.",
+      extrasEyebrow: "Order afterwards",
+      extrasTitle: "The objects, à la carte.",
       tabIndiv: "Individuals",
       tabPro: "Professionals",
       addonsTitle: "Personalize your experience",

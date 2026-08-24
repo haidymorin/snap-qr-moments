@@ -174,10 +174,30 @@ const Index = () => {
   ];
 
   const objects = [
-    { tag: t("home.obj1Tag"), title: t("home.obj1Title"), text: t("home.obj1Desc"), price: "14 €", g: 4 },
-    { tag: t("home.obj2Tag"), title: t("home.obj2Title"), text: t("home.obj2Desc"), price: "99 €", g: 0 },
-    { tag: t("home.obj3Tag"), title: t("home.obj3Title"), text: t("home.obj3Desc"), price: t("home.onQuote"), g: 6 },
-    { tag: t("home.obj4Tag"), title: t("home.obj4Title"), text: t("home.obj4Desc"), price: "249 €", g: 2 },
+    { tag: t("home.obj1Tag"), title: t("home.obj1Title"), text: t("home.obj1Desc"), g: 4 },
+    { tag: t("home.obj2Tag"), title: t("home.obj2Title"), text: t("home.obj2Desc"), g: 0 },
+    { tag: t("home.obj3Tag"), title: t("home.obj3Title"), text: t("home.obj3Desc"), g: 6 },
+    { tag: t("home.obj4Tag"), title: t("home.obj4Title"), text: t("home.obj4Desc"), g: 2 },
+  ];
+
+  const plans = [
+    {
+      name: t("home.plan1Name"),
+      price: t("home.plan1Price"),
+      text: t("home.plan1Desc"),
+    },
+    {
+      name: t("home.plan2Name"),
+      price: t("home.plan2Price"),
+      text: t("home.plan2Desc"),
+      highlighted: true,
+      badge: t("home.plan2Badge"),
+    },
+    {
+      name: t("home.plan3Name"),
+      price: t("home.plan3Price"),
+      text: t("home.plan3Desc"),
+    },
   ];
 
   return (
@@ -313,6 +333,57 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Les offres : ce que ça coûte, avant de parler des objets */}
+      <section className="border-t border-border py-[clamp(58px,7.5vw,100px)]">
+        <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
+          <div className="mx-auto mb-[clamp(32px,4.2vw,52px)] max-w-2xl text-center">
+            <p className="eyebrow">{t("home.plansEyebrow")}</p>
+            <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">{t("home.plansTitle")}</h2>
+            <p className="mx-auto mt-4 max-w-[52ch] leading-relaxed text-foreground opacity-80">
+              {t("home.plansDesc")}
+            </p>
+          </div>
+
+          <div className="grid gap-[clamp(13px,1.7vw,20px)] md:grid-cols-3">
+            {plans.map((p, i) => (
+              <article
+                key={i}
+                className={`flex flex-col border p-[clamp(22px,2.4vw,30px)] ${
+                  p.highlighted
+                    ? "border-night bg-night text-night-foreground"
+                    : "border-border bg-card text-foreground"
+                }`}
+              >
+                <div className="flex min-h-[24px] items-start justify-between gap-3">
+                  <h3 className="text-[clamp(24px,2.4vw,30px)] leading-none">{p.name}</h3>
+                  {p.badge && (
+                    <span
+                      className={`label-mono shrink-0 border px-2 py-1 opacity-100 ${
+                        p.highlighted ? "border-night-border text-night-foreground" : "border-border text-foreground"
+                      }`}
+                    >
+                      {p.badge}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-4 font-display text-[clamp(36px,3.8vw,46px)] leading-none">{p.price}</p>
+                <p className={`mt-4 flex-1 text-[14.5px] leading-relaxed ${p.highlighted ? "opacity-75" : "opacity-80"}`}>
+                  {p.text}
+                </p>
+                <Link
+                  to="/pricing"
+                  className={`label-mono mt-6 self-start border-b pb-0.5 opacity-100 transition-opacity hover:opacity-60 ${
+                    p.highlighted ? "border-night-foreground text-night-foreground" : "border-foreground text-foreground"
+                  }`}
+                >
+                  {t("home.planDetail")}
+                </Link>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Les objets imprimés, avec le mot posé en très grand */}
       <section className="relative overflow-hidden bg-card py-[clamp(58px,7.5vw,100px)]">
         <div className="giant-word bottom-[6%] text-[clamp(120px,21vw,300px)]">MEMORIES</div>
@@ -333,10 +404,12 @@ const Index = () => {
                 </div>
                 <div className="flex flex-1 flex-col p-6">
                   <h3 className="mb-3 text-[clamp(22px,2vw,28px)] text-wrap balance text-foreground">{o.title}</h3>
-                  <p className="mb-4 flex-1 text-[14.5px] leading-relaxed text-foreground opacity-80">{o.text}</p>
-                  <div className="flex items-baseline justify-between border-t border-border pt-4">
-                    <span className="font-display text-[clamp(28px,2.8vw,32px)]">{o.price}</span>
-                    <Link to="/pricing" className="label-mono border-b border-foreground pb-0.5 text-foreground hover:opacity-70 transition-opacity">
+                  <p className="mb-5 flex-1 text-[14.5px] leading-relaxed text-foreground opacity-80">{o.text}</p>
+                  <div className="border-t border-border pt-4">
+                    <Link
+                      to="/pricing"
+                      className="label-mono border-b border-foreground pb-0.5 text-foreground opacity-100 transition-opacity hover:opacity-60"
+                    >
                       {t("home.see")}
                     </Link>
                   </div>
