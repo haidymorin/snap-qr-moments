@@ -152,6 +152,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      event_exists: { Args: { p_event_id: string }; Returns: boolean }
       guest_count_media: {
         Args: { p_event_id: string; p_media?: string }
         Returns: number
