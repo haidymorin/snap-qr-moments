@@ -5,7 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
 import { generateVideoPoster } from "@/lib/videoPoster";
 import MediaTabs, { MediaFilter, PlayOverlay } from "@/components/MediaTabs";
-import { Camera, Images, Loader2, X } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Images, Loader2, X } from "lucide-react";
 
 interface EventRow {
   id: string;
@@ -64,6 +64,32 @@ const GuestEvent = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [busy, setBusy] = useState(false);
   const [lightbox, setLightbox] = useState<MediaRow | null>(null);
+  /* Navigation dans la visionneuse : flèches à l'écran et au clavier. */
+  const lightboxIndex = lightbox ? media.findIndex((m) => m.id === lightbox.id) : -1;
+  const goRelative = useCallback(
+    (delta: number) => {
+      if (media.length === 0) return;
+      setLightbox((current) => {
+        if (!current) return current;
+        const i = media.findIndex((m) => m.id === current.id);
+        if (i < 0) return current;
+        return media[(i + delta + media.length) % media.length];
+      });
+    },
+    [media]
+  );
+
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") goRelative(1);
+      else if (e.key === "ArrowLeft") goRelative(-1);
+      else if (e.key === "Escape") setLightbox(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox, goRelative]);
+
 
   const fetchPage = useCallback(
     async (from: number, activeFilter: MediaFilter) => {
@@ -493,10 +519,39 @@ const GuestEvent = () => {
             type="button"
             aria-label={t("guest.close")}
             onClick={() => setLightbox(null)}
-            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center border border-white/40 text-white"
+            className="absolute right-4 top-4 flex h-12 w-12 items-center justify-center border border-white/40 text-white transition-colors hover:bg-white/10"
           >
             <X className="h-5 w-5" />
           </button>
+            {media.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Photo précédente"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goRelative(-1);
+                  }}
+                  className="absolute left-3 top-1/2 flex h-14 w-14 -translate-y-1/2 items-center justify-center border border-white/40 text-white transition-colors hover:bg-white/10"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Photo suivante"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goRelative(1);
+                  }}
+                  className="absolute right-3 top-1/2 flex h-14 w-14 -translate-y-1/2 items-center justify-center border border-white/40 text-white transition-colors hover:bg-white/10"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+                <span className="label-mono absolute bottom-5 left-1/2 -translate-x-1/2 text-white">
+                  {lightboxIndex + 1} / {media.length}
+                </span>
+              </>
+            )}
           {lightbox.media_type === "video" ? (
             <video
               src={lightbox.url}

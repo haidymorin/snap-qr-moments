@@ -25,7 +25,7 @@ const photo = (i: number) =>
    présentée comme telle dans le texte de la section. */
 const STEP_PHOTOS = [12919433, 30505255, 10360902];
 const BAND_PHOTOS = [26558729, 19691776, 15964962, 2765703, 28123410, 8210489];
-const CAMILLE_SELFIE = 13434427;
+const CAMILLE_SELFIE = 11988908;
 const ALBUM_DEMO: { id: number; camille: boolean }[] = [
   { id: 13434416, camille: false },
   { id: 13434419, camille: false },
@@ -135,11 +135,11 @@ function PhotoWall() {
         style={{
           opacity: veil ? 1 : 0,
           background:
-            "linear-gradient(180deg, hsl(var(--background)/0.46), hsl(var(--background)/0.78) 46%, hsl(var(--background)/0.88))",
+            "linear-gradient(180deg, hsl(var(--background)/0.34), hsl(var(--background)/0.52) 46%, hsl(var(--background)/0.66))",
         }}
       />
 
-      <div className="relative z-10 max-w-3xl px-5 py-16 text-center">
+      <div className="relative z-10 mx-4 max-w-3xl border border-border bg-background/95 px-[clamp(24px,4vw,64px)] py-[clamp(32px,4.5vw,60px)] text-center backdrop-blur-[2px]">
 
         <div
           className="transition-[opacity,transform] duration-700 ease-out"
@@ -279,7 +279,8 @@ const Index = () => {
                   alt=""
                   loading="lazy"
                   decoding="async"
-                  className="h-14 w-14 shrink-0 border border-night-border object-cover"
+                  style={{ objectPosition: "64% 30%" }}
+                  className="h-20 w-16 shrink-0 border border-night-border object-cover"
                 />
                 <div className="min-w-[210px] flex-1">
                   <strong className="block text-[15px] font-semibold text-night-foreground">{t("home.selfieTitle")}</strong>
