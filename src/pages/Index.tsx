@@ -2,6 +2,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import etape1 from "@/assets/steps/etape-1-qr.jpg";
+import etape2 from "@/assets/steps/etape-2-invites.jpg";
+import etape3 from "@/assets/steps/etape-3-galerie.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 /* Photos de mariage libres de droits (Pexels — licence gratuite, usage
@@ -23,7 +26,11 @@ const photo = (i: number) =>
    Six photos sur vingt-quatre montrent la même invitée en robe rouge —
    c'est ce que Lya retrouve quand elle reconnaît quelqu'un. Mise en scène,
    présentée comme telle dans le texte de la section. */
-const STEP_PHOTOS = [12919433, 30505255, 10360902];
+/* Les trois images du déroulé, fournies par Haïdy et servies depuis le projet
+   (pas de dépendance à un service extérieur sur cette section) :
+   le carton QR posé sur la table, les invités qui déposent, la galerie triée. */
+const STEP_IMAGES = [etape1, etape2, etape3];
+const STEP_ALT = ["stepsAlt1", "stepsAlt2", "stepsAlt3"];
 const BAND_PHOTOS = [26558729, 19691776, 15964962, 2765703, 28123410, 8210489];
 const CAMILLE_SELFIE = 11988908;
 const ALBUM_DEMO: { id: number; camille: boolean }[] = [
@@ -202,10 +209,10 @@ const Index = () => {
   ];
 
   const objects = [
-    { tag: t("home.obj1Tag"), title: t("home.obj1Title"), text: t("home.obj1Desc"), g: 4 },
-    { tag: t("home.obj2Tag"), title: t("home.obj2Title"), text: t("home.obj2Desc"), g: 0 },
-    { tag: t("home.obj3Tag"), title: t("home.obj3Title"), text: t("home.obj3Desc"), g: 6 },
-    { tag: t("home.obj4Tag"), title: t("home.obj4Title"), text: t("home.obj4Desc"), g: 2 },
+    { tag: t("home.obj1Tag"), title: t("home.obj1Title"), text: t("home.obj1Desc"), g: 15445089 },
+    { tag: t("home.obj2Tag"), title: t("home.obj2Title"), text: t("home.obj2Desc"), g: 4561938 },
+    { tag: t("home.obj3Tag"), title: t("home.obj3Title"), text: t("home.obj3Desc"), g: 3866816 },
+    { tag: t("home.obj4Tag"), title: t("home.obj4Title"), text: t("home.obj4Desc"), g: 4554387 },
   ];
 
   const plans = [
@@ -252,10 +259,12 @@ const Index = () => {
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
                   <img
-                    src={photoUrl(STEP_PHOTOS[i])}
-                    alt=""
-                    loading="lazy"
+                    src={STEP_IMAGES[i]}
+                    alt={t(`home.${STEP_ALT[i]}`)}
+                    loading={i === 0 ? "eager" : "lazy"}
                     decoding="async"
+                    width={915}
+                    height={686}
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -463,7 +472,14 @@ const Index = () => {
           <div className="grid gap-[clamp(13px,1.7vw,20px)] sm:grid-cols-2 xl:grid-cols-4">
             {objects.map((o, i) => (
               <article key={i} className="flex flex-col border border-border bg-background">
-                <div className="relative aspect-[3/2] border-b border-border bg-secondary">
+                <div className="relative aspect-[3/2] overflow-hidden border-b border-border bg-secondary">
+                  <img
+                    src={photoUrl(o.g)}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
                   <span className="label-mono absolute left-2.5 top-2.5 bg-card px-2 py-1 text-foreground">
                     {o.tag}
                   </span>

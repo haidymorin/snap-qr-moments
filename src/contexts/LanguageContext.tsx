@@ -98,6 +98,9 @@ const translations: Record<Lang, Dict> = {
       selfieDesc:
         "Un selfie, et vous récupérez toutes vos photos de la soirée. C'est aussi votre accord : sans lui, votre visage n'est jamais analysé.",
       aiCta: "Essayer sur mon événement",
+      stepsAlt1: "Un cadre posé sur une table de mariage : « Partagez vos photos avec nous », avec un QR code à scanner.",
+      stepsAlt2: "Quatre invités en tenue de soirée, téléphone en main, en train de déposer leurs photos.",
+      stepsAlt3: "Un couple regarde sur une tablette la galerie de son mariage, remplie de photos.",
       gridFull: "Exemple · la galerie complète du mariage",
       gridMatched: "↓ Ce que Camille reçoit : les photos où elle apparaît",
 
@@ -357,6 +360,9 @@ const translations: Record<Lang, Dict> = {
       selfieDesc:
         "One selfie, and you get back every photo of you from the night. It is also your consent: without it, your face is never analysed.",
       aiCta: "Try it on my event",
+      stepsAlt1: "A frame on a wedding table reading “Share your photos with us”, with a QR code to scan.",
+      stepsAlt2: "Four guests in evening dress, phone in hand, uploading their photos.",
+      stepsAlt3: "A couple looking at their wedding gallery on a tablet, full of photos.",
       gridFull: "Example · the full wedding gallery",
       gridMatched: "↓ What Camille gets: the photos she appears in",
 
