@@ -23,12 +23,9 @@ const TILES = [
 ];
 const tile = (i: number) => TILES[((i % TILES.length) + TILES.length) % TILES.length];
 
-const TARGET = 247;
-
 /** Le mur de photos qui se remplit au chargement, puis laisse place au titre. */
 function PhotoWall() {
   const { t } = useLanguage();
-  const [count, setCount] = useState(0);
   const [shown, setShown] = useState<number[]>([]);
   const [veil, setVeil] = useState(false);
   const [title, setTitle] = useState(false);
@@ -49,14 +46,12 @@ function PhotoWall() {
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setShown(Array.from({ length: total }, (_, i) => i));
-      setCount(TARGET);
       setVeil(true);
       setTitle(true);
       return;
     }
 
     setShown([]);
-    setCount(0);
     setVeil(false);
     setTitle(false);
 
@@ -68,16 +63,6 @@ function PhotoWall() {
       );
     });
 
-    let c = 0;
-    const tick = window.setInterval(() => {
-      c += Math.max(1, Math.round((TARGET - c) / 9));
-      if (c >= TARGET) {
-        c = TARGET;
-        window.clearInterval(tick);
-      }
-      setCount(c);
-    }, 55);
-    timers.current.push(window.setTimeout(() => window.clearInterval(tick), 2600));
     timers.current.push(window.setTimeout(() => setVeil(true), 2250));
     timers.current.push(window.setTimeout(() => setTitle(true), 2750));
   }, []);
@@ -115,13 +100,6 @@ function PhotoWall() {
       />
 
       <div className="relative z-10 max-w-3xl px-5 py-16 text-center">
-        <div
-          className="label-mono inline-flex items-center gap-2 text-foreground transition-opacity duration-500"
-          style={{ opacity: count > 0 ? 1 : 0 }}
-        >
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-foreground" />
-          {count} {count > 1 ? t("home.counterPlural") : t("home.counterSingular")}
-        </div>
 
         <div
           className="transition-[opacity,transform] duration-700 ease-out"

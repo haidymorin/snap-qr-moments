@@ -1,13 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
 import { generateVideoPoster } from "@/lib/videoPoster";
 import MediaTabs, { MediaFilter, PlayOverlay } from "@/components/MediaTabs";
-import { Calendar, Camera, Check, Loader2, X } from "lucide-react";
+import { Camera, Images, Loader2, X } from "lucide-react";
 
 interface EventRow {
   id: string;
@@ -23,17 +21,39 @@ interface MediaRow {
   media_type: string;
 }
 
+/* Un fichier et son état, du choix jusqu'à l'album.
+   C'est cet objet qui permet de dire à l'invité ce qui a échoué et pourquoi. */
+type ItemState = "waiting" | "preparing" | "sending" | "sent" | "failed";
+interface Item {
+  key: string;
+  file: File;
+  state: ItemState;
+  reason?: string;
+}
+
 const MAX_IMAGE_SIZE = 25 * 1024 * 1024;
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
 const PAGE_SIZE = 24;
 const CONCURRENCY = 3;
 
+/* Traduit une erreur technique en une raison lisible par un invité. */
+const reasonOf = (err: unknown): string => {
+  const msg = String((err as { message?: string })?.message ?? err ?? "").toLowerCase();
+  if (msg.includes("format")) return "errFormat";
+  if (msg.includes("imagetoobig")) return "errTooBig";
+  if (msg.includes("videotoobig")) return "errVideoTooBig";
+  if (msg.includes("row-level") || msg.includes("policy") || msg.includes("unauthorized")) return "errRefused";
+  return "errNetwork";
+};
+
 const GuestEvent = () => {
   const { id } = useParams<{ id: string }>();
-  const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t, lang } = useLanguage();
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const libraryInputRef = useRef<HTMLInputElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+
   const [event, setEvent] = useState<EventRow | null>(null);
   const [media, setMedia] = useState<MediaRow[]>([]);
   const [filter, setFilter] = useState<MediaFilter>("all");
@@ -41,12 +61,8 @@ const GuestEvent = () => {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [uploading, setUploading] = useState(false);
-  const [phase, setPhase] = useState<"idle" | "compressing" | "uploading">("idle");
-  const [done, setDone] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [successText, setSuccessText] = useState("");
+  const [items, setItems] = useState<Item[]>([]);
+  const [busy, setBusy] = useState(false);
   const [lightbox, setLightbox] = useState<MediaRow | null>(null);
 
   const fetchPage = useCallback(
@@ -88,7 +104,6 @@ const GuestEvent = () => {
     })();
   }, [id, fetchPage, loadCounts]);
 
-  // Changement d'onglet : on repart de la page 0 côté serveur
   const changeFilter = async (next: MediaFilter) => {
     if (next === filter) return;
     setFilter(next);
@@ -135,7 +150,6 @@ const GuestEvent = () => {
   };
 
   const uploadImage = async (file: File) => {
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type) || file.size > MAX_IMAGE_SIZE) throw new Error("invalid");
     const { full, thumb, fallback } = await compressImage(file);
     const uuid = crypto.randomUUID();
     const ext = fallback ? file.name.split(".").pop() ?? "jpg" : "jpg";
@@ -165,7 +179,6 @@ const GuestEvent = () => {
     const ext = file.name.split(".").pop() ?? "mp4";
     const path = `${id}/${uuid}.${ext}`;
 
-    // La vidéo est envoyée telle quelle, sans compression
     const { error: upErr } = await supabase.storage.from("event-photos").upload(path, file, {
       contentType: file.type || "video/mp4",
       upsert: false,
@@ -184,258 +197,327 @@ const GuestEvent = () => {
     if (dbErr) throw dbErr;
   };
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !id || !event) return;
-    const selected = Array.from(e.target.files);
-    if (selected.length === 0) return;
+  const mark = (key: string, state: ItemState, reason?: string) =>
+    setItems((prev) => prev.map((it) => (it.key === key ? { ...it, state, reason } : it)));
 
-    // Vidéos trop lourdes : rejetées immédiatement, les autres fichiers continuent
-    const files = selected.filter((file) => {
-      if (file.type.startsWith("video/") && file.size > MAX_VIDEO_SIZE) {
-        toast({
-          title: `${file.name} ignoré`,
-          description:
-            "Cette vidéo est trop lourde (max 50 Mo). Filmez des séquences plus courtes, environ 20 secondes.",
-          variant: "destructive",
-        });
-        return false;
-      }
-      return true;
-    });
+  /* Refus décidés avant tout envoi : l'invité voit la raison tout de suite,
+     sans attendre une minute pour rien. */
+  const preflight = (file: File): string | null => {
+    if (file.type.startsWith("video/")) {
+      return file.size > MAX_VIDEO_SIZE ? "errVideoTooBig" : null;
+    }
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) return "errFormat";
+    if (file.size > MAX_IMAGE_SIZE) return "errTooBig";
+    return null;
+  };
 
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    if (files.length === 0) return;
-
-    setUploading(true);
-    setPhase("compressing");
-    setTotal(files.length);
-    setDone(0);
-
-    let ok = 0;
-    let failed = 0;
-    let index = 0;
-    let started = false;
-
+  const runQueue = useCallback(async (queue: Item[]) => {
+    setBusy(true);
+    let cursor = 0;
     const worker = async () => {
-      while (index < files.length) {
-        const file = files[index++];
+      while (cursor < queue.length) {
+        const it = queue[cursor++];
         try {
-          if (file.type.startsWith("video/")) {
-            await uploadVideo(file);
+          mark(it.key, "preparing");
+          if (it.file.type.startsWith("video/")) {
+            mark(it.key, "sending");
+            await uploadVideo(it.file);
           } else {
-            await uploadImage(file);
+            await uploadImage(it.file);
           }
-          ok++;
-        } catch {
-          failed++;
+          mark(it.key, "sent");
+        } catch (err) {
+          mark(it.key, "failed", reasonOf(err));
         }
-        if (!started) {
-          started = true;
-          setPhase("uploading");
-        }
-        setDone(ok + failed);
       }
     };
+    await Promise.all(
+      Array.from({ length: Math.min(CONCURRENCY, queue.length) }, worker)
+    );
+    setBusy(false);
+    await loadCounts();
+    setHasMore(true);
+    setMedia(await fetchPage(0, filter));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchPage, filter, loadCounts, id]);
 
-    await Promise.all(Array.from({ length: Math.min(CONCURRENCY, files.length) }, worker));
+  const handleSelection = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !id || !event) return;
+    const selected = Array.from(e.target.files);
+    e.target.value = "";
+    if (selected.length === 0) return;
 
-    setUploading(false);
-    setPhase("idle");
+    const next: Item[] = selected.map((file) => {
+      const refused = preflight(file);
+      return {
+        key: crypto.randomUUID(),
+        file,
+        state: refused ? "failed" : "waiting",
+        reason: refused ?? undefined,
+      };
+    });
 
-    if (ok > 0) {
-      setSuccessText(
-        failed > 0
-          ? `${ok} fichier${ok > 1 ? "s" : ""} envoyé${ok > 1 ? "s" : ""}, ${failed} ont échoué`
-          : "Vos souvenirs ont bien été partagés ! 🎉"
-      );
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 4000);
-      await loadCounts();
-      setHasMore(true);
-      setMedia(await fetchPage(0, filter));
-    } else {
-      toast({
-        title: "Envoi impossible",
-        description: `${failed} fichier${failed > 1 ? "s" : ""} n'ont pas pu être envoyé${failed > 1 ? "s" : ""}.`,
-        variant: "destructive",
-      });
-    }
+    setItems(next);
+    const queue = next.filter((it) => it.state === "waiting");
+    if (queue.length > 0) await runQueue(queue);
+  };
+
+  const retryFailed = async () => {
+    const retryable = items.filter((it) => it.state === "failed" && !preflight(it.file));
+    if (retryable.length === 0) return;
+    setItems((prev) =>
+      prev.map((it) =>
+        retryable.some((r) => r.key === it.key) ? { ...it, state: "waiting", reason: undefined } : it
+      )
+    );
+    await runQueue(retryable);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   if (!event) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 text-center">
+      <div className="flex min-h-screen items-center justify-center bg-background px-5 text-center">
         <div>
-          <h1 className="text-2xl font-bold mb-2">Événement introuvable</h1>
-          <p className="text-muted-foreground">Vérifiez le lien ou le QR code.</p>
+          <h1 className="text-3xl">{t("guest.notFoundTitle")}</h1>
+          <p className="mt-3 text-muted-foreground">{t("guest.notFoundText")}</p>
         </div>
       </div>
     );
   }
 
+  const sent = items.filter((it) => it.state === "sent").length;
+  const failed = items.filter((it) => it.state === "failed").length;
+  const finished = items.length > 0 && !busy;
+  const canRetry = items.some((it) => it.state === "failed" && !preflight(it.file));
+  const dateLabel = new Date(event.event_date).toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  const stateLabel = (it: Item) => {
+    if (it.state === "sent") return t("guest.sent");
+    if (it.state === "failed") return t(`guest.${it.reason ?? "errNetwork"}`);
+    if (it.state === "preparing") return t("guest.preparing");
+    if (it.state === "sending") return t("guest.sending");
+    return t("guest.waiting");
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <main className="pb-20">
-        {/* Hero */}
-        <div className="bg-gradient-hero text-white py-10 px-4 text-center">
-          <div className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium inline-block mb-3 capitalize">
-            {event.event_type}
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">{event.name}</h1>
-          <div className="flex items-center justify-center gap-2 text-white/90 text-sm">
-            <Calendar className="w-4 h-4" />
-            {new Date(event.event_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-          </div>
+      <header className="border-b border-border">
+        <div className="mx-auto max-w-4xl px-5 py-10 text-center sm:py-14">
+          <p className="label-mono">{event.event_type}</p>
+          <h1 className="mt-3 text-[clamp(30px,7vw,54px)]">{event.name}</h1>
+          <p className="label-mono mt-4">{dateLabel}</p>
         </div>
+      </header>
 
-        <div className="container mx-auto px-4 max-w-4xl">
-          {/* Upload */}
-          <div className="-mt-8 mb-10">
-            <div className="bg-card rounded-2xl border border-border shadow-card p-6 text-center">
-              {showSuccess ? (
-                <div className="py-4 animate-fade-in">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Check className="w-8 h-8 text-primary" />
-                  </div>
-                  <p className="text-lg font-semibold">{successText}</p>
-                </div>
-              ) : uploading ? (
-                <div className="py-4">
-                  <p className="text-lg font-semibold mb-3">
-                    {phase === "compressing" ? "Préparation des fichiers..." : "Envoi en cours..."}
-                  </p>
-                  <Progress value={total ? (done / total) * 100 : 0} className="mb-3" />
-                  <p className="text-sm text-muted-foreground">
-                    Envoi {Math.min(done + 1, total)} / {total}...
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*,video/*"
-                    multiple
-                    onChange={handleUpload}
-                    className="hidden"
-                    disabled={uploading}
-                  />
-                  <Button
-                    variant="hero"
-                    size="lg"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                    className="w-full sm:w-auto text-lg h-14 px-10"
-                  >
-                    <Camera className="w-6 h-6" /> Ajouter mes photos
-                  </Button>
-                  <p className="text-xs text-muted-foreground mt-3">
-                    Photos et vidéos · vidéos limitées à 50 Mo (environ 20 secondes)
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Plusieurs fichiers à la fois · Aucune inscription requise
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
+      <main className="mx-auto max-w-4xl px-5 pb-20">
+        {/* Dépôt */}
+        <section className="mt-8 border border-border bg-card p-6 sm:p-8">
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleSelection}
+            className="hidden"
+          />
+          <input
+            ref={libraryInputRef}
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            onChange={handleSelection}
+            className="hidden"
+          />
 
-          {/* Gallery */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <h2 className="text-xl font-bold">
-              Album partagé <span className="text-muted-foreground font-normal">({counts.all})</span>
-            </h2>
-            <MediaTabs value={filter} onChange={changeFilter} counts={counts} />
-          </div>
-
-          {media.length === 0 && !loadingMore ? (
-            <div className="text-center py-12 bg-card rounded-2xl border border-border">
-              <p className="text-muted-foreground">
-                {filter === "video"
-                  ? "Aucune vidéo pour l'instant."
-                  : filter === "photo"
-                    ? "Aucune photo pour l'instant."
-                    : "Soyez le premier à partager un souvenir !"}
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {media.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setLightbox(p)}
-                  style={{ aspectRatio: "1 / 1" }}
-                  className="relative w-full overflow-hidden rounded-xl bg-muted border border-border shadow-soft hover:shadow-card transition-all"
-                >
-                  <img
-                    src={p.thumbnail_url ?? (p.media_type === "video" ? undefined : p.url)}
-                    alt={p.file_name}
-                    loading="lazy"
-                    decoding="async"
-                    width={400}
-                    height={400}
-                    className="w-full h-full object-cover"
-                  />
-                  {p.media_type === "video" && <PlayOverlay />}
-                </button>
-              ))}
-            </div>
-          )}
-          <div ref={sentinelRef} className="h-10 flex items-center justify-center">
-            {loadingMore && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
-          </div>
-        </div>
-
-        {lightbox && (
-          <div
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 animate-fade-in"
-            onClick={() => setLightbox(null)}
-          >
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <button
               type="button"
-              aria-label="Fermer"
-              onClick={() => setLightbox(null)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white"
+              onClick={() => cameraInputRef.current?.click()}
+              disabled={busy}
+              className="inline-flex min-h-[56px] items-center justify-center gap-3 border border-primary bg-primary px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-50"
             >
-              <X className="w-6 h-6" />
+              <Camera className="h-5 w-5" aria-hidden="true" />
+              {t("guest.takePhoto")}
             </button>
-            {lightbox.media_type === "video" ? (
-              <video
-                src={lightbox.url}
-                poster={lightbox.thumbnail_url ?? undefined}
-                controls
-                playsInline
-                preload="none"
-                className="max-h-[90vh] max-w-full rounded-xl"
-                onClick={(e) => e.stopPropagation()}
-              />
-            ) : (
-              <img
-                src={lightbox.url}
-                alt={lightbox.file_name}
-                decoding="async"
-                className="max-h-[90vh] max-w-full object-contain rounded-xl"
-                onClick={(e) => e.stopPropagation()}
-              />
-            )}
+            <button
+              type="button"
+              onClick={() => libraryInputRef.current?.click()}
+              disabled={busy}
+              className="inline-flex min-h-[56px] items-center justify-center gap-3 border border-border px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary disabled:opacity-50"
+            >
+              <Images className="h-5 w-5" aria-hidden="true" />
+              {t("guest.choosePhotos")}
+            </button>
+          </div>
+
+          <p className="mt-5 text-center text-sm text-muted-foreground">{t("guest.hint1")}</p>
+          <p className="mt-1 text-center text-sm text-muted-foreground">{t("guest.hint2")}</p>
+
+          {/* État fichier par fichier */}
+          {items.length > 0 && (
+            <div className="mt-8 border-t border-border pt-6" role="status" aria-live="polite">
+              <div className="flex items-baseline justify-between gap-4">
+                <p className="label-mono">
+                  {busy ? t("guest.sendingTitle") : t("guest.doneTitle")}
+                </p>
+                <p className="label-mono">
+                  {sent + failed} / {items.length}
+                </p>
+              </div>
+
+              <div className="mt-3 h-px w-full bg-border">
+                <div
+                  className="h-px bg-primary transition-[width] duration-300"
+                  style={{ width: `${items.length ? ((sent + failed) / items.length) * 100 : 0}%` }}
+                />
+              </div>
+
+              <ul className="mt-5 divide-y divide-border border-y border-border">
+                {items.map((it) => (
+                  <li key={it.key} className="flex items-center justify-between gap-4 py-3">
+                    <span className="min-w-0 flex-1 truncate text-sm text-foreground">
+                      {it.file.name}
+                    </span>
+                    <span
+                      className={`label-mono shrink-0 ${
+                        it.state === "failed" ? "text-destructive opacity-100" : ""
+                      }`}
+                    >
+                      {stateLabel(it)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              {finished && (
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm text-muted-foreground">
+                    {failed === 0 ? t("guest.allSent") : null}
+                  </p>
+                  <div className="flex gap-3">
+                    {canRetry && (
+                      <button
+                        type="button"
+                        onClick={retryFailed}
+                        className="inline-flex min-h-[44px] items-center border border-primary px-5 py-2 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                      >
+                        {t("guest.retry")}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setItems([])}
+                      className="label-mono min-h-[44px] px-2 hover:text-foreground"
+                    >
+                      {t("guest.dismiss")}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </section>
+
+        {/* Album */}
+        <div className="mt-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="text-2xl">
+            {t("guest.album")}{" "}
+            <span className="text-muted-foreground">({counts.all})</span>
+          </h2>
+          <MediaTabs value={filter} onChange={changeFilter} counts={counts} />
+        </div>
+
+        {media.length === 0 && !loadingMore ? (
+          <div className="mt-6 border border-border px-6 py-16 text-center">
+            <p className="text-muted-foreground">
+              {filter === "video"
+                ? t("guest.emptyVideos")
+                : filter === "photo"
+                  ? t("guest.emptyPhotos")
+                  : t("guest.emptyAll")}
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4">
+            {media.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => setLightbox(p)}
+                style={{ aspectRatio: "1 / 1" }}
+                className="relative w-full overflow-hidden bg-muted transition-opacity hover:opacity-90"
+              >
+                <img
+                  src={p.thumbnail_url ?? (p.media_type === "video" ? undefined : p.url)}
+                  alt={p.file_name}
+                  loading="lazy"
+                  decoding="async"
+                  width={400}
+                  height={400}
+                  className="h-full w-full object-cover"
+                />
+                {p.media_type === "video" && <PlayOverlay />}
+              </button>
+            ))}
           </div>
         )}
 
-        <div className="text-center mt-12 pb-4">
-          <a href="/" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-            Propulsé par QR Memories
+        <div ref={sentinelRef} className="flex h-10 items-center justify-center">
+          {loadingMore && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
+        </div>
+
+        <div className="mt-12 text-center">
+          <a href="/" className="label-mono hover:text-foreground">
+            {t("guest.poweredBy")}
           </a>
         </div>
       </main>
+
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F0E0C]/95 p-4"
+          onClick={() => setLightbox(null)}
+        >
+          <button
+            type="button"
+            aria-label={t("guest.close")}
+            onClick={() => setLightbox(null)}
+            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center border border-white/40 text-white"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          {lightbox.media_type === "video" ? (
+            <video
+              src={lightbox.url}
+              poster={lightbox.thumbnail_url ?? undefined}
+              controls
+              playsInline
+              preload="none"
+              className="max-h-[90vh] max-w-full"
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <img
+              src={lightbox.url}
+              alt={lightbox.file_name}
+              decoding="async"
+              className="max-h-[90vh] max-w-full object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

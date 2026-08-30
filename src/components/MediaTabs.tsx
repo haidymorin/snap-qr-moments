@@ -1,4 +1,5 @@
 import { Play } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export type MediaFilter = "all" | "photo" | "video";
 
@@ -8,24 +9,30 @@ interface MediaTabsProps {
   counts: { all: number; photo: number; video: number };
 }
 
+/* Onglets au filet de 1 px : pas de pilule, pas d'ombre, pas de dégradé.
+   L'onglet actif est signalé par un trait plein sous le libellé. */
 const MediaTabs = ({ value, onChange, counts }: MediaTabsProps) => {
+  const { t } = useLanguage();
+
   const tabs: { key: MediaFilter; label: string; count: number }[] = [
-    { key: "all", label: "Tout", count: counts.all },
-    { key: "photo", label: "Photos", count: counts.photo },
-    { key: "video", label: "Vidéos", count: counts.video },
+    { key: "all", label: t("guest.tabAll"), count: counts.all },
+    { key: "photo", label: t("guest.tabPhotos"), count: counts.photo },
+    { key: "video", label: t("guest.tabVideos"), count: counts.video },
   ];
 
   return (
-    <div className="inline-flex p-1 rounded-full bg-muted border border-border shadow-soft">
+    <div className="inline-flex border-b border-border" role="tablist">
       {tabs.map((tab) => (
         <button
           key={tab.key}
           type="button"
+          role="tab"
+          aria-selected={value === tab.key}
           onClick={() => onChange(tab.key)}
-          className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
+          className={`label-mono -mb-px min-h-[44px] border-b px-4 py-3 transition-colors ${
             value === tab.key
-              ? "bg-gradient-hero text-white shadow-card"
-              : "text-muted-foreground hover:text-foreground"
+              ? "border-primary text-foreground opacity-100"
+              : "border-transparent hover:text-foreground"
           }`}
         >
           {tab.label} ({tab.count})
@@ -36,10 +43,10 @@ const MediaTabs = ({ value, onChange, counts }: MediaTabsProps) => {
 };
 
 export const PlayOverlay = () => (
-  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-    <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
-      <Play className="w-6 h-6 text-white fill-white" />
-    </div>
+  <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+    <span className="flex h-11 w-11 items-center justify-center border border-white/70 bg-black/40">
+      <Play className="h-5 w-5 fill-white text-white" />
+    </span>
   </div>
 );
 
