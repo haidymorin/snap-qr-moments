@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
+import { downloadMedia } from "@/lib/downloadMedia";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
 import { generateVideoPoster } from "@/lib/videoPoster";
 import MediaTabs, { MediaFilter, PlayOverlay } from "@/components/MediaTabs";
-import { Camera, ChevronLeft, ChevronRight, Images, Loader2, X } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Download, Images, Loader2, X } from "lucide-react";
 
 interface EventRow {
   id: string;
@@ -64,6 +66,21 @@ const GuestEvent = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [busy, setBusy] = useState(false);
   const [lightbox, setLightbox] = useState<MediaRow | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
+
+  const saveCurrent = async () => {
+    if (!lightbox || saving) return;
+    setSaving(true);
+    setSaveError(false);
+    try {
+      await downloadMedia(lightbox.url, lightbox.file_name);
+    } catch {
+      setSaveError(true);
+    } finally {
+      setSaving(false);
+    }
+  };
   /* Navigation dans la visionneuse : flèches à l'écran et au clavier. */
   const lightboxIndex = lightbox ? media.findIndex((m) => m.id === lightbox.id) : -1;
   const goRelative = useCallback(
@@ -485,12 +502,17 @@ const GuestEvent = () => {
                 className="relative w-full overflow-hidden bg-muted transition-opacity hover:opacity-90"
               >
                 <img
-                  src={p.thumbnail_url ?? (p.media_type === "video" ? undefined : p.url)}
+                  src={
+                    p.media_type === "video"
+                      ? p.thumbnail_url ?? undefined
+                      : gridUrl(p.url)
+                  }
+                  onError={(e) => fallbackToOriginal(e, p.thumbnail_url ?? p.url)}
                   alt={p.file_name}
                   loading="lazy"
                   decoding="async"
-                  width={400}
-                  height={400}
+                  width={700}
+                  height={700}
                   className="h-full w-full object-cover"
                 />
                 {p.media_type === "video" && <PlayOverlay />}
@@ -515,6 +537,24 @@ const GuestEvent = () => {
           className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F0E0C]/95 p-4"
           onClick={() => setLightbox(null)}
         >
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              saveCurrent();
+            }}
+            disabled={saving}
+            className="label-mono absolute left-4 top-4 flex min-h-[48px] items-center gap-2 border border-white/40 px-4 text-white opacity-100 transition-colors hover:bg-white/10 disabled:opacity-60"
+          >
+            <Download className="h-4 w-4" aria-hidden="true" />
+            {saving ? t("guest.downloading") : t("guest.download")}
+          </button>
+          {saveError && (
+            <p role="alert" className="absolute left-4 top-[76px] max-w-[60vw] text-sm text-white">
+              {t("guest.downloadFailed")}
+            </p>
+          )}
+
           <button
             type="button"
             aria-label={t("guest.close")}
@@ -564,7 +604,8 @@ const GuestEvent = () => {
             />
           ) : (
             <img
-              src={lightbox.url}
+              src={viewUrl(lightbox.url)}
+              onError={(e) => fallbackToOriginal(e, lightbox.url)}
               alt={lightbox.file_name}
               decoding="async"
               className="max-h-[90vh] max-w-full object-contain"

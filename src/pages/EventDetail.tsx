@@ -4,6 +4,8 @@ import { QRCodeCanvas } from "qrcode.react";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { supabase } from "@/integrations/supabase/client";
+import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
+import { downloadMedia } from "@/lib/downloadMedia";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -47,6 +49,23 @@ const EventDetail = () => {
   const [zipping, setZipping] = useState(false);
   const [copied, setCopied] = useState(false);
   const [lightbox, setLightbox] = useState<MediaRow | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const saveCurrent = async () => {
+    if (!lightbox || saving) return;
+    setSaving(true);
+    try {
+      await downloadMedia(lightbox.url, lightbox.file_name);
+    } catch {
+      toast({
+        title: "Téléchargement impossible",
+        description: "Réessayez dans un instant.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
   /* Navigation dans la visionneuse : flèches à l'écran et au clavier. */
   const lightboxIndex = lightbox ? media.findIndex((m) => m.id === lightbox.id) : -1;
   const goRelative = useCallback(
@@ -309,13 +328,18 @@ const EventDetail = () => {
                   className="relative w-full overflow-hidden rounded-xl bg-muted border border-border shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300"
                 >
                   <img
-                    src={p.thumbnail_url ?? (p.media_type === "video" ? undefined : p.url)}
+                    src={
+                      p.media_type === "video"
+                        ? p.thumbnail_url ?? undefined
+                        : gridUrl(p.url)
+                    }
+                    onError={(e) => fallbackToOriginal(e, p.thumbnail_url ?? p.url)}
                     alt={p.file_name}
                     loading="lazy"
                     decoding="async"
-                    width={400}
-                    height={400}
-                    className="w-full h-full object-cover"
+                    width={700}
+                    height={700}
+                    className="h-full w-full object-cover"
                   />
                   {p.media_type === "video" && <PlayOverlay />}
                 </button>
@@ -332,6 +356,19 @@ const EventDetail = () => {
             className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 animate-fade-in"
             onClick={() => setLightbox(null)}
           >
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                saveCurrent();
+              }}
+              disabled={saving}
+              className="label-mono absolute left-4 top-4 flex min-h-[48px] items-center gap-2 border border-white/40 px-4 text-white opacity-100 transition-colors hover:bg-white/10 disabled:opacity-60"
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
+              {saving ? "Préparation…" : "Enregistrer"}
+            </button>
+
             <button
               type="button"
               aria-label="Fermer"
@@ -381,10 +418,11 @@ const EventDetail = () => {
               />
             ) : (
               <img
-                src={lightbox.url}
+                src={viewUrl(lightbox.url)}
+                onError={(e) => fallbackToOriginal(e, lightbox.url)}
                 alt={lightbox.file_name}
                 decoding="async"
-                className="max-h-[90vh] max-w-full object-contain rounded-xl"
+                className="max-h-[90vh] max-w-full object-contain"
                 onClick={(e) => e.stopPropagation()}
               />
             )}

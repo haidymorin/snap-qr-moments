@@ -139,14 +139,24 @@ function PhotoWall() {
         }}
       />
 
-      <div className="relative z-10 mx-4 max-w-3xl border border-border bg-background/95 px-[clamp(24px,4vw,64px)] py-[clamp(32px,4.5vw,60px)] text-center backdrop-blur-[2px]">
+      <div
+        aria-hidden
+        className="absolute inset-0 transition-opacity duration-1000"
+        style={{
+          opacity: veil ? 1 : 0,
+          background:
+            "radial-gradient(66% 58% at 50% 48%, hsl(var(--background)/0.95) 0%, hsl(var(--background)/0.86) 48%, hsl(var(--background)/0.10) 100%)",
+        }}
+      />
+
+      <div className="relative z-10 max-w-3xl px-5 py-16 text-center">
 
         <div
           className="transition-[opacity,transform] duration-700 ease-out"
           style={{ opacity: title ? 1 : 0, transform: title ? "none" : "translateY(14px)" }}
         >
           <p className="eyebrow mt-4">{t("home.heroEyebrow")}</p>
-          <h1 className="mt-3 text-[clamp(46px,8.4vw,104px)] text-wrap balance">
+          <h1 className="mt-3 text-[clamp(38px,7.2vw,86px)] text-wrap balance">
             {t("home.heroTitle1")}
             <br />
             {t("home.heroTitle2")}
@@ -228,7 +238,7 @@ const Index = () => {
         <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <div className="mx-auto mb-[clamp(32px,4.2vw,52px)] max-w-2xl text-center">
             <p className="eyebrow">{t("home.stepsEyebrow")}</p>
-            <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">
+            <h2 className="mt-3 text-[clamp(30px,4.5vw,54px)] text-wrap balance">
               {t("home.stepsTitle1")}
               <br />
               {t("home.stepsTitle2")}
@@ -251,7 +261,7 @@ const Index = () => {
                 </div>
                 <div className="px-7 pb-10 pt-7">
                   <div className="label-mono text-foreground">{s.n}</div>
-                  <h3 className="mb-3 mt-4 text-[clamp(24px,2.2vw,32px)] text-wrap balance">{s.title}</h3>
+                  <h3 className="mb-3 mt-4 text-[clamp(20px,1.8vw,25px)] text-wrap balance">{s.title}</h3>
                   <p className="text-[16px] leading-relaxed text-muted-foreground">{s.text}</p>
                 </div>
               </div>
@@ -266,7 +276,7 @@ const Index = () => {
           <div className="grid items-center gap-[clamp(28px,5vw,58px)] lg:grid-cols-2">
             <div>
               <p className="eyebrow text-night-foreground">{t("home.aiEyebrow")}</p>
-              <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">
+              <h2 className="mt-3 text-[clamp(30px,4.5vw,54px)] text-wrap balance">
                 {t("home.aiTitle1")}
                 <br />
                 {t("home.aiTitle2")}
@@ -330,7 +340,7 @@ const Index = () => {
           <div className="grid items-center gap-[clamp(28px,5vw,58px)] lg:grid-cols-2">
             <div>
               <p className="eyebrow">{t("home.guestbookEyebrow")}</p>
-              <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">
+              <h2 className="mt-3 text-[clamp(30px,4.5vw,54px)] text-wrap balance">
                 {t("home.guestbookTitle1")}
                 <br />
                 {t("home.guestbookTitle2")}
@@ -394,7 +404,7 @@ const Index = () => {
         <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <div className="mx-auto mb-[clamp(32px,4.2vw,52px)] max-w-2xl text-center">
             <p className="eyebrow">{t("home.plansEyebrow")}</p>
-            <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">{t("home.plansTitle")}</h2>
+            <h2 className="mt-3 text-[clamp(30px,4.5vw,54px)] text-wrap balance">{t("home.plansTitle")}</h2>
             <p className="lead mx-auto mt-4 max-w-[52ch]">
               {t("home.plansDesc")}
             </p>
@@ -446,7 +456,7 @@ const Index = () => {
         <div className="relative z-10 mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <div className="mx-auto mb-[clamp(32px,4.2vw,52px)] max-w-2xl text-center">
             <p className="eyebrow">{t("home.objEyebrow")}</p>
-            <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">{t("home.objTitle")}</h2>
+            <h2 className="mt-3 text-[clamp(30px,4.5vw,54px)] text-wrap balance">{t("home.objTitle")}</h2>
             <p className="lead mx-auto mt-4 max-w-[54ch]">{t("home.objDesc")}</p>
           </div>
 
@@ -459,7 +469,7 @@ const Index = () => {
                   </span>
                 </div>
                 <div className="flex flex-1 flex-col p-6">
-                  <h3 className="mb-3 text-[clamp(22px,2vw,28px)] text-wrap balance text-foreground">{o.title}</h3>
+                  <h3 className="mb-3 text-[clamp(20px,1.8vw,25px)] text-wrap balance text-foreground">{o.title}</h3>
                   <p className="mb-5 flex-1 text-[14.5px] leading-relaxed text-foreground">{o.text}</p>
                   <div className="border-t border-border pt-4">
                     <Link
@@ -481,7 +491,7 @@ const Index = () => {
         <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <div className="bg-primary px-8 py-[clamp(44px,6vw,76px)] text-center text-primary-foreground">
             <p className="eyebrow text-primary-foreground">{t("home.finalEyebrow")}</p>
-            <h2 className="mx-auto mt-3 max-w-[22ch] text-[clamp(32px,5vw,58px)] text-wrap balance">{t("home.finalTitle")}</h2>
+            <h2 className="mx-auto mt-3 max-w-[22ch] text-[clamp(28px,4.3vw,50px)] text-wrap balance">{t("home.finalTitle")}</h2>
             <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed">{t("home.finalDesc")}</p>
             <Link
               to="/auth"

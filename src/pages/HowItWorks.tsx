@@ -264,7 +264,7 @@ const HowItWorks = () => {
           <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
             <div className="bg-primary px-8 py-[clamp(44px,6vw,76px)] text-center text-primary-foreground">
               <p className="eyebrow text-primary-foreground">{t("how.ctaEyebrow")}</p>
-              <h2 className="mx-auto mt-3 max-w-[22ch] text-[clamp(32px,5vw,58px)] text-wrap balance">
+              <h2 className="mx-auto mt-3 max-w-[22ch] text-[clamp(28px,4.3vw,50px)] text-wrap balance">
                 {t("how.ctaTitle")}
               </h2>
               <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed">{t("how.ctaDesc")}</p>
