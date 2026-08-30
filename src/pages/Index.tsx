@@ -209,10 +209,10 @@ const Index = () => {
   ];
 
   const objects = [
-    { tag: t("home.obj1Tag"), title: t("home.obj1Title"), text: t("home.obj1Desc"), g: 15445089 },
-    { tag: t("home.obj2Tag"), title: t("home.obj2Title"), text: t("home.obj2Desc"), g: 4561938 },
-    { tag: t("home.obj3Tag"), title: t("home.obj3Title"), text: t("home.obj3Desc"), g: 3866816 },
-    { tag: t("home.obj4Tag"), title: t("home.obj4Title"), text: t("home.obj4Desc"), g: 4554387 },
+    { tag: t("home.obj1Tag"), title: t("home.obj1Title"), text: t("home.obj1Desc") },
+    { tag: t("home.obj2Tag"), title: t("home.obj2Title"), text: t("home.obj2Desc") },
+    { tag: t("home.obj3Tag"), title: t("home.obj3Title"), text: t("home.obj3Desc") },
+    { tag: t("home.obj4Tag"), title: t("home.obj4Title"), text: t("home.obj4Desc") },
   ];
 
   const plans = [
@@ -472,15 +472,11 @@ const Index = () => {
           <div className="grid gap-[clamp(13px,1.7vw,20px)] sm:grid-cols-2 xl:grid-cols-4">
             {objects.map((o, i) => (
               <article key={i} className="flex flex-col border border-border bg-background">
-                <div className="relative aspect-[3/2] overflow-hidden border-b border-border bg-secondary">
-                  <img
-                    src={photoUrl(o.g)}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover"
-                  />
-                  <span className="label-mono absolute left-2.5 top-2.5 bg-card px-2 py-1 text-foreground">
+                {/* Pas de photo tant que l'objet n'existe pas : un aplat sombre
+                    et une mention honnête valent mieux que l'album d'un autre. */}
+                <div className="relative flex aspect-[3/2] items-center justify-center overflow-hidden border-b border-border bg-night">
+                  <span className="label-mono text-night-foreground">{t("home.objSoon")}</span>
+                  <span className="label-mono absolute left-2.5 top-2.5 border border-night-border px-2 py-1 text-night-muted">
                     {o.tag}
                   </span>
                 </div>

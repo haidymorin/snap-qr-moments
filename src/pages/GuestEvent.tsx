@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
 import { downloadMedia } from "@/lib/downloadMedia";
+import { uploadWithProgress } from "@/lib/uploadWithProgress";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
 import { generateVideoPoster } from "@/lib/videoPoster";
@@ -31,10 +32,15 @@ interface Item {
   file: File;
   state: ItemState;
   reason?: string;
+  /** Part envoyée, de 0 à 1. Renseignée pour les vidéos. */
+  progress?: number;
 }
 
 const MAX_IMAGE_SIZE = 25 * 1024 * 1024;
-const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
+/* Les vidéos partent telles quelles, sans recompression : on garde la
+   qualité d'origine. Le plafond du bucket de stockage doit être au moins
+   égal à cette valeur, sinon le serveur refuse le fichier. */
+const MAX_VIDEO_SIZE = 1024 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
 const PAGE_SIZE = 24;
 const CONCURRENCY = 3;
@@ -216,17 +222,19 @@ const GuestEvent = () => {
     if (dbErr) throw dbErr;
   };
 
-  const uploadVideo = async (file: File) => {
+  const uploadVideo = async (file: File, onProgress?: (ratio: number) => void) => {
     const uuid = crypto.randomUUID();
     const { thumb } = await generateVideoPoster(file);
     const ext = file.name.split(".").pop() ?? "mp4";
     const path = `${id}/${uuid}.${ext}`;
 
-    const { error: upErr } = await supabase.storage.from("event-photos").upload(path, file, {
+    await uploadWithProgress({
+      bucket: "event-photos",
+      path,
+      file,
       contentType: file.type || "video/mp4",
-      upsert: false,
+      onProgress,
     });
-    if (upErr) throw upErr;
 
     const thumbnailUrl = await uploadThumb(uuid, thumb);
     const { error: dbErr } = await supabase.from("photos").insert({
@@ -242,6 +250,9 @@ const GuestEvent = () => {
 
   const mark = (key: string, state: ItemState, reason?: string) =>
     setItems((prev) => prev.map((it) => (it.key === key ? { ...it, state, reason } : it)));
+
+  const markProgress = (key: string, progress: number) =>
+    setItems((prev) => prev.map((it) => (it.key === key ? { ...it, progress } : it)));
 
   /* Refus décidés avant tout envoi : l'invité voit la raison tout de suite,
      sans attendre une minute pour rien. */
@@ -264,7 +275,7 @@ const GuestEvent = () => {
           mark(it.key, "preparing");
           if (it.file.type.startsWith("video/")) {
             mark(it.key, "sending");
-            await uploadVideo(it.file);
+            await uploadVideo(it.file, (ratio) => markProgress(it.key, ratio));
           } else {
             await uploadImage(it.file);
           }
@@ -349,7 +360,10 @@ const GuestEvent = () => {
     if (it.state === "sent") return t("guest.sent");
     if (it.state === "failed") return t(`guest.${it.reason ?? "errNetwork"}`);
     if (it.state === "preparing") return t("guest.preparing");
-    if (it.state === "sending") return t("guest.sending");
+    if (it.state === "sending")
+      return it.progress !== undefined
+        ? `${t("guest.sending")} ${Math.round(it.progress * 100)} %`
+        : t("guest.sending");
     return t("guest.waiting");
   };
 
