@@ -4,24 +4,20 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-/* Aplats chauds qui tiennent lieu de photos tant que nous n'avons pas
-   d'images de vrais mariages. Remplacer ce tableau par des URL d'images
-   suffira à basculer le mur sur de vraies photos. */
-const TILES = [
-  "linear-gradient(155deg,#2A1F14,#7A4E1E 55%,#D9A054)",
-  "linear-gradient(200deg,#151310,#3B2E1F 60%,#8A6534)",
-  "linear-gradient(160deg,#E8DECB,#C7B08A 70%,#8E7A5C)",
-  "linear-gradient(140deg,#1B231C,#3B4A36 65%,#6E7F58)",
-  "linear-gradient(175deg,#F3EDE1,#DCCFB6)",
-  "linear-gradient(190deg,#120F0C,#43301C 55%,#C08040)",
-  "linear-gradient(150deg,#4A3524,#A9743A 60%,#EBC98C)",
-  "linear-gradient(165deg,#2C3529,#5C6B4C 70%,#9DAC82)",
-  "linear-gradient(145deg,#EFE7D8,#B9A88C)",
-  "linear-gradient(210deg,#191410,#2E2318 50%,#6E4E2A)",
-  "linear-gradient(155deg,#D9C9AC,#8E7550 80%)",
-  "linear-gradient(170deg,#101418,#2B3A2C 60%,#7E8F63)",
+/* Photos de mariage libres de droits (Pexels — licence gratuite, usage
+   commercial autorisé, sans attribution obligatoire). Servies par le CDN de
+   Pexels, recadrées en carré à 420 px : une vingtaine de Ko par vignette.
+   Pour les héberger nous-mêmes plus tard, il suffira de remplacer photoUrl. */
+const PHOTO_IDS = [
+  36028957, 10622328, 12919433, 19691776,
+  6918173, 2765703, 8210489, 1128784,
+  28123410, 15964962, 10360902, 15964954,
+  26558729, 30505255, 10360901, 17111049,
 ];
-const tile = (i: number) => TILES[((i % TILES.length) + TILES.length) % TILES.length];
+const photoUrl = (id: number) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=420&h=420&fit=crop`;
+const photo = (i: number) =>
+  photoUrl(PHOTO_IDS[((i % PHOTO_IDS.length) + PHOTO_IDS.length) % PHOTO_IDS.length]);
 
 /** Le mur de photos qui se remplit au chargement, puis laisse place au titre. */
 function PhotoWall() {
@@ -80,13 +76,23 @@ function PhotoWall() {
         {Array.from({ length: size }, (_, i) => (
           <div
             key={i}
-            className="transition-[opacity,transform] duration-500 ease-out"
+            className="relative overflow-hidden bg-secondary transition-[opacity,transform] duration-500 ease-out"
             style={{
-              background: tile(i * 5 + (i % 7)),
               opacity: shown.includes(i) ? 1 : 0,
               transform: shown.includes(i) ? "scale(1)" : "scale(0.93)",
             }}
-          />
+          >
+            <img
+              src={photo(i * 5 + (i % 7))}
+              alt=""
+              loading={i < 12 ? "eager" : "lazy"}
+              decoding="async"
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                e.currentTarget.style.visibility = "hidden";
+              }}
+            />
+          </div>
         ))}
       </div>
 
@@ -95,7 +101,7 @@ function PhotoWall() {
         style={{
           opacity: veil ? 1 : 0,
           background:
-            "linear-gradient(180deg, hsl(var(--background)/0.30), hsl(var(--background)/0.74) 46%, hsl(var(--background)/0.86))",
+            "linear-gradient(180deg, hsl(var(--background)/0.46), hsl(var(--background)/0.78) 46%, hsl(var(--background)/0.88))",
         }}
       />
 
@@ -249,9 +255,16 @@ const Index = () => {
                   return (
                     <div
                       key={i}
-                      className={`aspect-square ${match ? "outline outline-1 outline-offset-2 outline-night-foreground" : "opacity-[0.16] grayscale"}`}
-                      style={{ background: tile(i * 3 + 2) }}
-                    />
+                      className={`relative aspect-square overflow-hidden bg-night-surface ${match ? "outline outline-1 outline-offset-2 outline-night-foreground" : "opacity-[0.16] grayscale"}`}
+                    >
+                      <img
+                        src={photo(i * 3 + 2)}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
                   );
                 })}
               </div>
@@ -375,7 +388,7 @@ const Index = () => {
           <div className="grid gap-[clamp(13px,1.7vw,20px)] sm:grid-cols-2 xl:grid-cols-4">
             {objects.map((o, i) => (
               <article key={i} className="flex flex-col border border-border bg-background">
-                <div className="relative aspect-[3/2]" style={{ background: tile(o.g) }}>
+                <div className="relative aspect-[3/2] border-b border-border bg-secondary">
                   <span className="label-mono absolute left-2.5 top-2.5 bg-card px-2 py-1 text-foreground">
                     {o.tag}
                   </span>
