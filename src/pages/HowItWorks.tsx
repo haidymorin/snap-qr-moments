@@ -155,7 +155,7 @@ const HowItWorks = () => {
               <br />
               {t("how.title2")}
             </h1>
-            <p className="mx-auto mt-6 max-w-[54ch] text-[clamp(16px,1.7vw,18px)] leading-relaxed text-foreground opacity-80">
+            <p className="mx-auto mt-6 max-w-[54ch] text-[clamp(16px,1.7vw,18px)] leading-relaxed text-foreground">
               {t("how.subtitle")}
             </p>
           </div>
@@ -168,12 +168,12 @@ const HowItWorks = () => {
               <div>
                 <span className="label-mono text-foreground opacity-100">{t("how.c1Num")}</span>
                 <h2 className="mt-4 text-[clamp(30px,4.4vw,54px)] text-wrap balance">{t("how.c1Title")}</h2>
-                <p className="mt-5 max-w-[48ch] leading-relaxed text-foreground opacity-80">
+                <p className="mt-5 max-w-[48ch] leading-relaxed text-foreground">
                   {t("how.c1Desc")}
                 </p>
                 <ul className="mt-6 border-t border-border">
                   {[t("how.c1B1"), t("how.c1B2"), t("how.c1B3")].map((b) => (
-                    <li key={b} className="border-b border-border py-3 text-[15px] text-foreground opacity-85">
+                    <li key={b} className="border-b border-border py-3 text-[15px] text-foreground">
                       {b}
                     </li>
                   ))}
@@ -193,10 +193,10 @@ const HowItWorks = () => {
               <div className="lg:order-2">
                 <span className="label-mono text-night-foreground opacity-100">{t("how.c2Num")}</span>
                 <h2 className="mt-4 text-[clamp(30px,4.4vw,54px)] text-wrap balance">{t("how.c2Title")}</h2>
-                <p className="mt-5 max-w-[48ch] leading-relaxed opacity-80">{t("how.c2Desc")}</p>
+                <p className="mt-5 max-w-[48ch] leading-relaxed">{t("how.c2Desc")}</p>
                 <ul className="mt-6 border-t border-night-border">
                   {[t("how.c2B1"), t("how.c2B2"), t("how.c2B3")].map((b) => (
-                    <li key={b} className="border-b border-night-border py-3 text-[15px] opacity-85">
+                    <li key={b} className="border-b border-night-border py-3 text-[15px]">
                       {b}
                     </li>
                   ))}
@@ -216,12 +216,12 @@ const HowItWorks = () => {
               <div>
                 <span className="label-mono text-foreground opacity-100">{t("how.c3Num")}</span>
                 <h2 className="mt-4 text-[clamp(30px,4.4vw,54px)] text-wrap balance">{t("how.c3Title")}</h2>
-                <p className="mt-5 max-w-[48ch] leading-relaxed text-foreground opacity-80">
+                <p className="mt-5 max-w-[48ch] leading-relaxed text-foreground">
                   {t("how.c3Desc")}
                 </p>
                 <ul className="mt-6 border-t border-border">
                   {[t("how.c3B1"), t("how.c3B2"), t("how.c3B3")].map((b) => (
-                    <li key={b} className="border-b border-border py-3 text-[15px] text-foreground opacity-85">
+                    <li key={b} className="border-b border-border py-3 text-[15px] text-foreground">
                       {b}
                     </li>
                   ))}
@@ -242,7 +242,7 @@ const HowItWorks = () => {
               <div className="lg:order-2">
                 <span className="label-mono text-foreground opacity-100">{t("how.c4Num")}</span>
                 <h2 className="mt-4 text-[clamp(30px,4.4vw,54px)] text-wrap balance">{t("how.c4Title")}</h2>
-                <p className="mt-5 max-w-[48ch] leading-relaxed text-foreground opacity-80">
+                <p className="mt-5 max-w-[48ch] leading-relaxed text-foreground">
                   {t("how.c4Desc")}
                 </p>
                 <Link
@@ -267,7 +267,7 @@ const HowItWorks = () => {
               <h2 className="mx-auto mt-3 max-w-[22ch] text-[clamp(32px,5vw,58px)] text-wrap balance">
                 {t("how.ctaTitle")}
               </h2>
-              <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed opacity-90">{t("how.ctaDesc")}</p>
+              <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed">{t("how.ctaDesc")}</p>
               <Link
                 to="/auth"
                 className="mt-8 inline-flex min-h-[48px] items-center border border-primary-foreground bg-primary-foreground px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-transparent hover:text-primary-foreground"

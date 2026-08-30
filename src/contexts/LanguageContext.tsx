@@ -95,8 +95,8 @@ const translations: Record<Lang, Dict> = {
       selfieDesc:
         "Un selfie, et vous récupérez toutes vos photos de la soirée. C'est aussi votre accord : sans lui, votre visage n'est jamais analysé.",
       aiCta: "Essayer sur mon événement",
-      gridFull: "Galerie complète · 247 photos",
-      gridMatched: "↓ Après reconnaissance · 34 photos de Camille",
+      gridFull: "Exemple · la galerie complète du mariage",
+      gridMatched: "↓ Ce que Camille reçoit : les photos où elle apparaît",
 
       guestbookEyebrow: "Le livre d'or",
       guestbookTitle1: "Ce que personne",
@@ -351,8 +351,8 @@ const translations: Record<Lang, Dict> = {
       selfieDesc:
         "One selfie, and you get back every photo of you from the night. It is also your consent: without it, your face is never analysed.",
       aiCta: "Try it on my event",
-      gridFull: "Full gallery · 247 photos",
-      gridMatched: "↓ After recognition · 34 photos of Camille",
+      gridFull: "Example · the full wedding gallery",
+      gridMatched: "↓ What Camille gets: the photos she appears in",
 
       guestbookEyebrow: "The guest book",
       guestbookTitle1: "What nobody",

@@ -10,6 +10,7 @@
 @layer base {
   :root {
     --background: 40 20% 91%;
+    --paper: 42 40% 98%;
     --foreground: 50 9% 14%;
 
     --card: 40 27% 96%;
@@ -57,6 +58,7 @@
 
   .dark {
     --background: 40 6% 10%;
+    --paper: 40 4% 13%;
     --foreground: 40 26% 93%;
 
     --card: 40 4% 13%;
@@ -125,6 +127,14 @@
     @apply text-muted-foreground;
   }
 
+  /* Le paragraphe qui suit un grand titre : plus grand que le texte courant,
+     c'est lui qui crée la marche entre le titre et le corps de page. */
+  .lead {
+    font-size: clamp(18px, 1.9vw, 21px);
+    line-height: 1.55;
+    @apply text-foreground;
+  }
+
   /* La ligne en italique posée au-dessus des grands titres */
   .eyebrow {
     font-family: "Cormorant Garamond", Georgia, serif;
@@ -134,7 +144,6 @@
     font-weight: 400;
     letter-spacing: 0.02em;
     @apply text-foreground;
-    opacity: 0.9;
   }
 
   /* Le mot posé en très grand derrière une section */

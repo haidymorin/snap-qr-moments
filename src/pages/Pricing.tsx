@@ -332,7 +332,7 @@ const Pricing = () => {
             <h1 className="mx-auto mt-3 max-w-[18ch] text-[clamp(38px,6vw,72px)]">
               {t("pricing.title")}
             </h1>
-            <p className="mx-auto mt-5 max-w-[52ch] leading-relaxed text-foreground opacity-80">
+            <p className="mx-auto mt-5 max-w-[52ch] leading-relaxed text-foreground">
               {t("pricing.subtitle")}
             </p>
           </div>
@@ -393,12 +393,12 @@ const Pricing = () => {
                           <span className="font-display text-[clamp(42px,4.6vw,58px)] leading-none">
                             {plan.price}
                           </span>
-                          <span className={`text-[13px] ${dark ? "opacity-65" : "opacity-70"}`}>
+                          <span className="text-[13px]">
                             {plan.period}
                           </span>
                         </div>
 
-                        <p className={`mt-4 text-[15px] leading-relaxed ${dark ? "opacity-75" : "opacity-80"}`}>
+                        <p className="mt-4 text-[15px] leading-relaxed">
                           {plan.pitch}
                         </p>
 
@@ -410,7 +410,7 @@ const Pricing = () => {
                             {plan.features.map((f) => (
                               <li key={f} className="flex gap-3 text-[14.5px] leading-relaxed">
                                 <Check />
-                                <span className={dark ? "opacity-85" : "opacity-85"}>{f}</span>
+                                <span>{f}</span>
                               </li>
                             ))}
                           </ul>
@@ -432,7 +432,7 @@ const Pricing = () => {
                 </div>
 
                 {/* L'essai gratuit, discret, sous les vraies offres */}
-                <p className="mt-8 text-center text-[14.5px] text-foreground opacity-70">
+                <p className="mt-8 text-center text-[14.5px] text-foreground">
                   {trial.text}{" "}
                   <Link
                     to="/auth"
@@ -448,14 +448,14 @@ const Pricing = () => {
                   <h2 className="text-[clamp(26px,2.6vw,34px)] leading-none">{pro.name}</h2>
                   <div className="mt-5 flex items-baseline gap-2">
                     <span className="font-display text-[clamp(42px,4.6vw,58px)] leading-none">{pro.price}</span>
-                    <span className="text-[13px] opacity-65">{pro.period}</span>
+                    <span className="text-[13px]">{pro.period}</span>
                   </div>
-                  <p className="mt-4 max-w-[46ch] text-[15px] leading-relaxed opacity-75">{pro.pitch}</p>
+                  <p className="mt-4 max-w-[46ch] text-[15px] leading-relaxed">{pro.pitch}</p>
                   <ul className="mt-6 grid gap-3 border-t border-night-border pt-6 sm:grid-cols-2">
                     {pro.features.map((f) => (
                       <li key={f} className="flex gap-3 text-[14.5px] leading-relaxed">
                         <Check />
-                        <span className="opacity-85">{f}</span>
+                        <span>{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -479,7 +479,7 @@ const Pricing = () => {
                     {agency.features.map((f) => (
                       <li key={f} className="flex gap-3 text-[14.5px] leading-relaxed">
                         <Check />
-                        <span className="opacity-85">{f}</span>
+                        <span>{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -502,7 +502,7 @@ const Pricing = () => {
             <div className="mx-auto mb-[clamp(30px,4vw,48px)] max-w-2xl text-center">
               <p className="eyebrow">{t("pricing.extrasEyebrow")}</p>
               <h2 className="mt-3 text-[clamp(32px,4.6vw,54px)]">{t("pricing.extrasTitle")}</h2>
-              <p className="mx-auto mt-4 max-w-[52ch] leading-relaxed text-foreground opacity-80">
+              <p className="mx-auto mt-4 max-w-[52ch] leading-relaxed text-foreground">
                 {extrasNote}
               </p>
             </div>
@@ -519,7 +519,7 @@ const Pricing = () => {
                       {opt.price}
                     </span>
                   </div>
-                  <p className="mt-3 text-[14.5px] leading-relaxed text-foreground opacity-75">
+                  <p className="mt-3 text-[14.5px] leading-relaxed text-foreground">
                     {opt.description}
                   </p>
                 </div>
@@ -538,7 +538,7 @@ const Pricing = () => {
               {faqs.map((f) => (
                 <div key={f.q} className="border-b border-border py-7">
                   <h3 className="text-[clamp(19px,1.8vw,23px)] leading-snug">{f.q}</h3>
-                  <p className="mt-3 text-[15px] leading-relaxed text-foreground opacity-75">{f.a}</p>
+                  <p className="mt-3 text-[15px] leading-relaxed text-foreground">{f.a}</p>
                 </div>
               ))}
             </div>

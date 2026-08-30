@@ -19,6 +19,40 @@ const photoUrl = (id: number) =>
 const photo = (i: number) =>
   photoUrl(PHOTO_IDS[((i % PHOTO_IDS.length) + PHOTO_IDS.length) % PHOTO_IDS.length]);
 
+/* Démonstration du tri : un seul et même mariage, comme un vrai album.
+   Six photos sur vingt-quatre montrent la même invitée en robe rouge —
+   c'est ce que Lya retrouve quand elle reconnaît quelqu'un. Mise en scène,
+   présentée comme telle dans le texte de la section. */
+const STEP_PHOTOS = [12919433, 30505255, 10360902];
+const BAND_PHOTOS = [26558729, 19691776, 15964962, 2765703, 28123410, 8210489];
+const CAMILLE_SELFIE = 13434427;
+const ALBUM_DEMO: { id: number; camille: boolean }[] = [
+  { id: 13434416, camille: false },
+  { id: 13434419, camille: false },
+  { id: 13434413, camille: true },
+  { id: 13434420, camille: false },
+  { id: 13434422, camille: false },
+  { id: 13434417, camille: true },
+  { id: 13434423, camille: false },
+  { id: 13434424, camille: false },
+  { id: 13434426, camille: false },
+  { id: 13434421, camille: true },
+  { id: 13434429, camille: false },
+  { id: 13434430, camille: false },
+  { id: 13434433, camille: false },
+  { id: 13434434, camille: false },
+  { id: 13434425, camille: true },
+  { id: 13434436, camille: false },
+  { id: 13434437, camille: false },
+  { id: 13434438, camille: false },
+  { id: 13434427, camille: true },
+  { id: 13434439, camille: false },
+  { id: 13434440, camille: false },
+  { id: 13434431, camille: true },
+  { id: 13434443, camille: false },
+  { id: 13434444, camille: false },
+];
+
 /** Le mur de photos qui se remplit au chargement, puis laisse place au titre. */
 function PhotoWall() {
   const { t } = useLanguage();
@@ -189,8 +223,8 @@ const Index = () => {
       <Header />
       <PhotoWall />
 
-      {/* Le déroulé */}
-      <section className="py-[clamp(58px,7.5vw,100px)]">
+      {/* Le déroulé, sur la surface claire */}
+      <section className="bg-paper py-[clamp(58px,7.5vw,100px)]">
         <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <div className="mx-auto mb-[clamp(32px,4.2vw,52px)] max-w-2xl text-center">
             <p className="eyebrow">{t("home.stepsEyebrow")}</p>
@@ -204,11 +238,22 @@ const Index = () => {
             {steps.map((s, i) => (
               <div
                 key={i}
-                className="border-b border-border px-7 pb-10 pt-8 md:border-r md:last:border-r-0"
+                className="border-b border-border md:border-r md:last:border-r-0"
               >
-                <div className="label-mono text-foreground">{s.n}</div>
-                <h3 className="mb-3 mt-4 text-[clamp(24px,2.2vw,32px)] text-wrap balance">{s.title}</h3>
-                <p className="text-[15.5px] leading-relaxed text-muted-foreground">{s.text}</p>
+                <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
+                  <img
+                    src={photoUrl(STEP_PHOTOS[i])}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="px-7 pb-10 pt-7">
+                  <div className="label-mono text-foreground">{s.n}</div>
+                  <h3 className="mb-3 mt-4 text-[clamp(24px,2.2vw,32px)] text-wrap balance">{s.title}</h3>
+                  <p className="text-[16px] leading-relaxed text-muted-foreground">{s.text}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -226,16 +271,19 @@ const Index = () => {
                 <br />
                 {t("home.aiTitle2")}
               </h2>
-              <p className="mt-5 max-w-[50ch] leading-relaxed text-night-foreground opacity-85">{t("home.aiDesc")}</p>
+              <p className="lead mt-5 max-w-[50ch] text-night-foreground">{t("home.aiDesc")}</p>
 
               <div className="mt-6 flex flex-wrap items-center gap-4 border border-night-border bg-night-surface px-5 py-4">
-                <div
-                  className="h-12 w-12 shrink-0 rounded-full"
-                  style={{ background: "linear-gradient(150deg,#8A6A46,#3A2E22)" }}
+                <img
+                  src={photoUrl(CAMILLE_SELFIE)}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className="h-14 w-14 shrink-0 border border-night-border object-cover"
                 />
                 <div className="min-w-[210px] flex-1">
                   <strong className="block text-[15px] font-semibold text-night-foreground">{t("home.selfieTitle")}</strong>
-                  <span className="text-[14px] text-night-foreground opacity-70">{t("home.selfieDesc")}</span>
+                  <span className="text-[14px] text-night-foreground">{t("home.selfieDesc")}</span>
                 </div>
               </div>
 
@@ -250,23 +298,24 @@ const Index = () => {
             <div>
               <span className="label-mono text-night-muted">{t("home.gridFull")}</span>
               <div className="mt-3 grid grid-cols-4 gap-1.5 sm:grid-cols-6">
-                {Array.from({ length: 24 }, (_, i) => {
-                  const match = [2, 5, 9, 14, 18, 21].includes(i);
-                  return (
-                    <div
-                      key={i}
-                      className={`relative aspect-square overflow-hidden bg-night-surface ${match ? "outline outline-1 outline-offset-2 outline-night-foreground" : "opacity-[0.16] grayscale"}`}
-                    >
-                      <img
-                        src={photo(i * 3 + 2)}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  );
-                })}
+                {ALBUM_DEMO.map((p) => (
+                  <div
+                    key={p.id}
+                    className={`relative aspect-square overflow-hidden bg-night-surface ${
+                      p.camille
+                        ? "outline outline-1 outline-offset-2 outline-night-foreground"
+                        : "opacity-[0.18] grayscale"
+                    }`}
+                  >
+                    <img
+                      src={photoUrl(p.id)}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ))}
               </div>
               <span className="label-mono mt-4 block text-night-foreground">{t("home.gridMatched")}</span>
             </div>
@@ -285,8 +334,8 @@ const Index = () => {
                 <br />
                 {t("home.guestbookTitle2")}
               </h2>
-              <p className="mt-5 max-w-[50ch] leading-relaxed text-foreground opacity-80">{t("home.guestbookP1")}</p>
-              <p className="mt-4 max-w-[50ch] leading-relaxed text-foreground opacity-80">{t("home.guestbookP2")}</p>
+              <p className="lead mt-5 max-w-[50ch]">{t("home.guestbookP1")}</p>
+              <p className="mt-4 max-w-[50ch] leading-relaxed text-foreground">{t("home.guestbookP2")}</p>
             </div>
 
             <figure className="m-0 border border-border bg-card p-[clamp(26px,3.6vw,42px)]">
@@ -324,13 +373,28 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Les offres : ce que ça coûte, avant de parler des objets */}
-      <section className="border-t border-border py-[clamp(58px,7.5vw,100px)]">
+      {/* Une respiration : la soirée en six images, pleine largeur */}
+      <section aria-hidden className="grid grid-cols-3 border-y border-border md:grid-cols-6">
+        {BAND_PHOTOS.map((id) => (
+          <div key={id} className="relative aspect-square overflow-hidden bg-secondary">
+            <img
+              src={photoUrl(id)}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        ))}
+      </section>
+
+      {/* Les offres, sur la surface claire */}
+      <section className="bg-paper border-t border-border py-[clamp(58px,7.5vw,100px)]">
         <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <div className="mx-auto mb-[clamp(32px,4.2vw,52px)] max-w-2xl text-center">
             <p className="eyebrow">{t("home.plansEyebrow")}</p>
             <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">{t("home.plansTitle")}</h2>
-            <p className="mx-auto mt-4 max-w-[52ch] leading-relaxed text-foreground opacity-80">
+            <p className="lead mx-auto mt-4 max-w-[52ch]">
               {t("home.plansDesc")}
             </p>
           </div>
@@ -358,7 +422,7 @@ const Index = () => {
                   )}
                 </div>
                 <p className="mt-4 font-display text-[clamp(36px,3.8vw,46px)] leading-none">{p.price}</p>
-                <p className={`mt-4 flex-1 text-[14.5px] leading-relaxed ${p.highlighted ? "opacity-75" : "opacity-80"}`}>
+                <p className="mt-4 flex-1 text-[14.5px] leading-relaxed">
                   {p.text}
                 </p>
                 <Link
@@ -382,7 +446,7 @@ const Index = () => {
           <div className="mx-auto mb-[clamp(32px,4.2vw,52px)] max-w-2xl text-center">
             <p className="eyebrow">{t("home.objEyebrow")}</p>
             <h2 className="mt-3 text-[clamp(34px,5.2vw,64px)] text-wrap balance">{t("home.objTitle")}</h2>
-            <p className="mx-auto mt-4 max-w-[54ch] leading-relaxed text-foreground opacity-80">{t("home.objDesc")}</p>
+            <p className="lead mx-auto mt-4 max-w-[54ch]">{t("home.objDesc")}</p>
           </div>
 
           <div className="grid gap-[clamp(13px,1.7vw,20px)] sm:grid-cols-2 xl:grid-cols-4">
@@ -395,7 +459,7 @@ const Index = () => {
                 </div>
                 <div className="flex flex-1 flex-col p-6">
                   <h3 className="mb-3 text-[clamp(22px,2vw,28px)] text-wrap balance text-foreground">{o.title}</h3>
-                  <p className="mb-5 flex-1 text-[14.5px] leading-relaxed text-foreground opacity-80">{o.text}</p>
+                  <p className="mb-5 flex-1 text-[14.5px] leading-relaxed text-foreground">{o.text}</p>
                   <div className="border-t border-border pt-4">
                     <Link
                       to="/pricing"
@@ -417,7 +481,7 @@ const Index = () => {
           <div className="bg-primary px-8 py-[clamp(44px,6vw,76px)] text-center text-primary-foreground">
             <p className="eyebrow text-primary-foreground">{t("home.finalEyebrow")}</p>
             <h2 className="mx-auto mt-3 max-w-[22ch] text-[clamp(32px,5vw,58px)] text-wrap balance">{t("home.finalTitle")}</h2>
-            <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed opacity-90">{t("home.finalDesc")}</p>
+            <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed">{t("home.finalDesc")}</p>
             <Link
               to="/auth"
               className="mt-8 inline-flex min-h-[48px] items-center border border-primary-foreground bg-primary-foreground px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-transparent hover:text-primary-foreground"
