@@ -14,6 +14,7 @@ import AuthCallback from "./pages/AuthCallback";
 import Dashboard from "./pages/Dashboard";
 import EventDetail from "./pages/EventDetail";
 import GuestEvent from "./pages/GuestEvent";
+import PaiementReussi from "./pages/PaiementReussi";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Legal from "./pages/Legal";
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/event/:id" element={<EventDetail />} />
               <Route path="/event/:id" element={<GuestEvent />} />
+              <Route path="/paiement-reussi" element={<PaiementReussi />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/legal" element={<Legal />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

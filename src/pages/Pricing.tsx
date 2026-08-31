@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { startCheckout, type PlanId } from "@/lib/checkout";
+import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
 
 type Plan = {
+  id: PlanId;
   name: string;
   price: string;
   period: string;
@@ -42,6 +45,7 @@ const data: Record<Lang, {
           "PDF de signalétique à imprimer : panneau d'accueil et chevalets de table",
           "Hébergement 3 mois",
         ],
+        id: "essentiel",
         ctaLabel: "Choisir l'Essentiel",
       },
       {
@@ -59,6 +63,7 @@ const data: Record<Lang, {
           "Page, QR code et signalétique aux couleurs de votre événement",
           "Hébergement 1 an",
         ],
+        id: "souvenir",
         ctaLabel: "Choisir le Souvenir",
       },
       {
@@ -72,6 +77,7 @@ const data: Record<Lang, {
           "La gazette de votre mariage, 50 exemplaires à distribuer",
           "Hébergement 3 ans",
         ],
+        id: "heritage",
         ctaLabel: "Choisir l'Héritage",
       },
     ],
@@ -183,6 +189,7 @@ const data: Record<Lang, {
           "Printable signage PDF: welcome sign and table cards",
           "3 months hosting",
         ],
+        id: "essentiel",
         ctaLabel: "Choose Essential",
       },
       {
@@ -200,6 +207,7 @@ const data: Record<Lang, {
           "Page, QR code and signage in your event's colours",
           "1 year hosting",
         ],
+        id: "souvenir",
         ctaLabel: "Choose Keepsake",
       },
       {
@@ -213,6 +221,7 @@ const data: Record<Lang, {
           "Your wedding newspaper, 50 copies to hand out",
           "3 years hosting",
         ],
+        id: "heritage",
         ctaLabel: "Choose Heirloom",
       },
     ],
@@ -318,6 +327,24 @@ const Check = () => (
 const Pricing = () => {
   const { t, lang } = useLanguage();
   const [tab, setTab] = useState<"particuliers" | "professionnels">("particuliers");
+  const [pending, setPending] = useState<PlanId | null>(null);
+  const { toast } = useToast();
+
+  /* Le bouton d'un palier envoie vers la page de paiement Stripe. */
+  const choose = async (plan: PlanId) => {
+    if (pending) return;
+    setPending(plan);
+    try {
+      await startCheckout(plan);
+    } catch (err) {
+      setPending(null);
+      toast({
+        title: "Le paiement n'a pas pu s'ouvrir",
+        description: String((err as Error).message ?? err),
+        variant: "destructive",
+      });
+    }
+  };
   const { plans, trial, extras, extrasNote, pro, agency, faqs } = data[lang];
 
   return (
@@ -416,16 +443,18 @@ const Pricing = () => {
                           </ul>
                         </div>
 
-                        <Link
-                          to="/auth"
-                          className={`mt-8 inline-flex min-h-[48px] items-center justify-center border px-6 py-4 text-xs font-semibold uppercase tracking-[0.1em] transition-colors ${
+                        <button
+                          type="button"
+                          onClick={() => choose(plan.id)}
+                          disabled={pending !== null}
+                          className={`mt-8 inline-flex min-h-[48px] items-center justify-center border px-6 py-4 text-xs font-semibold uppercase tracking-[0.1em] transition-colors disabled:opacity-60 ${
                             dark
                               ? "border-night-foreground bg-night-foreground text-night hover:bg-transparent hover:text-night-foreground"
                               : "border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary"
                           }`}
                         >
-                          {plan.ctaLabel}
-                        </Link>
+                          {pending === plan.id ? "Redirection…" : plan.ctaLabel}
+                        </button>
                       </article>
                     );
                   })}

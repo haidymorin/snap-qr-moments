@@ -6,6 +6,13 @@ type Dict = Record<string, any>;
 
 const translations: Record<Lang, Dict> = {
   fr: {
+    paid: {
+      eyebrow: "Paiement reçu",
+      title: "C'est noté. À vous de jouer.",
+      body: "Créez votre compte avec l'adresse que vous venez d'utiliser : votre album et votre QR code vous attendent de l'autre côté.",
+      cta: "Créer mon compte",
+      reference: "Référence",
+    },
     guest: {
       notFoundTitle: "Événement introuvable",
       notFoundText: "Vérifiez le lien ou le QR code.",
@@ -269,6 +276,13 @@ const translations: Record<Lang, Dict> = {
     },
   },
   en: {
+    paid: {
+      eyebrow: "Payment received",
+      title: "All set. Over to you.",
+      body: "Create your account with the email you just used: your album and your QR code are waiting on the other side.",
+      cta: "Create my account",
+      reference: "Reference",
+    },
     guest: {
       notFoundTitle: "Event not found",
       notFoundText: "Check the link or the QR code.",
