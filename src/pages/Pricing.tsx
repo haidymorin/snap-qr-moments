@@ -43,7 +43,7 @@ const data: Record<Lang, {
           "Téléchargement en haute définition par vos invités",
           "Nettoyage automatique : doublons, flous, photos ratées",
           "PDF de signalétique à imprimer : panneau d'accueil et chevalets de table",
-          "Hébergement 3 mois",
+          "Hébergement 6 mois",
         ],
         id: "essentiel",
         ctaLabel: "Choisir l'Essentiel",
@@ -61,7 +61,7 @@ const data: Record<Lang, {
           "Tri par visage : chaque invité retrouve ses propres photos",
           "Diaporama live projeté pendant la soirée",
           "Page, QR code et signalétique aux couleurs de votre événement",
-          "Hébergement 1 an",
+          "Hébergement 6 mois",
         ],
         id: "souvenir",
         ctaLabel: "Choisir le Souvenir",
@@ -75,7 +75,7 @@ const data: Record<Lang, {
         features: [
           "L'album imprimé grand format, photos et messages en regard",
           "La gazette de votre mariage, 50 exemplaires à distribuer",
-          "Hébergement 3 ans",
+          "Hébergement 6 mois",
         ],
         id: "heritage",
         ctaLabel: "Choisir l'Héritage",
@@ -120,7 +120,7 @@ const data: Record<Lang, {
         title: "Année d'hébergement supplémentaire",
         price: "29 €",
         description:
-          "Pour garder la galerie en ligne un an de plus. À prendre à tout moment, avant l'échéance.",
+          "Pour garder la galerie en ligne un an de plus. À prendre autant de fois que vous voulez, tant que l'échéance n'est pas passée.",
       },
     ],
     extrasNote: "Tout se commande après l'événement, une fois les photos triées. Rien n'est à décider maintenant.",
@@ -154,7 +154,7 @@ const data: Record<Lang, {
     faqs: [
       {
         q: "Combien de temps mes photos restent-elles en ligne ?",
-        a: "Cela dépend du palier : trois mois avec l'Essentiel, un an avec le Souvenir, trois ans avec l'Héritage. Passé ce délai, tout est supprimé définitivement de nos serveurs. Vous pouvez prolonger d'une année pour 29 € à tout moment, tant que l'échéance n'est pas passée.",
+        a: "Six mois à compter de votre événement, quelle que soit la formule. Nous vous prévenons trente jours avant l'échéance, et le téléchargement de toute la galerie tient en un clic. Passé ce délai, tout est supprimé définitivement de nos serveurs — y compris de nos sauvegardes. Vous pouvez prolonger d'une année pour 29 €, autant de fois que vous le souhaitez, tant que l'échéance n'est pas passée. Nous préférons vous promettre six mois que nous tiendrons plutôt que trois ans dont personne ne peut répondre.",
       },
       {
         q: "Que se passe-t-il si je change d'avis après l'événement ?",
@@ -187,7 +187,7 @@ const data: Record<Lang, {
           "Full-resolution downloads for your guests",
           "Automatic clean-up: duplicates, blurry shots, misfires",
           "Printable signage PDF: welcome sign and table cards",
-          "3 months hosting",
+          "6 months hosting",
         ],
         id: "essentiel",
         ctaLabel: "Choose Essential",
@@ -205,7 +205,7 @@ const data: Record<Lang, {
           "Face sorting: every guest finds their own photos",
           "Live slideshow projected during the party",
           "Page, QR code and signage in your event's colours",
-          "1 year hosting",
+          "6 months hosting",
         ],
         id: "souvenir",
         ctaLabel: "Choose Keepsake",
@@ -219,7 +219,7 @@ const data: Record<Lang, {
         features: [
           "The large-format printed album, photos and messages side by side",
           "Your wedding newspaper, 50 copies to hand out",
-          "3 years hosting",
+          "6 months hosting",
         ],
         id: "heritage",
         ctaLabel: "Choose Heirloom",
@@ -298,7 +298,7 @@ const data: Record<Lang, {
     faqs: [
       {
         q: "How long do my photos stay online?",
-        a: "It depends on the plan: three months on Essential, one year on Keepsake, three years on Heirloom. After that, everything is permanently deleted from our servers. You can extend by a year for €29 at any point, as long as the deadline hasn't passed.",
+        a: "Six months from your event, whatever the plan. We warn you thirty days before the deadline, and downloading the whole gallery takes one click. After that, everything is permanently deleted from our servers, backups included. You can extend by a year for €29, as many times as you like, as long as the deadline hasn't passed. We would rather promise six months we can keep than three years no one can answer for.",
       },
       {
         q: "What if I change my mind after the event?",

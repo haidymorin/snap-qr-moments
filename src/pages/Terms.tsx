@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 /* Conditions générales de vente.
 
    Rédigées à partir de la grille tarifaire réelle (59 / 179 / 390 €, acompte
-   de 50 %, hébergement 3 mois / 1 an / 3 ans) et du fonctionnement réel du
+   de 50 %, hébergement 6 mois pour toutes les formules) et du fonctionnement réel du
    service. Les mentions entre crochets doivent être remplies dès l'obtention
    du SIRET : sans elles, le document est incomplet au regard du code de la
    consommation, et Stripe le vérifie avant d'activer les paiements réels.
@@ -44,9 +44,9 @@ const SECTIONS: Section[] = [
       {
         t: "Les trois formules",
         li: [
-          "Essentiel — 59 € : QR code et page de collecte, galerie partagée, téléchargement en haute définition, nettoyage automatique des doublons et des photos floues, PDF de signalétique à imprimer, hébergement 3 mois.",
-          "Souvenir — 179 € : tout l'Essentiel, plus le livre d'or numérique (messages écrits, vocaux et vidéo), le tri par visage, le diaporama projeté pendant la soirée, la personnalisation aux couleurs de l'événement, hébergement 1 an.",
-          "Héritage — 390 € : tout le Souvenir, plus l'album imprimé grand format et la gazette de l'événement en 50 exemplaires, hébergement 3 ans.",
+          "Essentiel — 59 € : QR code et page de collecte, galerie partagée, téléchargement en haute définition, nettoyage automatique des doublons et des photos floues, PDF de signalétique à imprimer, hébergement 6 mois.",
+          "Souvenir — 179 € : tout l'Essentiel, plus le livre d'or numérique (messages écrits, vocaux et vidéo), le tri par visage, le diaporama projeté pendant la soirée, la personnalisation aux couleurs de l'événement, hébergement 6 mois.",
+          "Héritage — 390 € : tout le Souvenir, plus l'album imprimé grand format et la gazette de l'événement en 50 exemplaires, hébergement 6 mois.",
         ],
       },
       {
@@ -98,7 +98,7 @@ const SECTIONS: Section[] = [
     blocs: [
       {
         p: [
-          "La durée d'hébergement dépend de la formule : 3 mois pour l'Essentiel, 1 an pour le Souvenir, 3 ans pour l'Héritage. Elle court à compter de la date de l'événement.",
+          "La galerie reste en ligne six mois à compter de la date de l'événement, quelle que soit la formule. Cette durée est la même pour tous parce que nous préférons tenir un engagement court plutôt qu'en promettre un long dont nous ne pourrions pas répondre.",
           "Un rappel est envoyé au client 30 jours avant l'échéance. Passé ce terme, les photos, vidéos et messages sont supprimés définitivement de nos serveurs et de ceux de notre hébergeur. Cette suppression est irréversible.",
           "La galerie peut être prolongée d'une année pour 29 €, à tout moment tant que l'échéance n'est pas atteinte. Il appartient au client de télécharger ses fichiers avant le terme.",
         ],

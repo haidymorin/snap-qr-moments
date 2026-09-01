@@ -143,16 +143,16 @@ const translations: Record<Lang, Dict> = {
       plan1Name: "Essentiel",
       plan1Price: "59 €",
       plan1Desc:
-        "Le QR code, la galerie partagée, le tri automatique des ratés et la signalétique à imprimer. Photos gardées trois mois.",
+        "Le QR code, la galerie partagée, le tri automatique des ratés et la signalétique à imprimer. Photos gardées six mois.",
       plan2Name: "Souvenir",
       plan2Price: "179 €",
       plan2Badge: "Le plus choisi",
       plan2Desc:
-        "Tout l'Essentiel, plus le livre d'or, le tri par visage et le diaporama projeté pendant la fête. Photos gardées un an.",
+        "Tout l'Essentiel, plus le livre d'or, le tri par visage et le diaporama projeté pendant la fête. Photos gardées six mois.",
       plan3Name: "Héritage",
       plan3Price: "390 €",
       plan3Desc:
-        "Tout le Souvenir, plus l'album grand format et la gazette en cinquante exemplaires. Photos gardées trois ans.",
+        "Tout le Souvenir, plus l'album grand format et la gazette en cinquante exemplaires. Photos gardées six mois.",
       planDetail: "Le détail",
 
       objEyebrow: "Ce qu'il en reste",
@@ -425,16 +425,16 @@ const translations: Record<Lang, Dict> = {
       plan1Name: "Essential",
       plan1Price: "€59",
       plan1Desc:
-        "The QR code, the shared gallery, automatic clean-up of the misfires and printable signage. Photos kept three months.",
+        "The QR code, the shared gallery, automatic clean-up of the misfires and printable signage. Photos kept six months.",
       plan2Name: "Keepsake",
       plan2Price: "€179",
       plan2Badge: "Most chosen",
       plan2Desc:
-        "Everything in Essential, plus the guest book, face sorting and the slideshow projected during the party. Photos kept one year.",
+        "Everything in Essential, plus the guest book, face sorting and the slideshow projected during the party. Photos kept six months.",
       plan3Name: "Heirloom",
       plan3Price: "€390",
       plan3Desc:
-        "Everything in Keepsake, plus the large-format album and fifty copies of the newspaper. Photos kept three years.",
+        "Everything in Keepsake, plus the large-format album and fifty copies of the newspaper. Photos kept six months.",
       planDetail: "The detail",
 
       objEyebrow: "What is left of it",
