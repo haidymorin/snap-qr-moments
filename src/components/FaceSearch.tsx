@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
  *      écrit nulle part, et on le dit à la personne au moment où elle le prend.
  */
 
-type Etape = "ferme" | "consentement" | "capture" | "analyse" | "resultats" | "erreur";
+type Etape = "ferme" | "consentement" | "analyse" | "resultats" | "erreur";
 
 const CLE_JETON = "qrm-face-token";
 
@@ -134,6 +134,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
   const surFichier = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fichier = e.target.files?.[0];
     e.target.value = "";
+    // Sélecteur annulé : il ne s'est rien passé, on ne bouge pas.
     if (!fichier) return;
     try {
       const reduit = await reduire(fichier);
@@ -257,7 +258,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
           <button
             type="button"
             disabled={!consent || !prenom.trim()}
-            onClick={() => { setEtape("capture"); champCamera.current?.click(); }}
+            onClick={() => champCamera.current?.click()}
             className="inline-flex min-h-[48px] items-center border border-primary bg-primary px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
           >
             Me prendre en photo
@@ -265,7 +266,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
           <button
             type="button"
             disabled={!consent || !prenom.trim()}
-            onClick={() => { setEtape("capture"); champGalerie.current?.click(); }}
+            onClick={() => champGalerie.current?.click()}
             className="inline-flex min-h-[48px] items-center border border-border px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary disabled:cursor-not-allowed disabled:opacity-40"
           >
             Choisir une photo de moi
@@ -303,7 +304,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
   }
 
   // --- L'attente -----------------------------------------------------------
-  if (etape === "analyse" || etape === "capture") {
+  if (etape === "analyse") {
     const { faites, total } = progression;
     return (
       <section className="mt-8 border border-border bg-card p-6 sm:p-8">
