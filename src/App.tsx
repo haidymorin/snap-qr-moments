@@ -1,37 +1,46 @@
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Suspense, lazy } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import Index from "./pages/Index";
-import HowItWorks from "./pages/HowItWorks";
-import Pricing from "./pages/Pricing";
-import Contact from "./pages/Contact";
-import Auth from "./pages/Auth";
-import AuthCallback from "./pages/AuthCallback";
-import Dashboard from "./pages/Dashboard";
-import EventDetail from "./pages/EventDetail";
-import GuestEvent from "./pages/GuestEvent";
-import PaiementReussi from "./pages/PaiementReussi";
-import NotFound from "./pages/NotFound";
-import Privacy from "./pages/Privacy";
-import Legal from "./pages/Legal";
-import Terms from "./pages/Terms";
 import RouteEffects from "./components/RouteEffects";
 
-const queryClient = new QueryClient();
+/* L'accueil est chargé d'emblée : c'est la page d'entrée la plus fréquente et
+   la première impression ne doit pas attendre. Tout le reste est découpé en
+   morceaux chargés à la demande.
+
+   Ce qui compte vraiment ici : un invité qui ouvre la galerie de son mariage
+   sur le réseau saturé d'une salle de réception ne télécharge plus le tableau
+   de bord, la page de tarifs ni les conditions de vente — seulement ce dont
+   il a besoin. */
+import Index from "./pages/Index";
+
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Auth = lazy(() => import("./pages/Auth"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const EventDetail = lazy(() => import("./pages/EventDetail"));
+const GuestEvent = lazy(() => import("./pages/GuestEvent"));
+const PaiementReussi = lazy(() => import("./pages/PaiementReussi"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Legal = lazy(() => import("./pages/Legal"));
+const Terms = lazy(() => import("./pages/Terms"));
+
+/* Un aplat de la couleur du fond pendant le chargement d'un morceau : pas de
+   roue qui tourne, pas de saut de mise en page. */
+const Attente = () => <div className="min-h-screen bg-background" />;
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+  <>
       <Toaster />
-      <Sonner />
       <BrowserRouter>
         <AuthProvider>
           <LanguageProvider>
             <RouteEffects />
+            <Suspense fallback={<Attente />}>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
@@ -49,11 +58,11 @@ const App = () => (
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </Suspense>
           </LanguageProvider>
         </AuthProvider>
       </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  </>
 );
 
 export default App;
