@@ -135,8 +135,11 @@ elle n'existe pas, lance l'analyse rétroactive, indexe le selfie, cherche, renv
 les identifiants des photos correspondantes. Jette le selfie. C'est la seule
 fonction qui peut être lente, et seulement à son premier appel pour un événement.
 
-**`face-index-photo`** — appelée à l'arrivée d'une photo si l'événement est actif.
-Silencieuse, rapide, sans effet visible.
+*(Une quatrième fonction était prévue pour analyser les photos arrivant après
+coup. Elle s'est révélée inutile : `face-search` regarde toujours s'il reste des
+photos non analysées, y compris quand l'événement est déjà actif. Une photo
+déposée jeudi est donc retrouvée par une recherche faite vendredi, sans
+déclencheur supplémentaire à maintenir.)*
 
 **`face-forget`** — supprime l'empreinte d'un invité de la collection et sa ligne
 de consentement. Appelable par l'invité depuis son navigateur, sans compte.
