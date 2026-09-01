@@ -73,16 +73,21 @@ const GuestEvent = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [busy, setBusy] = useState(false);
   const [lightbox, setLightbox] = useState<MediaRow | null>(null);
-  /* null = on montre tout ; une liste = on ne montre que les photos trouvées
-     pour l'invité qui vient de se prendre en photo. */
-  const [selectionVisages, setSelectionVisages] = useState<string[] | null>(null);
+  /* Les photos où l'invité a été reconnu. Vide tant qu'aucune recherche n'a
+     été faite. Elles alimentent un onglet à part, et ne remplacent jamais la
+     galerie : on doit pouvoir passer de ses photos à toutes les photos sans
+     perdre ni l'une ni l'autre. */
+  const [mesPhotos, setMesPhotos] = useState<MediaRow[]>([]);
   /* Ce que l'album affiche réellement. `media` reste la source de vérité ;
      la recherche par visage n'est qu'un filtre posé par-dessus, ce qui évite
      de dupliquer l'état et de le désynchroniser au chargement des pages
      suivantes. */
+  /* Ce que la galerie affiche : soit les photos reconnues, soit la page
+     courante de l'album. Une seule source par onglet, donc pas de
+     désynchronisation possible au chargement des pages suivantes. */
   const visibles = useMemo(
-    () => (selectionVisages ? media.filter((m) => selectionVisages.includes(m.id)) : media),
-    [media, selectionVisages],
+    () => (filter === "mine" ? mesPhotos : media),
+    [filter, media, mesPhotos],
   );
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
@@ -168,6 +173,12 @@ const GuestEvent = () => {
   const changeFilter = async (next: MediaFilter) => {
     if (next === filter) return;
     setFilter(next);
+    // Les photos reconnues sont déjà en mémoire : aucun aller-retour, aucune
+    // pagination, l'onglet s'affiche instantanément.
+    if (next === "mine") {
+      setHasMore(false);
+      return;
+    }
     setHasMore(true);
     setMedia([]);
     setLoadingMore(true);
@@ -176,7 +187,7 @@ const GuestEvent = () => {
   };
 
   const loadMore = useCallback(async () => {
-    if (loadingMore || !hasMore) return;
+    if (loadingMore || !hasMore || filter === "mine") return;
     setLoadingMore(true);
     const rows = await fetchPage(media.length, filter);
     setMedia((prev) => {
@@ -498,7 +509,15 @@ const GuestEvent = () => {
           )}
         </section>
 
-        <FaceSearch eventId={event.id} onResultats={setSelectionVisages} />
+        <FaceSearch
+          eventId={event.id}
+          onResultats={(photos) => {
+            setMesPhotos(photos ?? []);
+            // On bascule sur l'onglet quand il y a quelque chose à montrer,
+            // et on revient à l'album quand l'invité efface sa reconnaissance.
+            setFilter(photos && photos.length ? "mine" : "all");
+          }}
+        />
 
         {/* Album */}
         <div className="mt-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -506,7 +525,12 @@ const GuestEvent = () => {
             {t("guest.album")}{" "}
             <span className="text-muted-foreground">({counts.all})</span>
           </h2>
-          <MediaTabs value={filter} onChange={changeFilter} counts={counts} />
+          <MediaTabs
+            value={filter}
+            onChange={changeFilter}
+            counts={counts}
+            mineCount={mesPhotos.length}
+          />
         </div>
 
         {visibles.length === 0 && !loadingMore ? (

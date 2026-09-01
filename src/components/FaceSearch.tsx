@@ -59,10 +59,19 @@ const MESSAGES: Record<string, string> = {
     "Le tri est momentanément indisponible. Vous pouvez parcourir toute la galerie en attendant.",
 };
 
+/** Une photo telle que la galerie l'attend. */
+export interface PhotoReconnue {
+  id: string;
+  url: string;
+  thumbnail_url: string | null;
+  file_name: string;
+  media_type: string;
+}
+
 interface Props {
   eventId: string;
-  /** Appelé avec les identifiants des photos trouvées, ou null pour tout voir. */
-  onResultats: (photoIds: string[] | null) => void;
+  /** Les photos reconnues, ou null quand l'invité revient à l'album complet. */
+  onResultats: (photos: PhotoReconnue[] | null) => void;
 }
 
 const FaceSearch = ({ eventId, onResultats }: Props) => {
@@ -121,7 +130,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
 
       selfieRef.current = null; // le selfie ne survit pas à la recherche
       setTrouvees(data?.count ?? 0);
-      onResultats(data?.photoIds ?? []);
+      onResultats((data?.photos ?? []) as PhotoReconnue[]);
       setEtape("resultats");
       return;
     }
@@ -184,7 +193,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
               onClick={oublier}
               className="label-mono min-h-[48px] border-b border-foreground pb-0.5 text-foreground transition-opacity hover:opacity-60"
             >
-              Supprimer mon empreinte
+              Ne plus me reconnaître
             </button>
           )}
         </div>
@@ -368,22 +377,31 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
           quelques jours : la galerie continue de se remplir.
         </p>
       )}
-      <div className="mt-6 flex flex-wrap items-center gap-4">
-        <button
-          type="button"
-          onClick={() => { onResultats(null); setEtape("ferme"); }}
-          className="label-mono border-b border-foreground pb-0.5 transition-opacity hover:opacity-60"
-        >
-          Revoir toutes les photos
-        </button>
+      {trouvees > 0 && (
+        <p className="mt-3 max-w-[54ch] text-[15px] leading-relaxed text-muted-foreground">
+          Elles sont dans l'onglet <strong className="text-foreground">Vos photos</strong>,
+          juste en dessous. Les onglets à côté vous ramènent à l'album complet
+          quand vous voulez.
+        </p>
+      )}
+
+      {/* Plus de bouton « revoir toutes les photos » ici : ce sont les onglets
+          qui font ce travail, et ce bouton effaçait la sélection au passage —
+          l'onglet disparaissait alors sans que personne ne l'ait demandé. */}
+      <div className="mt-6">
         <button
           type="button"
           onClick={oublier}
           className="label-mono border-b border-foreground pb-0.5 text-muted-foreground transition-opacity hover:opacity-60"
         >
-          Supprimer mon empreinte
+          Ne plus me reconnaître
         </button>
       </div>
+      <p className="mt-4 max-w-[54ch] text-[14px] leading-relaxed text-muted-foreground">
+        « Ne plus me reconnaître » efface définitivement ce que nous avons retenu
+        de votre visage. Les photos restent dans la galerie ; c'est seulement la
+        recherche qui ne fonctionnera plus pour vous.
+      </p>
     </section>
   );
 };

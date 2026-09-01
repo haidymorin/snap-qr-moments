@@ -267,12 +267,25 @@ Deno.serve(async (req) => {
       .filter((id): id is string => Boolean(id));
 
     let photoIds: string[] = [];
+    // On renvoie les lignes complètes, pas seulement les identifiants : la
+    // galerie en fait un onglet à part entière, et un aller-retour de moins
+    // sur le réseau d'une salle de réception est toujours bon à prendre.
+    let photos: unknown[] = [];
     if (idsTrouves.length) {
       const { data: liens } = await db
         .from("photo_faces").select("photo_id")
         .eq("event_id", eventId)
         .in("rekognition_face_id", idsTrouves);
       photoIds = [...new Set((liens ?? []).map((l) => l.photo_id as string))];
+
+      if (photoIds.length) {
+        const { data: lignes } = await db
+          .from("photos")
+          .select("id, url, thumbnail_url, file_name, media_type")
+          .in("id", photoIds)
+          .order("uploaded_at", { ascending: false });
+        photos = lignes ?? [];
+      }
     }
 
     // --- Le consentement ---------------------------------------------------
@@ -293,7 +306,7 @@ Deno.serve(async (req) => {
       expires_at: expire.toISOString(),
     }, { onConflict: "event_id,browser_token" });
 
-    return json({ status: "ok", photoIds, count: photoIds.length });
+    return json({ status: "ok", photoIds, photos, count: photoIds.length });
   } catch (e) {
     console.error("face-search", e);
     return json({ error: "indisponible" }, 500);
