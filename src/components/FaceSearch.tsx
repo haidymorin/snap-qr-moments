@@ -74,6 +74,71 @@ interface Props {
   onResultats: (photos: PhotoReconnue[] | null) => void;
 }
 
+
+/* L'attente de l'analyse.
+ *
+ * Un cercle qui tourne était exclu — la charte interdit les angles arrondis —
+ * et il aurait de toute façon menti : il tourne à vitesse constante quoi qu'il
+ * arrive. Ici la grille se remplit au rythme réel des photos analysées, et le
+ * viseur à quatre coins, qui est l'imagerie universelle de la détection de
+ * visage, se déplace sur les cases restantes. Tout est fait de traits droits.
+ *
+ * Le mouvement s'arrête pour qui a demandé à son système de réduire les
+ * animations : la grille reste, seul le viseur disparaît.
+ */
+const CASES = 40;
+
+function Scanner({ faites, total }: { faites: number; total: number }) {
+  const [viseur, setViseur] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(
+      () => setViseur((v) => (v + 1 + Math.floor(Math.random() * 4)) % CASES),
+      240,
+    );
+    return () => window.clearInterval(id);
+  }, []);
+
+  const remplies = total > 0 ? Math.min(CASES, Math.round((faites / total) * CASES)) : 0;
+  const pourcent = total > 0 ? Math.min(100, Math.round((faites / total) * 100)) : 0;
+
+  return (
+    <div className="mt-6 max-w-md">
+      <div className="grid grid-cols-8 gap-1.5" aria-hidden>
+        {Array.from({ length: CASES }, (_, i) => {
+          const faite = i < remplies;
+          const vise = !faite && i === viseur;
+          return (
+            <div
+              key={i}
+              className={`relative aspect-square transition-opacity duration-500 ${
+                faite ? "bg-foreground opacity-90" : "border border-border opacity-70"
+              }`}
+            >
+              {vise && (
+                <>
+                  <span className="absolute -left-px -top-px h-2 w-2 border-l-2 border-t-2 border-primary" />
+                  <span className="absolute -right-px -top-px h-2 w-2 border-r-2 border-t-2 border-primary" />
+                  <span className="absolute -bottom-px -left-px h-2 w-2 border-b-2 border-l-2 border-primary" />
+                  <span className="absolute -bottom-px -right-px h-2 w-2 border-b-2 border-r-2 border-primary" />
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-5 flex items-baseline justify-between border-t border-border pt-3">
+        <span className="label-mono text-foreground">
+          {total > 0 ? `${faites} / ${total}` : "···"}
+        </span>
+        <span className="label-mono text-muted-foreground">{pourcent} %</span>
+      </div>
+    </div>
+  );
+}
+
 const FaceSearch = ({ eventId, onResultats }: Props) => {
   const [etape, setEtape] = useState<Etape>("ferme");
   const [prenom, setPrenom] = useState("");
@@ -317,21 +382,16 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
     const { faites, total } = progression;
     return (
       <section className="mt-8 border border-border bg-card p-6 sm:p-8">
-        <p className="eyebrow">Recherche en cours</p>
-        <h2 className="mt-2 text-[clamp(20px,3.4vw,26px)]">Un instant</h2>
+        <p className="eyebrow">Analyse en cours</p>
+        <h2 className="mt-2 text-[clamp(20px,3.4vw,26px)]">
+          Lya regarde les photos une à une
+        </h2>
         <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-muted-foreground">
           {total > 0
-            ? `${faites} photos analysées sur ${total}. C'est la première recherche de cette galerie : les suivantes seront immédiates.`
-            : "Nous analysons les photos de la soirée."}
+            ? "C'est la première recherche de cette galerie : elle prend une minute ou deux. Les suivantes seront immédiates, pour vous comme pour les autres invités."
+            : "Nous préparons l'analyse des photos de la soirée."}
         </p>
-        {total > 0 && (
-          <div className="mt-5 h-[3px] w-full max-w-md bg-secondary">
-            <div
-              className="h-full bg-primary transition-[width] duration-500"
-              style={{ width: `${Math.min(100, Math.round((faites / total) * 100))}%` }}
-            />
-          </div>
-        )}
+        <Scanner faites={faites} total={total} />
       </section>
     );
   }
@@ -398,9 +458,9 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
         </button>
       </div>
       <p className="mt-4 max-w-[54ch] text-[14px] leading-relaxed text-muted-foreground">
-        « Ne plus me reconnaître » efface définitivement ce que nous avons retenu
-        de votre visage. Les photos restent dans la galerie ; c'est seulement la
-        recherche qui ne fonctionnera plus pour vous.
+        Nous oublions votre visage, pour de bon. Vos photos, elles, ne bougent
+        pas : elles restent dans la galerie. C'est seulement la recherche qui
+        cessera de fonctionner pour vous.
       </p>
     </section>
   );
