@@ -74,7 +74,8 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
   const [erreur, setErreur] = useState("");
   const [trouvees, setTrouvees] = useState(0);
   const [dejaVenu, setDejaVenu] = useState(false);
-  const champFichier = useRef<HTMLInputElement>(null);
+  const champCamera = useRef<HTMLInputElement>(null);
+  const champGalerie = useRef<HTMLInputElement>(null);
   const selfieRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -128,6 +129,8 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
     setEtape("erreur");
   }, [eventId, prenom, consent, autoriseHotes, onResultats]);
 
+  /* Le même traitement quelle que soit l'origine de l'image : les deux champs
+     pointent ici. */
   const surFichier = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fichier = e.target.files?.[0];
     e.target.value = "";
@@ -161,9 +164,10 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
           Retrouvez les photos où vous apparaissez
         </h2>
         <p className="mt-3 max-w-[54ch] text-[15px] leading-relaxed text-muted-foreground">
-          Prenez-vous en photo, et nous vous montrons celles de la soirée où l'on
-          vous voit. Votre photo sert uniquement à cette recherche : elle n'est
-          jamais conservée.
+          Prenez-vous en photo, ou choisissez une photo de vous que vous avez
+          déjà, et nous vous montrons celles de la soirée où l'on vous voit.
+          Cette image sert uniquement à la recherche : elle n'est jamais
+          conservée.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <button
@@ -196,8 +200,9 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
 
         <ul className="mt-5 border-t border-border">
           <li className="border-b border-border py-3 text-[15px] leading-relaxed">
-            Votre photo est analysée pour en extraire une empreinte numérique,
-            puis <strong>elle est jetée</strong>. Nous ne la conservons pas.
+            L'image que vous fournissez — selfie ou photo existante — est
+            analysée pour en extraire une empreinte numérique, puis
+            <strong> elle est jetée</strong>. Nous ne la conservons pas.
           </li>
           <li className="border-b border-border py-3 text-[15px] leading-relaxed">
             L'empreinte sert à retrouver les photos où vous apparaissez. Elle est
@@ -252,10 +257,18 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
           <button
             type="button"
             disabled={!consent || !prenom.trim()}
-            onClick={() => { setEtape("capture"); champFichier.current?.click(); }}
+            onClick={() => { setEtape("capture"); champCamera.current?.click(); }}
             className="inline-flex min-h-[48px] items-center border border-primary bg-primary px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
           >
             Me prendre en photo
+          </button>
+          <button
+            type="button"
+            disabled={!consent || !prenom.trim()}
+            onClick={() => { setEtape("capture"); champGalerie.current?.click(); }}
+            className="inline-flex min-h-[48px] items-center border border-border px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Choisir une photo de moi
           </button>
           <button
             type="button"
@@ -266,11 +279,22 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
           </button>
         </div>
 
+        {/* Deux champs plutôt qu'un : `capture` ouvre directement l'appareil
+            photo frontal, mais interdit alors d'aller chercher une photo
+            existante. Beaucoup de gens ont déjà un bon portrait d'eux et ne
+            veulent pas se photographier au milieu d'une soirée. */}
         <input
-          ref={champFichier}
+          ref={champCamera}
           type="file"
           accept="image/*"
           capture="user"
+          onChange={surFichier}
+          className="sr-only"
+        />
+        <input
+          ref={champGalerie}
+          type="file"
+          accept="image/*"
           onChange={surFichier}
           className="sr-only"
         />
