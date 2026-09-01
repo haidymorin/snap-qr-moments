@@ -65,6 +65,11 @@ const Footer = () => {
                   {t("footer.privacy")}
                 </Link>
               </li>
+              <li>
+                <Link to="/cgv" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  {t("footer.terms")}
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

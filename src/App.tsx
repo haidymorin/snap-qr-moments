@@ -18,6 +18,7 @@ import PaiementReussi from "./pages/PaiementReussi";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Legal from "./pages/Legal";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
               <Route path="/paiement-reussi" element={<PaiementReussi />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/legal" element={<Legal />} />
+              <Route path="/cgv" element={<Terms />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
