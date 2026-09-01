@@ -8,12 +8,12 @@
 // Elle est appelée par une tâche planifiée, pas par le navigateur : elle exige
 // un secret partagé (CLEANUP_SECRET) et refuse tout le reste.
 
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
 import {
   RekognitionClient,
   DeleteFacesCommand,
   DeleteCollectionCommand,
-} from "npm:@aws-sdk/client-rekognition@3";
+} from "@aws-sdk/client-rekognition";
 
 const db = createClient(
   Deno.env.get("SUPABASE_URL")!,

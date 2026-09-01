@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@aws-sdk/client-rekognition": "npm:@aws-sdk/client-rekognition@^3.645.0",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@^2.45.0"
+  },
+  "nodeModulesDir": "auto"
+}
