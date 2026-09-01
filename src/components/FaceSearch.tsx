@@ -384,7 +384,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
       <section className="mt-8 border border-border bg-card p-6 sm:p-8">
         <p className="eyebrow">Analyse en cours</p>
         <h2 className="mt-2 text-[clamp(20px,3.4vw,26px)]">
-          Lya regarde les photos une à une
+          L'intelligence artificielle regarde les photos une à une
         </h2>
         <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-muted-foreground">
           {total > 0

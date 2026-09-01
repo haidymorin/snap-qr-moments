@@ -13,7 +13,7 @@ import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
 
 /* Démonstration du tri : un seul et même mariage, comme un vrai album.
    Six photos sur vingt-quatre montrent la même invitée en robe rouge —
-   c'est ce que Lya retrouve quand elle reconnaît quelqu'un. Mise en scène,
+   c'est ce que la reconnaissance retrouve quand elle identifie quelqu'un. Mise en scène,
    présentée comme telle dans le texte de la section. */
 /* Les trois images du déroulé, fournies par Haïdy et servies depuis le projet
    (pas de dépendance à un service extérieur sur cette section) :

@@ -28,11 +28,11 @@ const META: Record<string, { fr: Meta; en: Meta }> = {
   "/how-it-works": {
     fr: {
       title: "Comment ça marche · QR Memories",
-      desc: "Le QR code, la collecte pendant la soirée, le tri par Lya, la galerie et les objets imprimés : le déroulé complet, étape par étape.",
+      desc: "Le QR code, la collecte pendant la soirée, le tri par intelligence artificielle, la galerie et les objets imprimés : le déroulé complet, étape par étape.",
     },
     en: {
       title: "How it works · QR Memories",
-      desc: "The QR code, collecting during the party, sorting by Lya, the gallery and the printed keepsakes: the full sequence, step by step.",
+      desc: "The QR code, collecting during the party, AI-powered sorting, the gallery and the printed keepsakes: the full sequence, step by step.",
     },
   },
   "/pricing": {
