@@ -44,6 +44,91 @@ export type Database = {
         }
         Relationships: []
       }
+      face_consents: {
+        Row: {
+          allow_hosts: boolean
+          browser_token: string
+          created_at: string
+          event_id: string
+          expires_at: string
+          first_name: string
+          id: string
+          last_used_at: string
+          rekognition_face_id: string | null
+        }
+        Insert: {
+          allow_hosts?: boolean
+          browser_token: string
+          created_at?: string
+          event_id: string
+          expires_at: string
+          first_name: string
+          id?: string
+          last_used_at?: string
+          rekognition_face_id?: string | null
+        }
+        Update: {
+          allow_hosts?: boolean
+          browser_token?: string
+          created_at?: string
+          event_id?: string
+          expires_at?: string
+          first_name?: string
+          id?: string
+          last_used_at?: string
+          rekognition_face_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "face_consents_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      face_events: {
+        Row: {
+          activated_at: string | null
+          collection_id: string | null
+          event_id: string
+          indexed_photos: number
+          last_error: string | null
+          status: string
+          total_photos: number
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          collection_id?: string | null
+          event_id: string
+          indexed_photos?: number
+          last_error?: string | null
+          status?: string
+          total_photos?: number
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          collection_id?: string | null
+          event_id?: string
+          indexed_photos?: number
+          last_error?: string | null
+          status?: string
+          total_photos?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "face_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guest_contacts: {
         Row: {
           created_at: string
@@ -85,9 +170,49 @@ export type Database = {
           },
         ]
       }
+      photo_faces: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          photo_id: string
+          rekognition_face_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          photo_id: string
+          rekognition_face_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          photo_id?: string
+          rekognition_face_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photo_faces_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "photo_faces_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "photos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       photos: {
         Row: {
           event_id: string
+          faces_indexed_at: string | null
           file_name: string
           id: string
           media_type: string
@@ -98,6 +223,7 @@ export type Database = {
         }
         Insert: {
           event_id: string
+          faces_indexed_at?: string | null
           file_name: string
           id?: string
           media_type?: string
@@ -108,6 +234,7 @@ export type Database = {
         }
         Update: {
           event_id?: string
+          faces_indexed_at?: string | null
           file_name?: string
           id?: string
           media_type?: string
@@ -185,6 +312,22 @@ export type Database = {
       guest_self_register: {
         Args: { p_email?: string; p_event_id: string; p_phone?: string }
         Returns: undefined
+      }
+      host_list_consenting_guests: {
+        Args: { p_event_id: string }
+        Returns: {
+          consent_id: string
+          created_at: string
+          first_name: string
+        }[]
+      }
+      purge_expired_face_consents: {
+        Args: never
+        Returns: {
+          collection_id: string
+          event_id: string
+          rekognition_face_id: string
+        }[]
       }
     }
     Enums: {
