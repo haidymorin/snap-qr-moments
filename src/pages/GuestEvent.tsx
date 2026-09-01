@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import FaceSearch from "@/components/FaceSearch";
 import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
 import { downloadMedia } from "@/lib/downloadMedia";
 import { uploadWithProgress } from "@/lib/uploadWithProgress";
@@ -72,6 +73,17 @@ const GuestEvent = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [busy, setBusy] = useState(false);
   const [lightbox, setLightbox] = useState<MediaRow | null>(null);
+  /* null = on montre tout ; une liste = on ne montre que les photos trouvées
+     pour l'invité qui vient de se prendre en photo. */
+  const [selectionVisages, setSelectionVisages] = useState<string[] | null>(null);
+  /* Ce que l'album affiche réellement. `media` reste la source de vérité ;
+     la recherche par visage n'est qu'un filtre posé par-dessus, ce qui évite
+     de dupliquer l'état et de le désynchroniser au chargement des pages
+     suivantes. */
+  const visibles = useMemo(
+    () => (selectionVisages ? media.filter((m) => selectionVisages.includes(m.id)) : media),
+    [media, selectionVisages],
+  );
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
 
@@ -88,18 +100,18 @@ const GuestEvent = () => {
     }
   };
   /* Navigation dans la visionneuse : flèches à l'écran et au clavier. */
-  const lightboxIndex = lightbox ? media.findIndex((m) => m.id === lightbox.id) : -1;
+  const lightboxIndex = lightbox ? visibles.findIndex((m) => m.id === lightbox.id) : -1;
   const goRelative = useCallback(
     (delta: number) => {
-      if (media.length === 0) return;
+      if (visibles.length === 0) return;
       setLightbox((current) => {
         if (!current) return current;
-        const i = media.findIndex((m) => m.id === current.id);
+        const i = visibles.findIndex((m) => m.id === current.id);
         if (i < 0) return current;
-        return media[(i + delta + media.length) % media.length];
+        return visibles[(i + delta + visibles.length) % visibles.length];
       });
     },
-    [media]
+    [visibles]
   );
 
   useEffect(() => {
@@ -486,6 +498,8 @@ const GuestEvent = () => {
           )}
         </section>
 
+        <FaceSearch eventId={event.id} onResultats={setSelectionVisages} />
+
         {/* Album */}
         <div className="mt-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="text-2xl">
@@ -495,7 +509,7 @@ const GuestEvent = () => {
           <MediaTabs value={filter} onChange={changeFilter} counts={counts} />
         </div>
 
-        {media.length === 0 && !loadingMore ? (
+        {visibles.length === 0 && !loadingMore ? (
           <div className="mt-6 border border-border px-6 py-16 text-center">
             <p className="text-muted-foreground">
               {filter === "video"
@@ -507,7 +521,7 @@ const GuestEvent = () => {
           </div>
         ) : (
           <div className="mt-6 grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4">
-            {media.map((p) => (
+            {visibles.map((p) => (
               <button
                 key={p.id}
                 type="button"
@@ -577,7 +591,7 @@ const GuestEvent = () => {
           >
             <X className="h-5 w-5" />
           </button>
-            {media.length > 1 && (
+            {visibles.length > 1 && (
               <>
                 <button
                   type="button"
@@ -602,7 +616,7 @@ const GuestEvent = () => {
                   <ChevronRight className="h-6 w-6" />
                 </button>
                 <span className="label-mono absolute bottom-5 left-1/2 -translate-x-1/2 text-white">
-                  {lightboxIndex + 1} / {media.length}
+                  {lightboxIndex + 1} / {visibles.length}
                 </span>
               </>
             )}
