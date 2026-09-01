@@ -122,7 +122,7 @@ const translations: Record<Lang, Dict> = {
       quoteText:
         "Ma chérie, je n'ai pas trouvé les mots hier soir. Alors je te les écris ici, pendant que tu danses.",
       quoteAuthor: "Jeanne, sa grand-mère",
-      quoteMeta: "22 h 14 · Table 3",
+      quoteMeta: "Exemple · 22 h 14 · Table 3",
 
       plansEyebrow: "Ce que ça coûte",
       plansTitle: "Un prix par événement.",
@@ -392,7 +392,7 @@ const translations: Record<Lang, Dict> = {
       quoteText:
         "My darling, I could not find the words last night. So I am writing them here, while you dance.",
       quoteAuthor: "Jeanne, her grandmother",
-      quoteMeta: "10:14 PM · Table 3",
+      quoteMeta: "Example · 10:14 PM · Table 3",
 
       plansEyebrow: "What it costs",
       plansTitle: "One price per event.",
