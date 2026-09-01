@@ -6,7 +6,7 @@ import etape1 from "@/assets/steps/etape-1-qr.jpg";
 import etape2 from "@/assets/steps/etape-2-invites.jpg";
 import etape3 from "@/assets/steps/etape-3-galerie.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { photo, photoUrl } from "@/lib/photos";
+import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
 
 /* Les photos libres de droits sont désormais partagées avec la page
    « Comment ça marche » : voir src/lib/photos.ts. */
@@ -20,7 +20,6 @@ import { photo, photoUrl } from "@/lib/photos";
    le carton QR posé sur la table, les invités qui déposent, la galerie triée. */
 const STEP_IMAGES = [etape1, etape2, etape3];
 const STEP_ALT = ["stepsAlt1", "stepsAlt2", "stepsAlt3"];
-const BAND_PHOTOS = [26558729, 19691776, 15964962, 2765703, 28123410, 8210489];
 const CAMILLE_SELFIE = 11988908;
 const ALBUM_DEMO: { id: number; camille: boolean }[] = [
   { id: 13434416, camille: false },
@@ -378,19 +377,27 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Une respiration : la soirée en six images, pleine largeur */}
-      <section aria-hidden className="grid grid-cols-3 border-y border-border md:grid-cols-6">
-        {BAND_PHOTOS.map((id) => (
-          <div key={id} className="relative aspect-square overflow-hidden bg-secondary">
-            <img
-              src={photoUrl(id)}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover"
-            />
-          </div>
-        ))}
+      {/* Le seul endroit du site où l'on montre un vrai mariage déjà livré.
+          C'est la preuve, pas une respiration : elle est légendée. */}
+      <section className="border-y border-border">
+        <div className="grid grid-cols-2 md:grid-cols-4">
+          {MARIAGE_REEL.map((p) => (
+            <div key={p.src} className="relative aspect-square overflow-hidden bg-secondary">
+              <img
+                src={p.src}
+                alt={t(`home.${p.alt}`)}
+                loading="lazy"
+                decoding="async"
+                width={900}
+                height={900}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+        <p className="label-mono border-t border-border px-[clamp(20px,5vw,48px)] py-4 text-center text-muted-foreground">
+          {t("home.bandCaption")}
+        </p>
       </section>
 
       {/* Les offres, sur la surface claire */}

@@ -1,3 +1,19 @@
+/* --- Les vraies photos --- */
+/* Le mariage livré en juin 2026, avec l'accord des mariés. Une vraie photo
+   d'un vrai mariage vaut dix banques d'images : c'est la seule preuve qu'on
+   a déjà fait le travail. Recadrées en carré, 900 px, ~120 Ko chacune. */
+import danse from "@/assets/mariage/01-premiere-danse.jpg";
+import signature from "@/assets/mariage/02-signature.jpg";
+import sortie from "@/assets/mariage/03-sortie-mairie.jpg";
+import voiture from "@/assets/mariage/04-mairie-voiture.jpg";
+
+export const MARIAGE_REEL = [
+  { src: sortie, alt: "mariageAltSortie" },
+  { src: danse, alt: "mariageAltDanse" },
+  { src: signature, alt: "mariageAltSignature" },
+  { src: voiture, alt: "mariageAltVoiture" },
+];
+
 /* Photos de mariage libres de droits (Pexels — licence gratuite, usage
    commercial autorisé, sans attribution obligatoire). Servies par le CDN de
    Pexels, recadrées en carré : une vingtaine de Ko par vignette.
