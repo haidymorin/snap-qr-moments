@@ -150,6 +150,22 @@ $$;
 
 revoke all on function public.purge_expired_face_consents() from public, anon, authenticated;
 
+-- ---------------------------------------------------------------------------
+-- 6. Accès des fonctions serveur
+-- ---------------------------------------------------------------------------
+-- Ces tables n'ont volontairement aucune politique pour `anon` et
+-- `authenticated`. Mais activer la sécurité au niveau des lignes ne suffit pas :
+-- sans droit explicite, PostgREST refuse l'accès au rôle de service lui-même,
+-- et les fonctions serveur échouent dès le premier appel.
+--
+-- On accorde donc l'accès au seul `service_role`, qui n'est jamais exposé au
+-- navigateur : la clé correspondante vit uniquement dans les secrets des
+-- fonctions serveur.
+
+grant all on public.face_events   to service_role;
+grant all on public.face_consents to service_role;
+grant all on public.photo_faces   to service_role;
+
 comment on table public.face_consents is
   'Consentements à la reconnaissance faciale. Données biométriques au sens de
    l''article 9 du RGPD. Aucun accès direct depuis le navigateur : tout passe
