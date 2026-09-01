@@ -6,21 +6,10 @@ import etape1 from "@/assets/steps/etape-1-qr.jpg";
 import etape2 from "@/assets/steps/etape-2-invites.jpg";
 import etape3 from "@/assets/steps/etape-3-galerie.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { photo, photoUrl } from "@/lib/photos";
 
-/* Photos de mariage libres de droits (Pexels — licence gratuite, usage
-   commercial autorisé, sans attribution obligatoire). Servies par le CDN de
-   Pexels, recadrées en carré à 420 px : une vingtaine de Ko par vignette.
-   Pour les héberger nous-mêmes plus tard, il suffira de remplacer photoUrl. */
-const PHOTO_IDS = [
-  36028957, 10622328, 12919433, 19691776,
-  6918173, 2765703, 8210489, 1128784,
-  28123410, 15964962, 10360902, 15964954,
-  26558729, 30505255, 10360901, 17111049,
-];
-const photoUrl = (id: number) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=420&h=420&fit=crop`;
-const photo = (i: number) =>
-  photoUrl(PHOTO_IDS[((i % PHOTO_IDS.length) + PHOTO_IDS.length) % PHOTO_IDS.length]);
+/* Les photos libres de droits sont désormais partagées avec la page
+   « Comment ça marche » : voir src/lib/photos.ts. */
 
 /* Démonstration du tri : un seul et même mariage, comme un vrai album.
    Six photos sur vingt-quatre montrent la même invitée en robe rouge —
@@ -363,18 +352,14 @@ const Index = () => {
               <blockquote className="m-0 mt-2 font-display text-[clamp(24px,3.1vw,34px)] italic leading-[1.32]">
                 {t("home.quoteText")}
               </blockquote>
-              <figcaption className="mt-6 flex items-center gap-3 border-t border-border pt-5">
-                <div
-                  className="h-12 w-12 shrink-0 rounded-full"
-                  style={{ background: "linear-gradient(150deg,#C9B79A,#8E7A5C)" }}
-                />
+              <figcaption className="mt-6 border-t border-border pt-5">
                 <div>
                   <b className="block text-[15px] font-semibold">{t("home.quoteAuthor")}</b>
                   <span className="label-mono">{t("home.quoteMeta")}</span>
                 </div>
               </figcaption>
               <div className="mt-5 flex items-center gap-3 border border-border bg-background px-4 py-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-[11px] text-primary-foreground">
+                <span className="grid h-9 w-9 shrink-0 place-items-center border border-foreground text-[10px] text-foreground">
                   ▶
                 </span>
                 <div className="flex h-6 flex-1 items-center gap-[2.5px]">

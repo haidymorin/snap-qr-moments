@@ -1,5 +1,8 @@
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
 
+/* Bascule de langue. Charte : pas d'angle arrondi, pas de blanc pur, pas
+   d'ombre. Deux étiquettes en capitales espacées séparées par un filet de
+   1 px ; la langue active est en plein, l'autre en retrait. */
 const LanguageSwitcher = ({ className = "" }: { className?: string }) => {
   const { lang, setLang } = useLanguage();
 
@@ -7,9 +10,9 @@ const LanguageSwitcher = ({ className = "" }: { className?: string }) => {
     <button
       key={value}
       onClick={() => setLang(value)}
-      className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-all ${
+      className={`min-h-[30px] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors ${
         lang === value
-          ? "bg-gradient-hero text-white shadow-soft"
+          ? "bg-primary text-primary-foreground"
           : "text-muted-foreground hover:text-foreground"
       }`}
       aria-label={`Switch to ${label}`}
@@ -21,7 +24,7 @@ const LanguageSwitcher = ({ className = "" }: { className?: string }) => {
 
   return (
     <div
-      className={`inline-flex items-center gap-1 p-1 rounded-full bg-muted border border-border ${className}`}
+      className={`inline-flex items-center divide-x divide-border border border-border ${className}`}
     >
       {btn("fr", "FR")}
       {btn("en", "EN")}

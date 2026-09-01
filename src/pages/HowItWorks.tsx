@@ -2,24 +2,10 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { photoBg } from "@/lib/photos";
 
-/* Mêmes aplats chauds que sur l'accueil : ils tiennent lieu de photos
-   tant qu'on n'a pas d'images de vrais mariages. */
-const TILES = [
-  "linear-gradient(155deg,#2A1F14,#7A4E1E 55%,#D9A054)",
-  "linear-gradient(200deg,#151310,#3B2E1F 60%,#8A6534)",
-  "linear-gradient(160deg,#E8DECB,#C7B08A 70%,#8E7A5C)",
-  "linear-gradient(140deg,#1B231C,#3B4A36 65%,#6E7F58)",
-  "linear-gradient(175deg,#F3EDE1,#DCCFB6)",
-  "linear-gradient(190deg,#120F0C,#43301C 55%,#C08040)",
-  "linear-gradient(150deg,#4A3524,#A9743A 60%,#EBC98C)",
-  "linear-gradient(165deg,#2C3529,#5C6B4C 70%,#9DAC82)",
-  "linear-gradient(145deg,#EFE7D8,#B9A88C)",
-  "linear-gradient(210deg,#191410,#2E2318 50%,#6E4E2A)",
-  "linear-gradient(155deg,#D9C9AC,#8E7550 80%)",
-  "linear-gradient(170deg,#101418,#2B3A2C 60%,#7E8F63)",
-];
-const tile = (i: number) => TILES[((i % TILES.length) + TILES.length) % TILES.length];
+/* Plus d'aplats dégradés en guise de photos : les vignettes montrent de
+   vraies photos de mariage, les mêmes que sur l'accueil. */
 
 /* --- Les quatre visuels. Aucune icône étirée : des formes qui disent
        vraiment ce que fait l'étape. --- */
@@ -80,14 +66,14 @@ function UploadVisual() {
             style={
               pending.includes(i)
                 ? { border: "1px dashed hsl(var(--night-muted))", opacity: 0.5 }
-                : { background: tile(i * 3 + 1) }
+                : { background: photoBg(i * 3 + 1) }
             }
           />
         ))}
       </div>
       <div className="mt-4 flex items-center justify-between border-t border-night-border pt-3">
         <span className="label-mono text-night-foreground opacity-100">9 / 12</span>
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-night-foreground" />
+        <span className="h-1.5 w-1.5 animate-pulse bg-night-foreground" />
       </div>
     </div>
   );
@@ -107,7 +93,7 @@ function SortVisual() {
                 ? "outline outline-1 outline-offset-2 outline-foreground"
                 : "opacity-[0.32] grayscale"
             }`}
-            style={{ background: tile(i * 3 + 2) }}
+            style={{ background: photoBg(i * 3 + 2) }}
           />
         ))}
       </div>
@@ -122,15 +108,19 @@ function ObjectsVisual() {
      un tabloïd haut, le PDF a la forme d'une page. Ils reposent sur une
      même ligne, comme des objets posés sur une étagère. */
   const items = [
-    { label: t("how.objA"), ratio: "aspect-square", g: 9 },
-    { label: t("how.objB"), ratio: "aspect-[5/8]", g: 4 },
-    { label: t("how.objC"), ratio: "aspect-[1/1.414]", g: 11 },
+    { label: t("how.objA"), ratio: "aspect-square" },
+    { label: t("how.objB"), ratio: "aspect-[5/8]" },
+    { label: t("how.objC"), ratio: "aspect-[1/1.414]" },
   ];
   return (
     <div className="grid w-full grid-cols-3 items-end gap-4">
       {items.map((o, i) => (
         <div key={i}>
-          <div className={`${o.ratio} border border-border`} style={{ background: tile(o.g) }} />
+          <div
+            className={`${o.ratio} grid place-items-center border border-border bg-night px-2 text-center`}
+          >
+            <span className="label-mono text-night-foreground">{t("home.objSoon")}</span>
+          </div>
           <span className="label-mono mt-3 block text-foreground opacity-100">{o.label}</span>
         </div>
       ))}

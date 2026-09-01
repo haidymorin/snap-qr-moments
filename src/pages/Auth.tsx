@@ -134,16 +134,16 @@ const Auth = () => {
             <div className="text-center mb-8 animate-fade-in">
               <h1 className="text-4xl font-bold mb-3">
                 {t("auth.welcome")}{" "}
-                <span className="bg-gradient-hero bg-clip-text text-transparent">QR Memories</span>
+                <span className="font-display italic">QR Memories</span>
               </h1>
               <p className="text-muted-foreground">{t("auth.subtitle")}</p>
             </div>
 
-            <div className="p-8 bg-card rounded-2xl border border-border shadow-card">
+            <div className="p-8 bg-card border border-border">
               {signUpSuccess ? (
                 <div className="text-center space-y-5 py-4 animate-fade-in">
-                  <div className="w-16 h-16 mx-auto bg-gradient-hero rounded-full flex items-center justify-center">
-                    <MailCheck className="w-8 h-8 text-white" />
+                  <div className="w-16 h-16 mx-auto border border-foreground flex items-center justify-center">
+                    <MailCheck className="w-7 h-7 text-foreground" />
                   </div>
                   <h2 className="text-2xl font-bold">{t("auth.checkEmailTitle")}</h2>
                   <p className="text-muted-foreground">{t("auth.checkEmailDesc")}</p>
