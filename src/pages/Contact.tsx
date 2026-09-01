@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Calendar, Mail, User, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+/* L'adresse à laquelle les demandes arrivent réellement. Un seul endroit à
+   changer le jour où un domaine et une boîte professionnelle existent. */
+export const CONTACT_EMAIL = "haidymorin@gmail.com";
+
 const Contact = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -18,20 +22,36 @@ const Contact = () => {
     message: "",
   });
 
+  /* Ce formulaire n'avait pas de destination : il affichait « Message envoyé ! »
+     et vidait les champs, sans que rien ne parte nulle part. Tant qu'il n'y a
+     pas de fonction serveur d'envoi, il compose le message et ouvre la
+     messagerie du visiteur — le message part vraiment, et on ne prétend rien.
+     À remplacer par un envoi côté serveur dès qu'une adresse professionnelle
+     et une fonction d'envoi existent. */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    toast({
-      title: "Message envoyé !",
-      description: "Nous vous répondrons dans les plus brefs délais.",
-    });
 
-    setFormData({
-      name: "",
-      email: "",
-      eventType: "",
-      eventDate: "",
-      message: "",
+    const corps = [
+      `Nom : ${formData.name}`,
+      `Email : ${formData.email}`,
+      `Type d'événement : ${formData.eventType || "non précisé"}`,
+      `Date de l'événement : ${formData.eventDate || "non précisée"}`,
+      "",
+      formData.message,
+    ].join("\n");
+
+    const sujet = formData.eventType
+      ? `Demande — ${formData.eventType}`
+      : "Demande d'informations";
+
+    window.location.href =
+      `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(sujet)}` +
+      `&body=${encodeURIComponent(corps)}`;
+
+    toast({
+      title: "Votre messagerie va s'ouvrir",
+      description:
+        `Le message est prêt, il ne reste qu'à l'envoyer. Si rien ne s'ouvre, écrivez directement à ${CONTACT_EMAIL}.`,
     });
   };
 
@@ -156,7 +176,7 @@ const Contact = () => {
               <div className="p-6 bg-gradient-card rounded-xl border border-border shadow-soft text-center">
                 <Mail className="w-12 h-12 text-primary mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Email</h3>
-                <p className="text-muted-foreground">contact@qrmemories.com</p>
+                <p className="text-muted-foreground">{CONTACT_EMAIL}</p>
               </div>
 
               <div className="p-6 bg-gradient-card rounded-xl border border-border shadow-soft text-center">

@@ -45,9 +45,9 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/pricing#faq" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   {t("footer.faq")}
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

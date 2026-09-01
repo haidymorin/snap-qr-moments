@@ -134,11 +134,14 @@ const SECTIONS: Section[] = [
       },
       {
         t: "En cas d'annulation pure et simple",
+        p: [
+          "L'annulation s'entend du renoncement définitif à la prestation, par opposition au report, qui reste ouvert à tout moment et sans frais.",
+        ],
         li: [
-          "Plus de 30 jours avant l'événement : remboursement intégral.",
-          "Entre 30 et 7 jours avant : remboursement de 50 % du montant versé.",
-          "Moins de 7 jours avant : aucun remboursement, la prestation étant préparée et le QR code émis. Le client conserve la possibilité de reporter.",
-          "Les objets imprimés déjà lancés en fabrication restent dus dans tous les cas.",
+          "Plus de 90 jours avant l'événement : remboursement de 70 % du montant versé, 30 % restant acquis au titre de l'ouverture du dossier et de la préparation.",
+          "Entre 90 et 30 jours avant : remboursement de 50 % du montant versé.",
+          "Moins de 30 jours avant : aucun remboursement. À ce stade la prestation est préparée, le QR code émis, la signalétique produite et la date réservée. Le client conserve à tout moment la possibilité de reporter plutôt que d'annuler.",
+          "Les objets imprimés dont la fabrication est lancée restent dus en totalité, quelle que soit la date.",
         ],
       },
       {

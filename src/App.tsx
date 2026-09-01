@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
 import Legal from "./pages/Legal";
 import Terms from "./pages/Terms";
+import RouteEffects from "./components/RouteEffects";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <LanguageProvider>
+            <RouteEffects />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/how-it-works" element={<HowItWorks />} />

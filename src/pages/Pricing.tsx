@@ -557,8 +557,8 @@ const Pricing = () => {
           </div>
         </section>
 
-        {/* Questions */}
-        <section className="py-[clamp(58px,7.5vw,100px)]">
+        {/* Questions — ancre visée par le lien FAQ du pied de page */}
+        <section id="faq" className="scroll-mt-[80px] py-[clamp(58px,7.5vw,100px)]">
           <div className="mx-auto max-w-[820px] px-[clamp(20px,5vw,48px)]">
             <h2 className="mb-[clamp(28px,3.5vw,44px)] text-center text-[clamp(30px,4.2vw,48px)]">
               {t("pricing.faqTitle")}

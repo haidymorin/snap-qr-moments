@@ -12,3 +12,12 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Les galeries d'invités et les espaces privés ne s'indexent pas :
+# une galerie de mariage dans un moteur de recherche serait une fuite.
+Disallow: /dashboard
+Disallow: /event/
+Disallow: /auth
+Disallow: /paiement-reussi
+
+Sitemap: https://snap-qr-moments.lovable.app/sitemap.xml
