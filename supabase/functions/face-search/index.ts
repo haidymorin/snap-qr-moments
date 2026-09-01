@@ -17,14 +17,14 @@
 //      qui permet d'afficher « 340 photos sur 900 » plutôt qu'une roue qui
 //      tourne dans le vide.
 
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
 import {
   RekognitionClient,
   CreateCollectionCommand,
   IndexFacesCommand,
   SearchFacesCommand,
   DeleteFacesCommand,
-} from "npm:@aws-sdk/client-rekognition@3";
+} from "@aws-sdk/client-rekognition";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",

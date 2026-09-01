@@ -9,8 +9,8 @@
 // en présentant le jeton aléatoire déposé dans son navigateur, qui n'ouvre
 // l'accès qu'à sa propre ligne.
 
-import { createClient } from "npm:@supabase/supabase-js@2";
-import { RekognitionClient, DeleteFacesCommand } from "npm:@aws-sdk/client-rekognition@3";
+import { createClient } from "@supabase/supabase-js";
+import { RekognitionClient, DeleteFacesCommand } from "@aws-sdk/client-rekognition";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
