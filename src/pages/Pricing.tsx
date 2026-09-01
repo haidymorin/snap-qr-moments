@@ -154,7 +154,7 @@ const data: Record<Lang, {
     faqs: [
       {
         q: "Combien de temps mes photos restent-elles en ligne ?",
-        a: "Six mois à compter de votre événement, quelle que soit la formule. Nous vous prévenons trente jours avant l'échéance, et le téléchargement de toute la galerie tient en un clic. Passé ce délai, tout est supprimé définitivement de nos serveurs — y compris de nos sauvegardes. Vous pouvez prolonger d'une année pour 29 €, autant de fois que vous le souhaitez, tant que l'échéance n'est pas passée. Nous préférons vous promettre six mois que nous tiendrons plutôt que trois ans dont personne ne peut répondre.",
+        a: "Six mois à compter de votre événement, quelle que soit la formule — largement le temps de tout récupérer. Nous vous prévenons trente jours avant l'échéance, et le téléchargement de la galerie entière tient en un clic. Vous pouvez aussi la prolonger d'une année pour 29 €, autant de fois que vous le souhaitez. Sans prolongation, tout est supprimé définitivement à l'échéance, sauvegardes comprises : c'est ce que nous devons à vos invités, qui ne nous ont pas confié leurs photos pour que nous les gardions indéfiniment.",
       },
       {
         q: "Que se passe-t-il si je change d'avis après l'événement ?",
@@ -298,7 +298,7 @@ const data: Record<Lang, {
     faqs: [
       {
         q: "How long do my photos stay online?",
-        a: "Six months from your event, whatever the plan. We warn you thirty days before the deadline, and downloading the whole gallery takes one click. After that, everything is permanently deleted from our servers, backups included. You can extend by a year for €29, as many times as you like, as long as the deadline hasn't passed. We would rather promise six months we can keep than three years no one can answer for.",
+        a: "Six months from your event, whatever the plan — ample time to save everything. We warn you thirty days before the deadline, and downloading the whole gallery takes one click. You can also extend it by a year for €29, as many times as you like. Without an extension, everything is permanently deleted at the deadline, backups included: that is what we owe your guests, who did not hand us their photos for us to keep forever.",
       },
       {
         q: "What if I change my mind after the event?",
