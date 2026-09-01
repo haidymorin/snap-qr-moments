@@ -38,21 +38,54 @@ interface Item {
 }
 
 const MAX_IMAGE_SIZE = 25 * 1024 * 1024;
-/* Les vidéos partent telles quelles, sans recompression : on garde la
-   qualité d'origine. Le plafond du bucket de stockage doit être au moins
-   égal à cette valeur, sinon le serveur refuse le fichier. */
-const MAX_VIDEO_SIZE = 1024 * 1024 * 1024;
+/* Les vidéos partent telles quelles, sans recompression : on garde la qualité
+   d'origine.
+
+   ATTENTION — cette valeur doit correspondre au plafond réel du bucket de
+   stockage. Elle annonçait 1 Go alors que le bucket est plafonné à 50 Mo :
+   l'invité téléversait plusieurs minutes sur le réseau d'une salle avant de se
+   faire refuser, et sans comprendre pourquoi. Mieux vaut un refus honnête en
+   une seconde qu'une longue attente pour rien.
+
+   Pour relever ce plafond, il faut le faire des DEUX côtés : ici, et sur le
+   bucket `event-photos` côté Supabase. Au-delà de 50 Mo, cela dépend du plan
+   d'hébergement. */
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
 const PAGE_SIZE = 24;
 const CONCURRENCY = 3;
 
-/* Traduit une erreur technique en une raison lisible par un invité. */
+/* Traduit une erreur technique en une raison lisible par un invité.
+ *
+ * Le cas du dépassement de taille manquait, et c'est le plus fréquent : le
+ * stockage répond « payload too large » ou « exceeded the maximum allowed
+ * size », qu'aucune ligne ne reconnaissait. L'invité voyait donc « connexion
+ * perdue » alors que sa connexion allait très bien, et il réessayait
+ * indéfiniment le même fichier trop lourd.
+ *
+ * Le dernier cas reste le réseau, mais il ne doit être qu'un dernier recours :
+ * chaque erreur qu'on sait nommer évite à quelqu'un de chercher au mauvais
+ * endroit. */
 const reasonOf = (err: unknown): string => {
-  const msg = String((err as { message?: string })?.message ?? err ?? "").toLowerCase();
-  if (msg.includes("format")) return "errFormat";
+  const brut = String((err as { message?: string })?.message ?? err ?? "");
+  const msg = brut.toLowerCase();
   if (msg.includes("imagetoobig")) return "errTooBig";
   if (msg.includes("videotoobig")) return "errVideoTooBig";
-  if (msg.includes("row-level") || msg.includes("policy") || msg.includes("unauthorized")) return "errRefused";
+  if (
+    msg.includes("payload too large") ||
+    msg.includes("exceeded the maximum allowed size") ||
+    msg.includes("entity too large") ||
+    msg.includes("(413)")
+  ) {
+    return "errServerTooBig";
+  }
+  if (msg.includes("format") || msg.includes("mime") || msg.includes("(415)")) return "errFormat";
+  if (
+    msg.includes("row-level") || msg.includes("policy") ||
+    msg.includes("unauthorized") || msg.includes("(401)") || msg.includes("(403)")
+  ) {
+    return "errRefused";
+  }
   return "errNetwork";
 };
 
