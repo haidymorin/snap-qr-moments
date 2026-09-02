@@ -63,21 +63,46 @@ const rekognition = new RekognitionClient({
   },
 });
 
-/** Récupère une photo du stockage, réduite : Rekognition plafonne à 5 Mo. */
-async function telecharger(storagePath: string): Promise<Uint8Array | null> {
-  const { data, error } = await db.storage
-    .from("event-photos")
-    .download(storagePath, { transform: { width: 1600, quality: 80 } });
+/* Récupère une photo pour l'analyser. Rekognition plafonne à 5 Mo.
+ *
+ * Deux stockages coexistent : les fichiers déposés depuis la bascule vivent
+ * sur Cloudflare R2, les anciens sont restés chez Supabase. On essaie R2
+ * d'abord — c'est là que sont les nouveaux — puis Supabase.
+ *
+ * On préfère la vignette à l'image entière quand elle existe : 800 px
+ * suffisent largement à reconnaître un visage, et cela divise par dix le
+ * volume téléchargé sur neuf cents photos. */
+const R2_PUBLIC = (Deno.env.get("R2_PUBLIC_URL") ?? "").replace(/\/$/, "");
 
-  if (error || !data) {
-    // La transformation d'image n'est pas disponible sur tous les plans :
-    // on retombe sur le fichier d'origine plutôt que d'abandonner la photo.
-    const brut = await db.storage.from("event-photos").download(storagePath);
-    if (brut.error || !brut.data) return null;
-    const buf = new Uint8Array(await brut.data.arrayBuffer());
-    return buf.byteLength > 5_000_000 ? null : buf;
+async function telecharger(storagePath: string, urlVignette?: string | null): Promise<Uint8Array | null> {
+  // 1. La vignette, si on en a une : dix fois plus légère.
+  if (urlVignette) {
+    try {
+      const rep = await fetch(urlVignette);
+      if (rep.ok) {
+        const buf = new Uint8Array(await rep.arrayBuffer());
+        if (buf.byteLength && buf.byteLength <= 5_000_000) return buf;
+      }
+    } catch { /* on tentera l'image entière */ }
   }
-  return new Uint8Array(await data.arrayBuffer());
+
+  // 2. Le fichier sur R2.
+  if (R2_PUBLIC) {
+    try {
+      const rep = await fetch(`${R2_PUBLIC}/${storagePath}`);
+      if (rep.ok) {
+        const buf = new Uint8Array(await rep.arrayBuffer());
+        if (buf.byteLength && buf.byteLength <= 5_000_000) return buf;
+        if (buf.byteLength > 5_000_000) return null;
+      }
+    } catch { /* on tentera l'ancien stockage */ }
+  }
+
+  // 3. L'ancien stockage, pour les photos déposées avant la bascule.
+  const brut = await db.storage.from("event-photos").download(storagePath);
+  if (brut.error || !brut.data) return null;
+  const buf = new Uint8Array(await brut.data.arrayBuffer());
+  return buf.byteLength > 5_000_000 ? null : buf;
 }
 
 /** Marque une photo comme analysée, quel qu'ait été le résultat. */
@@ -91,7 +116,7 @@ async function marquerVue(photoId: string) {
 async function analyserUnLot(eventId: string, collectionId: string): Promise<number> {
   const { data: photos } = await db
     .from("photos")
-    .select("id, storage_path")
+    .select("id, storage_path, thumbnail_url")
     .eq("event_id", eventId)
     .is("faces_indexed_at", null)
     .limit(LOT);
@@ -101,7 +126,7 @@ async function analyserUnLot(eventId: string, collectionId: string): Promise<num
   let traitees = 0;
   for (const photo of photos) {
     try {
-      const octets = await telecharger(photo.storage_path);
+      const octets = await telecharger(photo.storage_path, photo.thumbnail_url);
       if (!octets) {
         // Photo illisible ou trop lourde : on la marque comme vue pour ne pas
         // la reprendre en boucle à chaque appel.

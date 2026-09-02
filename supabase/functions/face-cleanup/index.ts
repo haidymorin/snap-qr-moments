@@ -28,12 +28,41 @@ const rekognition = new RekognitionClient({
   },
 });
 
+/* Cloudflare R2. Les fichiers doivent disparaître avec la galerie : supprimer
+   les lignes en base en laissant les photos sur le stockage reviendrait à
+   facturer indéfiniment des images que plus personne ne peut voir — et à ne
+   pas tenir la promesse écrite dans les conditions de vente. */
+const r2 = new AwsClient({
+  accessKeyId: Deno.env.get("R2_ACCESS_KEY_ID") ?? "",
+  secretAccessKey: Deno.env.get("R2_SECRET_ACCESS_KEY") ?? "",
+  service: "s3",
+  region: "auto",
+});
+const R2_BASE = `https://${Deno.env.get("R2_ACCOUNT_ID")}.r2.cloudflarestorage.com/${Deno.env.get("R2_BUCKET")}`;
+
+/** Supprime un fichier du bucket. Silencieux : un fichier déjà absent va bien. */
+async function supprimerSurR2(chemin: string): Promise<boolean> {
+  if (!Deno.env.get("R2_ACCOUNT_ID")) return false;
+  try {
+    const rep = await r2.fetch(`${R2_BASE}/${chemin}`, { method: "DELETE" });
+    return rep.ok || rep.status === 404;
+  } catch (e) {
+    console.error("purge — fichier R2", chemin, e);
+    return false;
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.headers.get("x-cleanup-secret") !== Deno.env.get("CLEANUP_SECRET")) {
     return new Response("non", { status: 401 });
   }
 
-  const rapport = { empreintes_supprimees: 0, collections_supprimees: 0, echecs: 0 };
+  const rapport = {
+    empreintes_supprimees: 0,
+    collections_supprimees: 0,
+    fichiers_supprimes: 0,
+    echecs: 0,
+  };
 
   try {
     // 1. Les empreintes individuelles arrivées à échéance.
@@ -80,6 +109,18 @@ Deno.serve(async (req) => {
       if (!collection) continue;
       try {
         await rekognition.send(new DeleteCollectionCommand({ CollectionId: collection }));
+
+        // Les fichiers eux-mêmes, image et vignette, avant les lignes en base :
+        // une fois la ligne supprimée, on ne saurait plus quel fichier effacer.
+        const { data: fichiers } = await db
+          .from("photos").select("id, storage_path").eq("event_id", evenement.id);
+        for (const f of fichiers ?? []) {
+          if (!f.storage_path) continue;
+          if (await supprimerSurR2(f.storage_path)) rapport.fichiers_supprimes++;
+          const vignette = String(f.storage_path).replace(/\.[a-z0-9]+$/i, "-thumb.jpg");
+          await supprimerSurR2(vignette);
+        }
+
         await db.from("face_events").delete().eq("event_id", evenement.id);
         await db.from("photo_faces").delete().eq("event_id", evenement.id);
         await db.from("face_consents").delete().eq("event_id", evenement.id);

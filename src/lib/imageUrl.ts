@@ -1,12 +1,16 @@
-/* Les images sont servies par le redimensionneur de Supabase.
+/* Les adresses d'images.
  *
- * Pourquoi : une vignette fabriquée à l'envoi fait 400 px sur son plus grand
- * côté, donc 225 px sur le petit côté pour une photo de téléphone en portrait.
- * Affichée dans une case carrée de 328 px sur un écran Retina, il faut 656 px
- * réels : l'image est étirée presque trois fois et paraît floue.
+ * Deux stockages coexistent, et c'est voulu : les fichiers déposés depuis la
+ * bascule vivent sur Cloudflare R2, ceux d'avant sont restés chez Supabase.
+ * Ces fonctions traitent les deux sans que le reste du code ait à savoir
+ * lequel il manipule.
  *
- * Le redimensionneur part de l'original et rend exactement la taille demandée.
- * Il corrige donc aussi les photos déjà déposées, sans rien régénérer.
+ * Sur Supabase, un redimensionneur fabriquait la taille demandée à la volée.
+ * R2 sert des fichiers, pas des transformations : on s'appuie donc sur les
+ * deux tailles produites dans le navigateur avant l'envoi — une image de
+ * 2560 px et une vignette de 800 px. La vignette est assez grande pour rester
+ * nette dans une grille sur écran Retina, ce qui était la raison d'être du
+ * redimensionneur.
  */
 
 const OBJECT = "/storage/v1/object/public/";
@@ -14,14 +18,21 @@ const RENDER = "/storage/v1/render/image/public/";
 
 const isTransformable = (url: string) => url.includes(OBJECT) && !/\.(mp4|mov|webm|m4v)(\?|$)/i.test(url);
 
-/** Vignette carrée, recadrée, pour les grilles. `size` en pixels réels. */
+/**
+ * L'adresse à utiliser dans une grille.
+ *
+ * On lui passe la vignette quand elle existe : sur R2 c'est elle qui évite de
+ * faire télécharger une image de 2560 px pour l'afficher dans une case de
+ * 300 px — sur le réseau d'une salle de réception, avec quatre-vingts
+ * vignettes à l'écran, la différence n'est pas cosmétique.
+ */
 export const gridUrl = (url: string | null | undefined, size = 700): string | undefined => {
   if (!url) return undefined;
   if (!isTransformable(url)) return url;
   return `${url.replace(OBJECT, RENDER)}?width=${size}&height=${size}&resize=cover&quality=78`;
 };
 
-/** Image entière pour la visionneuse : nette sans faire télécharger l'original. */
+/** Image entière pour la visionneuse. Sur R2, c'est le fichier de 2560 px. */
 export const viewUrl = (url: string | null | undefined): string | undefined => {
   if (!url) return undefined;
   if (!isTransformable(url)) return url;

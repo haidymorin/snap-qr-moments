@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import FaceSearch from "@/components/FaceSearch";
 import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
 import { downloadMedia } from "@/lib/downloadMedia";
-import { uploadWithProgress } from "@/lib/uploadWithProgress";
+import { envoyerSurR2, extensionDe } from "@/lib/r2";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
 import { generateVideoPoster } from "@/lib/videoPoster";
@@ -243,33 +243,42 @@ const GuestEvent = () => {
     return () => obs.disconnect();
   }, [loadMore, hasMore]);
 
+  /* La vignette. Elle porte le même identifiant que l'image, suffixé, pour
+     qu'on puisse retrouver et supprimer les deux fichiers d'un même média sans
+     tenir de registre séparé. */
   const uploadThumb = async (uuid: string, thumb: Blob | null) => {
     if (!thumb) return null;
-    const thumbPath = `${id}/thumbs/${uuid}.jpg`;
-    const { error } = await supabase.storage.from("event-photos").upload(thumbPath, thumb, {
-      contentType: "image/jpeg",
-      upsert: false,
-    });
-    if (error) return null;
-    return supabase.storage.from("event-photos").getPublicUrl(thumbPath).data.publicUrl;
+    try {
+      return await envoyerSurR2({
+        eventId: id!,
+        chemin: `${id}/${uuid}-thumb.jpg`,
+        fichier: thumb,
+        contentType: "image/jpeg",
+      });
+    } catch {
+      // Une vignette manquante n'est pas grave : la grille retombera sur
+      // l'image entière. Perdre la photo, si.
+      return null;
+    }
   };
 
   const uploadImage = async (file: File) => {
     const { full, thumb, fallback } = await compressImage(file);
     const uuid = crypto.randomUUID();
-    const ext = fallback ? file.name.split(".").pop() ?? "jpg" : "jpg";
-    const path = `${id}/${uuid}.${ext}`;
+    const contentType = fallback ? file.type || "image/jpeg" : "image/jpeg";
+    const path = `${id}/${uuid}.${extensionDe(contentType)}`;
 
-    const { error: upErr } = await supabase.storage.from("event-photos").upload(path, full, {
-      contentType: fallback ? file.type : "image/jpeg",
-      upsert: false,
+    const url = await envoyerSurR2({
+      eventId: id!,
+      chemin: path,
+      fichier: full,
+      contentType,
     });
-    if (upErr) throw upErr;
 
     const thumbnailUrl = await uploadThumb(uuid, thumb);
     const { error: dbErr } = await supabase.from("photos").insert({
       event_id: id!,
-      url: supabase.storage.from("event-photos").getPublicUrl(path).data.publicUrl,
+      url,
       thumbnail_url: thumbnailUrl,
       file_name: file.name,
       storage_path: path,
@@ -281,21 +290,21 @@ const GuestEvent = () => {
   const uploadVideo = async (file: File, onProgress?: (ratio: number) => void) => {
     const uuid = crypto.randomUUID();
     const { thumb } = await generateVideoPoster(file);
-    const ext = file.name.split(".").pop() ?? "mp4";
-    const path = `${id}/${uuid}.${ext}`;
+    const contentType = file.type || "video/mp4";
+    const path = `${id}/${uuid}.${extensionDe(contentType)}`;
 
-    await uploadWithProgress({
-      bucket: "event-photos",
-      path,
-      file,
-      contentType: file.type || "video/mp4",
+    const url = await envoyerSurR2({
+      eventId: id!,
+      chemin: path,
+      fichier: file,
+      contentType,
       onProgress,
     });
 
     const thumbnailUrl = await uploadThumb(uuid, thumb);
     const { error: dbErr } = await supabase.from("photos").insert({
       event_id: id!,
-      url: supabase.storage.from("event-photos").getPublicUrl(path).data.publicUrl,
+      url,
       thumbnail_url: thumbnailUrl,
       file_name: file.name,
       storage_path: path,
@@ -590,7 +599,7 @@ const GuestEvent = () => {
                   src={
                     p.media_type === "video"
                       ? p.thumbnail_url ?? undefined
-                      : gridUrl(p.url)
+                      : gridUrl(p.thumbnail_url ?? p.url)
                   }
                   onError={(e) => fallbackToOriginal(e, p.thumbnail_url ?? p.url)}
                   alt={p.file_name}

@@ -331,7 +331,7 @@ const EventDetail = () => {
                     src={
                       p.media_type === "video"
                         ? p.thumbnail_url ?? undefined
-                        : gridUrl(p.url)
+                        : gridUrl(p.thumbnail_url ?? p.url)
                     }
                     onError={(e) => fallbackToOriginal(e, p.thumbnail_url ?? p.url)}
                     alt={p.file_name}
