@@ -195,7 +195,27 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
 
       selfieRef.current = null; // le selfie ne survit pas à la recherche
       setTrouvees(data?.count ?? 0);
-      onResultats((data?.photos ?? []) as PhotoReconnue[]);
+
+      /* Le site et les fonctions serveur ne se déploient pas ensemble : il
+         existe toujours une fenêtre pendant laquelle l'un des deux est en
+         avance. Une version ancienne de face-search ne renvoie que des
+         numéros de photos, sans les photos elles-mêmes — l'onglet restait
+         alors vide alors que le compteur annonçait cent photos.
+
+         On va donc les chercher nous-mêmes le cas échéant. La table est
+         lisible publiquement, comme la galerie qu'elle sert. */
+      let photos = (data?.photos ?? []) as PhotoReconnue[];
+      const ids = (data?.photoIds ?? []) as string[];
+      if (photos.length === 0 && ids.length > 0) {
+        const { data: lignes } = await supabase
+          .from("photos")
+          .select("id, url, thumbnail_url, file_name, media_type")
+          .in("id", ids)
+          .order("uploaded_at", { ascending: false });
+        photos = (lignes ?? []) as PhotoReconnue[];
+      }
+
+      onResultats(photos);
       setEtape("resultats");
       return;
     }
