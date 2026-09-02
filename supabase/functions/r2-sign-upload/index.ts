@@ -25,8 +25,11 @@ const CORS = {
 const json = (b: unknown, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { ...CORS, "Content-Type": "application/json" } });
 
-/** Cinq minutes : le temps de commencer un envoi, pas de le partager. */
-const VALIDITE = 300;
+/* Une heure. L'URL signée doit survivre à l'envoi lui-même : une vidéo de
+   plusieurs centaines de Mo depuis le wifi d'une salle de réception peut
+   prendre bien plus de cinq minutes. Assez long pour que l'envoi aboutisse,
+   assez court pour qu'un lien copié ne serve pas de dépôt public. */
+const VALIDITE = 3600;
 
 /* Ce qu'on accepte. La liste est courte volontairement : tout ce qui n'est pas
    une image ou une vidéo n'a rien à faire dans la galerie d'un mariage. */

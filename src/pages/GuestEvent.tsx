@@ -41,16 +41,15 @@ const MAX_IMAGE_SIZE = 25 * 1024 * 1024;
 /* Les vidéos partent telles quelles, sans recompression : on garde la qualité
    d'origine.
 
-   ATTENTION — cette valeur doit correspondre au plafond réel du bucket de
-   stockage. Elle annonçait 1 Go alors que le bucket est plafonné à 50 Mo :
-   l'invité téléversait plusieurs minutes sur le réseau d'une salle avant de se
-   faire refuser, et sans comprendre pourquoi. Mieux vaut un refus honnête en
-   une seconde qu'une longue attente pour rien.
+   ATTENTION — cette valeur doit correspondre au plafond réel du stockage.
+   Depuis la migration vers Cloudflare R2, l'envoi se fait en un seul PUT signé,
+   qui accepte jusqu'à 5 Go. On s'arrête bien en dessous : au-delà de 500 Mo,
+   l'envoi depuis le réseau d'une salle devient trop long pour être fiable, et
+   mieux vaut un refus honnête en une seconde qu'une longue attente pour rien.
 
-   Pour relever ce plafond, il faut le faire des DEUX côtés : ici, et sur le
-   bucket `event-photos` côté Supabase. Au-delà de 50 Mo, cela dépend du plan
-   d'hébergement. */
-const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
+   Si ce plafond bouge, vérifier aussi VALIDITE dans la fonction
+   `r2-sign-upload` : l'URL signée doit vivre plus longtemps que l'envoi. */
+const MAX_VIDEO_SIZE = 500 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
 const PAGE_SIZE = 24;
 const CONCURRENCY = 3;
