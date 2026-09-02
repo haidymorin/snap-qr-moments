@@ -12,6 +12,7 @@
 //
 // Secrets attendus : R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY,
 //                    R2_BUCKET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+//        facultatif : R2_ENDPOINT (voir plus bas — juridiction du bucket)
 
 import { AwsClient } from "npm:aws4fetch@1";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -78,7 +79,17 @@ Deno.serve(async (req) => {
       region: "auto",
     });
 
-    const cible = `https://${compte}.r2.cloudflarestorage.com/${bucket}/${path}`;
+    /* Le segment `.eu` n'est pas décoratif : le bucket a été créé sous
+       juridiction Union européenne, pour que les photos des invités ne
+       quittent pas l'Europe. Cloudflare lui donne alors une adresse distincte,
+       et l'adresse sans juridiction désigne un tout autre espace de noms — où
+       ce bucket n'existe pas. Signés contre la mauvaise adresse, les envois
+       recevaient un 403 sur la requête que le navigateur pose avant tout
+       dépôt, sans le moindre en-tête CORS : côté invité, cela ressemblait à
+       une coupure de connexion. */
+    const racine = Deno.env.get("R2_ENDPOINT")?.replace(/\/$/, "")
+      ?? `https://${compte}.eu.r2.cloudflarestorage.com`;
+    const cible = `${racine}/${bucket}/${path}`;
     const signee = await client.sign(
       new Request(`${cible}?X-Amz-Expires=${VALIDITE}`, { method: "PUT" }),
       { aws: { signQuery: true } },

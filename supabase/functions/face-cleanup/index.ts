@@ -38,7 +38,22 @@ const r2 = new AwsClient({
   service: "s3",
   region: "auto",
 });
-const R2_BASE = `https://${Deno.env.get("R2_ACCOUNT_ID")}.r2.cloudflarestorage.com/${Deno.env.get("R2_BUCKET")}`;
+/* L'adresse S3 du bucket.
+ *
+ * Le segment `.eu` n'est pas décoratif : le bucket a été créé sous juridiction
+ * Union européenne, pour que les photos des invités ne quittent pas l'Europe.
+ * Cloudflare donne alors à ce bucket une adresse distincte,
+ * `<compte>.eu.r2.cloudflarestorage.com`, et l'adresse sans juridiction
+ * désigne un tout autre espace de noms — où ce bucket n'existe pas. Les envois
+ * signés contre la mauvaise adresse recevaient un 403 sur la requête que le
+ * navigateur pose avant tout dépôt, sans le moindre en-tête CORS : côté
+ * invité, cela ressemblait à une coupure de connexion.
+ *
+ * `R2_ENDPOINT` permet de forcer une autre adresse si la juridiction change un
+ * jour, sans toucher au code. */
+const R2_RACINE = Deno.env.get("R2_ENDPOINT")?.replace(/\/$/, "")
+  ?? `https://${Deno.env.get("R2_ACCOUNT_ID")}.eu.r2.cloudflarestorage.com`;
+const R2_BASE = `${R2_RACINE}/${Deno.env.get("R2_BUCKET")}`;
 
 /** Supprime un fichier du bucket. Silencieux : un fichier déjà absent va bien. */
 async function supprimerSurR2(chemin: string): Promise<boolean> {
