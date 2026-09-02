@@ -1,4 +1,5 @@
 {
+  "nodeModulesDir": "auto",
   "imports": {
     "aws4fetch": "npm:aws4fetch@1",
     "@aws-sdk/client-rekognition": "npm:@aws-sdk/client-rekognition@3",
