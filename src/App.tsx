@@ -1,9 +1,11 @@
 import { Toaster } from "@/components/ui/toaster";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { Suspense } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { lazyWithRetry as lazy } from "@/lib/lazyWithRetry";
 import RouteEffects from "./components/RouteEffects";
+
 
 /* L'accueil est chargé d'emblée : c'est la page d'entrée la plus fréquente et
    la première impression ne doit pas attendre. Tout le reste est découpé en
