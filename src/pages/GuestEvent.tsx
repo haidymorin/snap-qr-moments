@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import FaceSearch from "@/components/FaceSearch";
 import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
 import { downloadMedia } from "@/lib/downloadMedia";
-import { envoyerSurR2, extensionDe } from "@/lib/r2";
+import { envoyerSurR2, extensionDe, typeDeclare } from "@/lib/r2";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
 import { generateVideoPoster } from "@/lib/videoPoster";
@@ -33,6 +33,8 @@ interface Item {
   file: File;
   state: ItemState;
   reason?: string;
+  /** Ce que la machine a répondu, quand on n'a pas su le traduire. */
+  detail?: string;
   /** Part envoyée, de 0 à 1. Renseignée pour les vidéos. */
   progress?: number;
 }
@@ -78,7 +80,19 @@ const reasonOf = (err: unknown): string => {
   ) {
     return "errServerTooBig";
   }
-  if (msg.includes("format") || msg.includes("mime") || msg.includes("(415)")) return "errFormat";
+  if (
+    msg.includes("format") || msg.includes("mime") ||
+    msg.includes("type_refuse") || msg.includes("(415)")
+  ) {
+    return "errFormat";
+  }
+  if (msg.includes("chemin_invalide") || msg.includes("evenement_inconnu")) return "errRefused";
+  if (
+    msg.includes("indisponible") || msg.includes("(500)") ||
+    msg.includes("(502)") || msg.includes("(503)")
+  ) {
+    return "errServeur";
+  }
   if (
     msg.includes("row-level") || msg.includes("policy") ||
     msg.includes("unauthorized") || msg.includes("(401)") || msg.includes("(403)")
@@ -289,7 +303,7 @@ const GuestEvent = () => {
   const uploadVideo = async (file: File, onProgress?: (ratio: number) => void) => {
     const uuid = crypto.randomUUID();
     const { thumb } = await generateVideoPoster(file);
-    const contentType = file.type || "video/mp4";
+    const contentType = typeDeclare(file, "video/mp4");
     const path = `${id}/${uuid}.${extensionDe(contentType)}`;
 
     const url = await envoyerSurR2({
@@ -312,8 +326,8 @@ const GuestEvent = () => {
     if (dbErr) throw dbErr;
   };
 
-  const mark = (key: string, state: ItemState, reason?: string) =>
-    setItems((prev) => prev.map((it) => (it.key === key ? { ...it, state, reason } : it)));
+  const mark = (key: string, state: ItemState, reason?: string, detail?: string) =>
+    setItems((prev) => prev.map((it) => (it.key === key ? { ...it, state, reason, detail } : it)));
 
   const markProgress = (key: string, progress: number) =>
     setItems((prev) => prev.map((it) => (it.key === key ? { ...it, progress } : it)));
@@ -345,7 +359,12 @@ const GuestEvent = () => {
           }
           mark(it.key, "sent");
         } catch (err) {
-          mark(it.key, "failed", reasonOf(err));
+          const raison = reasonOf(err);
+          /* Quand on ne sait pas nommer la cause, on montre au moins ce que la
+             machine a répondu. Mieux vaut une ligne technique qu'un invité qui
+             réessaie vingt fois le même fichier sans jamais savoir pourquoi. */
+          const brut = String((err as { message?: string })?.message ?? err ?? "");
+          mark(it.key, "failed", raison, raison === "errNetwork" ? brut.slice(0, 140) : undefined);
         }
       }
     };
@@ -506,17 +525,24 @@ const GuestEvent = () => {
 
               <ul className="mt-5 divide-y divide-border border-y border-border">
                 {items.map((it) => (
-                  <li key={it.key} className="flex items-center justify-between gap-4 py-3">
-                    <span className="min-w-0 flex-1 truncate text-sm text-foreground">
-                      {it.file.name}
-                    </span>
-                    <span
-                      className={`label-mono shrink-0 ${
-                        it.state === "failed" ? "text-destructive opacity-100" : ""
-                      }`}
-                    >
-                      {stateLabel(it)}
-                    </span>
+                  <li key={it.key} className="py-3">
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="min-w-0 flex-1 truncate text-sm text-foreground">
+                        {it.file.name}
+                      </span>
+                      <span
+                        className={`label-mono shrink-0 ${
+                          it.state === "failed" ? "text-destructive opacity-100" : ""
+                        }`}
+                      >
+                        {stateLabel(it)}
+                      </span>
+                    </div>
+                    {it.detail && (
+                      <p className="mt-1 break-words text-[11px] leading-relaxed text-muted-foreground">
+                        {t("guest.errDetail")} {it.detail}
+                      </p>
+                    )}
                   </li>
                 ))}
               </ul>

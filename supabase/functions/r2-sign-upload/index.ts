@@ -36,6 +36,10 @@ const VALIDITE = 3600;
 const TYPES = [
   "image/jpeg", "image/png", "image/webp", "image/heic", "image/heif",
   "video/mp4", "video/quicktime", "video/webm",
+  // Les navigateurs de bureau et les Android anciens déclarent parfois l'un de
+  // ces types-là pour une vidéo tout à fait ordinaire. Les refuser ne protège
+  // de rien : ce sont les mêmes fichiers, sous un autre nom.
+  "video/x-m4v", "video/3gpp", "video/mpeg", "video/x-matroska", "video/x-msvideo",
 ];
 
 const db = createClient(
