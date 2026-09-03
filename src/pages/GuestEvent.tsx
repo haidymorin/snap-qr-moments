@@ -2,15 +2,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import FaceSearch from "@/components/FaceSearch";
+import LivreDor from "@/components/LivreDor";
 import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
-import { downloadMedia } from "@/lib/downloadMedia";
-import { telechargerEnLots, type Avancement } from "@/lib/telechargerLot";
+import {
+  downloadMedia, partagerPlusieurs, partageMultipleDisponible, PARTAGE_MAX,
+} from "@/lib/downloadMedia";
 import { envoyerSurR2, extensionDe, typeDeclare } from "@/lib/r2";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
 import { generateVideoPoster } from "@/lib/videoPoster";
 import MediaTabs, { MediaFilter, PlayOverlay } from "@/components/MediaTabs";
-import { Camera, ChevronLeft, ChevronRight, Download, Images, Loader2, X } from "lucide-react";
+import {
+  Camera, Check, CheckSquare, ChevronLeft, ChevronRight, Download, Images, Loader2, X,
+} from "lucide-react";
 
 interface EventRow {
   id: string;
@@ -165,6 +169,12 @@ const GuestEvent = () => {
   const [mesPhotos, setMesPhotos] = useState<MediaRow[]>([]);
   /* Les lignes correspondant aux identifiants gardés sur cet appareil. */
   const [mesEnvois, setMesEnvois] = useState<MediaRow[]>([]);
+  /* Ce que la formule et le couple autorisent sur cette page. Rendu par le
+     serveur : une case décochée dans le tableau de bord doit fermer la porte,
+     pas seulement cacher un bouton. */
+  const [reglages, setReglages] = useState<{
+    livre_dor: boolean; vocal: boolean; messages_publics: boolean;
+  } | null>(null);
   /* Ce que l'album affiche réellement. `media` reste la source de vérité ;
      la recherche par visage n'est qu'un filtre posé par-dessus, ce qui évite
      de dupliquer l'état et de le désynchroniser au chargement des pages
@@ -180,34 +190,55 @@ const GuestEvent = () => {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
 
-  /* Tout l'onglet courant, en une ou plusieurs archives.
+  /* Choisir, puis enregistrer.
    *
-   * On ne télécharge que ce que l'onglet montre : « Photos de moi » et
-   * « Mes envois » tiennent en un seul fichier, l'album complet en plusieurs.
-   * Sur l'album, seule la page déjà chargée est disponible côté navigateur —
-   * on va donc chercher la liste entière avant de commencer, sinon on
-   * n'archiverait que ce que l'invité a fait défiler. */
-  const [lot, setLot] = useState<Avancement | null>(null);
+   * L'archive `.zip` a été écartée : sur un téléphone elle n'arrive pas dans la
+   * pellicule mais dans l'application Fichiers, où il faut la décompresser à la
+   * main. Personne ne le fait. Et de toute façon, un invité ne veut presque
+   * jamais les neuf cents photos d'un mariage — il en veut douze.
+   *
+   * La feuille de partage du système, elle, accepte plusieurs fichiers d'un
+   * coup et les dépose directement dans la photothèque. C'est le seul chemin
+   * qui donne le résultat attendu, et il impose sa limite : quelques dizaines
+   * de fichiers, pas des centaines. La sélection n'est donc pas un pis-aller,
+   * c'est ce qui correspond à l'usage. */
+  const [selection, setSelection] = useState<Set<string> | null>(null);
+  const [enCours, setEnCours] = useState<{ faits: number; total: number } | null>(null);
 
-  const toutTelecharger = async () => {
-    if (!id || !event || lot) return;
-    let liste = visibles;
-    if (filter !== "mine" && filter !== "envois") {
-      const { data } = await supabase.rpc("guest_list_media", {
-        p_event_id: id, p_media: filter, p_limit: 2000, p_offset: 0,
-      });
-      liste = ((data ?? []) as MediaRow[]);
-    }
-    if (liste.length === 0) return;
-    setLot({ faits: 0, total: liste.length, lot: 1, lots: 1 });
+  const basculerSelection = (photoId: string) =>
+    setSelection((prev) => {
+      const suivant = new Set(prev ?? []);
+      if (suivant.has(photoId)) suivant.delete(photoId);
+      else suivant.add(photoId);
+      return suivant;
+    });
+
+  const enregistrerSelection = async () => {
+    if (!selection || selection.size === 0 || enCours) return;
+    const choisies = visibles.filter((m) => selection.has(m.id));
+    const fichiers = choisies.map((m) => ({ url: m.url, nom: m.file_name || `${m.id}.jpg` }));
+    setEnCours({ faits: 0, total: fichiers.length });
     try {
-      await telechargerEnLots(
-        liste.map((m) => ({ url: m.url, nom: m.file_name || `${m.id}.jpg` })),
-        (event.name || "souvenirs").replace(/\s+/g, "-").toLowerCase(),
-        setLot,
-      );
+      if (partageMultipleDisponible() && fichiers.length <= PARTAGE_MAX) {
+        await partagerPlusieurs(fichiers, (faits, total) => setEnCours({ faits, total }));
+      } else {
+        /* Sur ordinateur, ou au-delà de ce que le partage accepte : un
+           enregistrement après l'autre. Plus long, mais chaque fichier arrive
+           là où l'utilisateur l'attend. */
+        for (let i = 0; i < fichiers.length; i++) {
+          try {
+            await downloadMedia(fichiers[i].url, fichiers[i].nom);
+          } catch {
+            /* Un fichier manquant n'interrompt pas les autres. */
+          }
+          setEnCours({ faits: i + 1, total: fichiers.length });
+        }
+      }
+      setSelection(null);
+    } catch {
+      /* Partage annulé : la sélection reste, l'invité réessaiera s'il veut. */
     } finally {
-      setLot(null);
+      setEnCours(null);
     }
   };
 
@@ -305,12 +336,16 @@ const GuestEvent = () => {
       const { data: evRows } = await supabase.rpc("guest_get_event", { p_event_id: id });
       const ev = Array.isArray(evRows) ? evRows[0] ?? null : null;
       setEvent(ev);
+      supabase.rpc("guest_reglages", { p_event_id: id }).then(({ data }) => {
+        const r = Array.isArray(data) ? data[0] ?? null : null;
+        if (r) setReglages(r);
+      });
       await chargerEnvois();
       await loadCounts();
       setMedia(await fetchPage(0, "all"));
       setLoading(false);
     })();
-  }, [id, fetchPage, loadCounts]);
+  }, [id, fetchPage, loadCounts, chargerEnvois]);
 
   const changeFilter = async (next: MediaFilter) => {
     if (next === filter) return;
@@ -704,14 +739,11 @@ const GuestEvent = () => {
             {visibles.length > 0 && (
               <button
                 type="button"
-                onClick={toutTelecharger}
-                disabled={lot !== null}
-                className="label-mono inline-flex min-h-[44px] items-center gap-2 border border-border px-4 transition-colors hover:border-primary disabled:opacity-50"
+                onClick={() => setSelection((prev) => (prev ? null : new Set()))}
+                className="label-mono inline-flex min-h-[44px] items-center gap-2 border border-border px-4 transition-colors hover:border-primary"
               >
-                <Download className="h-4 w-4" />
-                {lot
-                  ? `${t("guest.zipEnCours")} ${lot.faits}/${lot.total}`
-                  : `${t("guest.zipTout")} (${visibles.length})`}
+                {selection ? <X className="h-4 w-4" /> : <CheckSquare className="h-4 w-4" />}
+                {selection ? t("guest.selAnnuler") : t("guest.selChoisir")}
               </button>
             )}
           </div>
@@ -737,9 +769,12 @@ const GuestEvent = () => {
               >
               <button
                 type="button"
-                onClick={() => setLightbox(p)}
+                onClick={() => (selection ? basculerSelection(p.id) : setLightbox(p))}
                 aria-label={p.file_name}
-                className="block h-full w-full transition-opacity hover:opacity-90"
+                aria-pressed={selection ? selection.has(p.id) : undefined}
+                className={`block h-full w-full transition-opacity hover:opacity-90 ${
+                  selection && !selection.has(p.id) ? "opacity-60" : ""
+                }`}
               >
                 <img
                   src={
@@ -757,25 +792,81 @@ const GuestEvent = () => {
                 />
                 {p.media_type === "video" && <PlayOverlay />}
               </button>
-              <button
-                type="button"
-                onClick={() => enregistrer(p)}
-                aria-label={t("guest.save")}
-                title={t("guest.save")}
-                className="absolute right-1 top-1 flex h-9 w-9 items-center justify-center border border-white/40 bg-black/45 text-white transition-opacity hover:bg-black/70 focus-visible:opacity-100"
-              >
-                {enregistrement === p.id
-                  ? <Loader2 className="h-4 w-4 animate-spin" />
-                  : <Download className="h-4 w-4" />}
-              </button>
+              {selection ? (
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute right-1 top-1 flex h-9 w-9 items-center justify-center border ${
+                    selection.has(p.id)
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-white/50 bg-black/35 text-transparent"
+                  }`}
+                >
+                  <Check className="h-4 w-4" />
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => enregistrer(p)}
+                  aria-label={t("guest.save")}
+                  title={t("guest.save")}
+                  className="absolute right-1 top-1 flex h-9 w-9 items-center justify-center border border-white/40 bg-black/45 text-white transition-opacity hover:bg-black/70 focus-visible:opacity-100"
+                >
+                  {enregistrement === p.id
+                    ? <Loader2 className="h-4 w-4 animate-spin" />
+                    : <Download className="h-4 w-4" />}
+                </button>
+              )}
               </div>
             ))}
+          </div>
+        )}
+
+        {selection && (
+          <div className="sticky bottom-0 z-30 -mx-[clamp(20px,5vw,48px)] mt-4 border-t border-border bg-background px-[clamp(20px,5vw,48px)] py-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-4">
+                <span className="label-mono">
+                  {selection.size} {t("guest.selChoisies")}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSelection((prev) =>
+                      prev && prev.size === visibles.length
+                        ? new Set()
+                        : new Set(visibles.map((m) => m.id)),
+                    )
+                  }
+                  className="label-mono min-h-[44px] border-b border-foreground pb-0.5 hover:opacity-60"
+                >
+                  {selection.size === visibles.length ? t("guest.selAucune") : t("guest.selTout")}
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={enregistrerSelection}
+                disabled={selection.size === 0 || enCours !== null}
+                className="inline-flex min-h-[48px] items-center gap-2 border border-primary bg-primary px-6 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-40"
+              >
+                {enCours ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                {enCours ? `${enCours.faits}/${enCours.total}` : t("guest.selEnregistrer")}
+              </button>
+            </div>
           </div>
         )}
 
         <div ref={sentinelRef} className="flex h-10 items-center justify-center">
           {loadingMore && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
         </div>
+
+        {reglages?.livre_dor && (
+          <LivreDor
+            eventId={event.id}
+            messagesPublics={reglages.messages_publics}
+            vocalAutorise={reglages.vocal}
+            typeEvenement={event.event_type}
+          />
+        )}
 
         <div className="mt-12 text-center">
           <a href="/" className="label-mono hover:text-foreground">

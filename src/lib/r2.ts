@@ -42,6 +42,12 @@ export function extensionDe(type: string): string {
     "video/mpeg": "mpeg",
     "video/x-matroska": "mkv",
     "video/x-msvideo": "avi",
+    "audio/webm": "weba",
+    "audio/mp4": "m4a",
+    "audio/mpeg": "mp3",
+    "audio/ogg": "oga",
+    "audio/aac": "aac",
+    "audio/wav": "wav",
   };
   return table[type] ?? "bin";
 }

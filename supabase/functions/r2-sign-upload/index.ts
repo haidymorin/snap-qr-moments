@@ -41,6 +41,10 @@ const TYPES = [
   // ces types-là pour une vidéo tout à fait ordinaire. Les refuser ne protège
   // de rien : ce sont les mêmes fichiers, sous un autre nom.
   "video/x-m4v", "video/3gpp", "video/mpeg", "video/x-matroska", "video/x-msvideo",
+  // Les messages vocaux du livre d'or. Le format dépend du navigateur : webm
+  // sur Android et Chrome, mp4 sur iPhone. On accepte les deux plutôt que
+  // d'imposer une conversion que le téléphone ferait mal.
+  "audio/webm", "audio/mp4", "audio/mpeg", "audio/ogg", "audio/aac", "audio/wav",
 ];
 
 const db = createClient(

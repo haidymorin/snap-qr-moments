@@ -21,6 +21,9 @@ export type Database = {
           event_type: string
           expire_le: string | null
           id: string
+          livre_dor_actif: boolean
+          livre_dor_public: boolean
+          livre_dor_vocal: boolean
           name: string
           paye_le: string | null
           plan: string
@@ -35,6 +38,9 @@ export type Database = {
           event_type: string
           expire_le?: string | null
           id?: string
+          livre_dor_actif?: boolean
+          livre_dor_public?: boolean
+          livre_dor_vocal?: boolean
           name: string
           paye_le?: string | null
           plan?: string
@@ -49,6 +55,9 @@ export type Database = {
           event_type?: string
           expire_le?: string | null
           id?: string
+          livre_dor_actif?: boolean
+          livre_dor_public?: boolean
+          livre_dor_vocal?: boolean
           name?: string
           paye_le?: string | null
           plan?: string
@@ -184,6 +193,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      livre_dor: {
+        Row: {
+          audio_secondes: number | null
+          audio_url: string | null
+          auteur: string
+          created_at: string
+          event_id: string
+          id: string
+          masque: boolean
+          photo_thumb_url: string | null
+          photo_url: string | null
+          texte: string | null
+        }
+        Insert: {
+          audio_secondes?: number | null
+          audio_url?: string | null
+          auteur: string
+          created_at?: string
+          event_id: string
+          id?: string
+          masque?: boolean
+          photo_thumb_url?: string | null
+          photo_url?: string | null
+          texte?: string | null
+        }
+        Update: {
+          audio_secondes?: number | null
+          audio_url?: string | null
+          auteur?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          masque?: boolean
+          photo_thumb_url?: string | null
+          photo_url?: string | null
+          texte?: string | null
+        }
+        Relationships: []
       }
       paiements: {
         Row: {
@@ -375,6 +423,35 @@ export type Database = {
           name: string
           plan: string
         }[]
+      }
+      guest_count_livre_dor: {
+        Args: { p_event_id: string }
+        Returns: number
+      }
+      guest_list_livre_dor: {
+        Args: { p_event_id: string; p_limit?: number; p_offset?: number }
+        Returns: {
+          audio_secondes: number
+          audio_url: string
+          auteur: string
+          created_at: string
+          id: string
+          photo_thumb_url: string
+          photo_url: string
+          texte: string
+        }[]
+      }
+      guest_reglages: {
+        Args: { p_event_id: string }
+        Returns: {
+          livre_dor: boolean
+          messages_publics: boolean
+          vocal: boolean
+        }[]
+      }
+      livre_dor_ouvert: {
+        Args: { p_event_id: string }
+        Returns: boolean
       }
       guest_list_by_ids: {
         Args: { p_event_id: string; p_ids: string[] }

@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
-import JSZip from "jszip";
-import { saveAs } from "file-saver";
+import { telechargerEnLots, type Avancement } from "@/lib/telechargerLot";
 import { supabase } from "@/integrations/supabase/client";
 import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
 import { downloadMedia } from "@/lib/downloadMedia";
@@ -47,6 +46,7 @@ const EventDetail = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [zipping, setZipping] = useState(false);
+  const [avancement, setAvancement] = useState<Avancement | null>(null);
   const [copied, setCopied] = useState(false);
   const [lightbox, setLightbox] = useState<MediaRow | null>(null);
   const [saving, setSaving] = useState(false);
@@ -194,51 +194,50 @@ const EventDetail = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  /* Toute la galerie, pour le couple, depuis un ordinateur.
+   *
+   * Cette fonction chargeait auparavant tous les fichiers en mémoire avant de
+   * fabriquer l'archive : sur un vrai mariage, plus de deux gigaoctets d'un
+   * seul tenant, et l'onglet se fermait sans un mot. Ce n'était pas un cas
+   * limite, c'était le cas normal.
+   *
+   * Les invités, eux, n'ont pas d'archive du tout : ils sélectionnent ce qu'ils
+   * veulent et l'enregistrent dans leur pellicule. Le zip n'a de sens que
+   * pour les hôtes, sur un ordinateur, et une seule fois. */
   const downloadZip = async () => {
-    if (counts.all === 0) {
-      toast({ title: "Aucun fichier à télécharger" });
-      return;
-    }
+    if (zipping) return;
     setZipping(true);
     try {
-      // Récupère la liste complète page par page (jamais tout d'un coup)
-      const all: MediaRow[] = [];
-      for (let from = 0; ; from += 200) {
-        const { data } = await supabase
-          .from("photos")
-          .select("id, url, thumbnail_url, file_name, media_type")
-          .eq("event_id", id!)
-          .order("uploaded_at", { ascending: false })
-          .range(from, from + 199);
-        const rows = (data ?? []) as MediaRow[];
-        all.push(...rows);
-        if (rows.length < 200) break;
+      const { data } = await supabase
+        .from("photos")
+        .select("url, file_name")
+        .eq("event_id", id)
+        .order("created_at", { ascending: true });
+      const fichiers = (data ?? []).map((m, n) => ({
+        url: m.url as string,
+        nom: (m.file_name as string) || `photo-${n + 1}.jpg`,
+      }));
+      if (fichiers.length === 0) return;
+      const echecs = await telechargerEnLots(
+        fichiers,
+        (event?.name || "souvenirs").replace(/\s+/g, "-").toLowerCase(),
+        setAvancement,
+      );
+      if (echecs > 0) {
+        toast({
+          title: "Archive incomplète",
+          description: `${echecs} fichier(s) n'ont pas pu être récupérés.`,
+          variant: "destructive",
+        });
       }
-
-      const zip = new JSZip();
-      const used = new Set<string>();
-      for (let i = 0; i < all.length; i += 4) {
-        await Promise.all(
-          all.slice(i, i + 4).map(async (p) => {
-            try {
-              const res = await fetch(p.url);
-              const blob = await res.blob();
-              let name = p.file_name;
-              let n = 1;
-              while (used.has(name)) name = `${n++}-${p.file_name}`;
-              used.add(name);
-              zip.file(name, blob);
-            } catch {
-              /* on continue avec les autres */
-            }
-          })
-        );
-      }
-      const content = await zip.generateAsync({ type: "blob" });
-      saveAs(content, `${event?.name.replace(/\s+/g, "-")}-souvenirs.zip`);
-    } catch (err: any) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+    } catch (err) {
+      toast({
+        title: "Téléchargement impossible",
+        description: String((err as Error).message ?? err),
+        variant: "destructive",
+      });
     } finally {
+      setAvancement(null);
       setZipping(false);
     }
   };
@@ -302,7 +301,7 @@ const EventDetail = () => {
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <MediaTabs value={filter} onChange={changeFilter} counts={counts} />
               <Button variant="outline" onClick={downloadZip} disabled={zipping || counts.all === 0}>
-                <Download className="w-4 h-4" /> {zipping ? "Préparation..." : "Tout télécharger (ZIP)"}
+                <Download className="w-4 h-4" /> {avancement ? `Préparation ${avancement.faits}/${avancement.total}` : zipping ? "Préparation…" : "Tout télécharger (ZIP)"}
               </Button>
             </div>
           </div>
