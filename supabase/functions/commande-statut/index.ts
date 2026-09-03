@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
 
   try {
-    const { sessionId, redirection } = await req.json();
+    const { sessionId } = await req.json();
     if (!sessionId || typeof sessionId !== "string") return json({ error: "requete_incomplete" }, 400);
 
     const { data: paiement } = await db
@@ -61,22 +61,31 @@ Deno.serve(async (req) => {
     const frais = Date.now() - new Date(paiement.recu_le).getTime() < FENETRE_MS;
     const jamaisDelivre = !paiement.acces_delivre_le;
 
-    let lien: string | null = null;
+    /* On ne renvoie PAS le lien tout fait que produit Supabase : ce lien passe
+       par l'adresse de redirection configurée dans le projet, et toute adresse
+       non déclarée y est silencieusement remplacée par celle du site d'origine.
+       Le jour où le nom de domaine change, le client se retrouve renvoyé sur
+       l'ancien site sans que rien ne signale l'erreur.
+
+       On renvoie donc le jeton seul. Le navigateur l'échange lui-même contre
+       une session (verifyOtp), sans redirection, sans liste d'adresses à tenir
+       à jour. Le jeton est aussi sensible que le lien qui le contenait : il ne
+       sort qu'une fois, dans les trente minutes qui suivent le paiement. */
+    let jeton: string | null = null;
     if (frais && jamaisDelivre && paiement.email) {
       const { data: genere } = await db.auth.admin.generateLink({
         type: "magiclink",
         email: paiement.email,
-        options: redirection ? { redirectTo: String(redirection) } : undefined,
       });
-      lien = genere?.properties?.action_link ?? null;
-      if (lien) {
+      jeton = genere?.properties?.hashed_token ?? null;
+      if (jeton) {
         await db.from("paiements")
           .update({ acces_delivre_le: new Date().toISOString() })
           .eq("stripe_session_id", sessionId);
       }
     }
 
-    return json({ statut: "pret", evenement, lien });
+    return json({ statut: "pret", evenement, jeton });
   } catch (e) {
     console.error("commande-statut", e);
     return json({ error: "indisponible" }, 500);

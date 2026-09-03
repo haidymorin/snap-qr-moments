@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
@@ -32,7 +32,8 @@ const TEXTES = {
     jusqua: "Photos conservées jusqu'au",
     lien: "Lien de vos invités",
     entrer: "Accéder à mon espace",
-    entrerAide: "Ce lien vous connecte directement. Vous pourrez choisir un mot de passe ensuite.",
+    entrerAide: "Ce bouton vous connecte directement. Vous pourrez choisir un mot de passe ensuite.",
+    entrerEchec: "La connexion automatique n'a pas abouti. Connectez-vous avec votre adresse e-mail.",
     connexion: "Se connecter",
     lenteurTitre: "Le paiement est bien passé.",
     lenteurCorps:
@@ -54,7 +55,8 @@ const TEXTES = {
     jusqua: "Photos kept until",
     lien: "Your guests' link",
     entrer: "Go to my space",
-    entrerAide: "This link signs you in directly. You can set a password afterwards.",
+    entrerAide: "This button signs you in directly. You can set a password afterwards.",
+    entrerEchec: "Automatic sign-in did not work. Please sign in with your email address.",
     connexion: "Sign in",
     lenteurTitre: "Your payment went through.",
     lenteurCorps:
@@ -87,18 +89,20 @@ const PaiementReussi = () => {
   const session = params.get("session_id");
 
   const [evenement, setEvenement] = useState<Evenement | null>(null);
-  const [lien, setLien] = useState<string | null>(null);
+  const [jeton, setJeton] = useState<string | null>(null);
+  const [entree, setEntree] = useState<"prete" | "encours" | "echec">("prete");
+  const naviguer = useNavigate();
   const [tropLong, setTropLong] = useState(false);
   const depart = useRef(Date.now());
 
   const interroger = useCallback(async () => {
     if (!session) return true;
     const { data } = await supabase.functions.invoke("commande-statut", {
-      body: { sessionId: session, redirection: `${window.location.origin}/dashboard` },
+      body: { sessionId: session },
     });
     if (data?.statut === "pret" && data.evenement) {
       setEvenement(data.evenement as Evenement);
-      setLien((data.lien as string) ?? null);
+      setJeton((data.jeton as string) ?? null);
       return true;
     }
     return false;
@@ -134,6 +138,21 @@ const PaiementReussi = () => {
       window.clearTimeout(minuteur);
     };
   }, [session, interroger]);
+
+  /* On échange le jeton contre une session ici même, sans quitter la page.
+     Passer par le lien tout fait de Supabase ferait transiter la personne par
+     une adresse de redirection déclarée ailleurs — c'est ce qui la renvoyait
+     sur l'ancien site après le changement de nom de domaine. */
+  const entrerDansEspace = async () => {
+    if (!jeton) return;
+    setEntree("encours");
+    const { error } = await supabase.auth.verifyOtp({ token_hash: jeton, type: "magiclink" });
+    if (error) {
+      setEntree("echec");
+      return;
+    }
+    naviguer("/dashboard");
+  };
 
   const lienInvites = evenement ? `${window.location.origin}/event/${evenement.id}` : "";
   const dateLisible = (iso: string) =>
@@ -219,23 +238,31 @@ const PaiementReussi = () => {
             </div>
 
             <div className="mt-9">
-              {lien ? (
+              {jeton && entree !== "echec" ? (
                 <>
-                  <a
-                    href={lien}
-                    className="inline-flex min-h-[52px] items-center border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
+                  <button
+                    type="button"
+                    onClick={entrerDansEspace}
+                    disabled={entree === "encours"}
+                    className="inline-flex min-h-[52px] items-center border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-60"
                   >
+                    {entree === "encours" && <Loader2 className="mr-3 h-4 w-4 animate-spin" />}
                     {T.entrer}
-                  </a>
+                  </button>
                   <p className="mt-3 max-w-[44ch] text-xs text-muted-foreground">{T.entrerAide}</p>
                 </>
               ) : (
-                <Link
-                  to="/auth?mode=signin"
-                  className="inline-flex min-h-[52px] items-center border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
-                >
-                  {T.connexion}
-                </Link>
+                <>
+                  <Link
+                    to="/auth?mode=signin"
+                    className="inline-flex min-h-[52px] items-center border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
+                  >
+                    {T.connexion}
+                  </Link>
+                  {entree === "echec" && (
+                    <p className="mt-3 max-w-[44ch] text-xs text-muted-foreground">{T.entrerEchec}</p>
+                  )}
+                </>
               )}
             </div>
           </>
