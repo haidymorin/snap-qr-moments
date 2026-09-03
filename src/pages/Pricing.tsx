@@ -23,7 +23,6 @@ type Extra = { title: string; price: string; description: string };
 
 const data: Record<Lang, {
   plans: Plan[];
-  trial: { text: string; link: string };
   extras: Extra[];
   extrasNote: string;
   pro: { name: string; price: string; period: string; pitch: string; features: string[]; ctaLabel: string };
@@ -59,7 +58,7 @@ const data: Record<Lang, {
         features: [
           "Livre d'or numérique : messages écrits, vocaux et vidéo",
           "Tri par visage : chaque invité retrouve ses propres photos",
-          "Diaporama live projeté pendant la soirée",
+          "Diaporama en direct, à afficher sur l'écran de votre choix",
           "Page, QR code et signalétique aux couleurs de votre événement",
           "Hébergement 6 mois",
         ],
@@ -81,10 +80,6 @@ const data: Record<Lang, {
         ctaLabel: "Choisir l'Héritage",
       },
     ],
-    trial: {
-      text: "Vous préférez voir à quoi ça ressemble avant de choisir ?",
-      link: "Créez un événement d'essai, 15 photos, sans carte bancaire",
-    },
     extras: [
       {
         title: "Album grand format",
@@ -203,7 +198,7 @@ const data: Record<Lang, {
         features: [
           "Digital guest book: written, voice and video messages",
           "Face sorting: every guest finds their own photos",
-          "Live slideshow projected during the party",
+          "Live slideshow, shown on the screen of your choice",
           "Page, QR code and signage in your event's colours",
           "6 months hosting",
         ],
@@ -225,10 +220,6 @@ const data: Record<Lang, {
         ctaLabel: "Choose Heirloom",
       },
     ],
-    trial: {
-      text: "Rather see what it looks like before you pick?",
-      link: "Create a trial event, 15 photos, no card required",
-    },
     extras: [
       {
         title: "Large-format album",
@@ -333,7 +324,7 @@ const Pricing = () => {
      rétractation — un consentement demandé après le paiement ne vaudrait
      rien. */
   const [commande, setCommande] = useState<PlanId | null>(null);
-  const { plans, trial, extras, extrasNote, pro, agency, faqs } = data[lang];
+  const { plans, extras, extrasNote, pro, agency, faqs } = data[lang];
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -447,16 +438,6 @@ const Pricing = () => {
                   })}
                 </div>
 
-                {/* L'essai gratuit, discret, sous les vraies offres */}
-                <p className="mt-8 text-center text-[14.5px] text-foreground">
-                  {trial.text}{" "}
-                  <Link
-                    to="/auth"
-                    className="border-b border-foreground pb-0.5 text-foreground opacity-100 transition-opacity hover:opacity-60"
-                  >
-                    {trial.link}
-                  </Link>
-                </p>
               </>
             ) : (
               <div className="grid gap-[clamp(14px,1.8vw,22px)] lg:grid-cols-[1.55fr_1fr]">

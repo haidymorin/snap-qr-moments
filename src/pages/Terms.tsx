@@ -45,7 +45,7 @@ const SECTIONS: Section[] = [
         t: "Les trois formules",
         li: [
           "Essentiel — 59 € : QR code et page de collecte, galerie partagée, téléchargement en haute définition, nettoyage automatique des doublons et des photos floues, PDF de signalétique à imprimer, hébergement 6 mois.",
-          "Souvenir — 179 € : tout l'Essentiel, plus le livre d'or numérique (messages écrits, vocaux et vidéo), le tri par visage, le diaporama projeté pendant la soirée, la personnalisation aux couleurs de l'événement, hébergement 6 mois.",
+          "Souvenir — 179 € : tout l'Essentiel, plus le livre d'or numérique (messages écrits, vocaux et vidéo), le tri par visage, le diaporama en direct, la personnalisation aux couleurs de l'événement, hébergement 6 mois.",
           "Héritage — 390 € : tout le Souvenir, plus l'album imprimé grand format et la gazette de l'événement en 50 exemplaires, hébergement 6 mois.",
         ],
       },
