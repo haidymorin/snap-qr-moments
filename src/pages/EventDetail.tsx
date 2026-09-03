@@ -8,6 +8,9 @@ import { downloadMedia } from "@/lib/downloadMedia";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useLanguage } from "@/contexts/LanguageContext";
+import ReglagesEvenement, { type Reglages } from "@/components/ReglagesEvenement";
+import LivreDorHote from "@/components/LivreDorHote";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import MediaTabs, { MediaFilter, PlayOverlay } from "@/components/MediaTabs";
@@ -20,7 +23,61 @@ interface EventRow {
   event_type: string;
   unique_code: string;
   user_id: string;
+  plan: string;
+  collecte_fin: string | null;
+  message_accueil: string | null;
+  livre_dor_actif: boolean;
+  livre_dor_vocal: boolean;
+  livre_dor_public: boolean;
 }
+
+/* Le livre d'or fait partie du Souvenir, pas de l'Essentiel : sans lui, ni ses
+   réglages ni les messages n'ont de raison d'apparaître. */
+const PLANS_AVEC_LIVRE_DOR = ["souvenir", "heritage", "admin"];
+/* Cette page était écrite entièrement en français dans le code. C'est celle
+   où atterrit un client juste après avoir payé — donc la première qu'il ouvre
+   en anglais si c'est sa langue. */
+const TEXTES = {
+  fr: {
+    retour: "Retour au tableau de bord",
+    lien: "Lien à partager avec vos invités",
+    copier: "Copier", copie: "Copié",
+    qr: "Votre QR code",
+    telechargerQR: "Télécharger le QR (PNG)",
+    galerie: "Galerie",
+    toutTelecharger: "Tout télécharger (ZIP)",
+    preparation: "Préparation",
+    videTout: "Aucun souvenir pour l'instant. Partagez le QR code à vos invités.",
+    videPhotos: "Aucune photo pour l'instant.",
+    videVideos: "Aucune vidéo pour l'instant.",
+    introuvable: "Événement introuvable",
+    refuse: "Accès refusé",
+    echecTitre: "Téléchargement impossible",
+    echecTexte: "Réessayez dans un instant.",
+    archiveTitre: "Archive incomplète",
+    archiveTexte: (n: number) => `${n} fichier(s) n'ont pas pu être récupérés.`,
+  },
+  en: {
+    retour: "Back to dashboard",
+    lien: "Link to share with your guests",
+    copier: "Copy", copie: "Copied",
+    qr: "Your QR code",
+    telechargerQR: "Download QR (PNG)",
+    galerie: "Gallery",
+    toutTelecharger: "Download all (ZIP)",
+    preparation: "Preparing",
+    videTout: "Nothing here yet. Share the QR code with your guests.",
+    videPhotos: "No photos yet.",
+    videVideos: "No videos yet.",
+    introuvable: "Event not found",
+    refuse: "Access denied",
+    echecTitre: "Download failed",
+    echecTexte: "Try again in a moment.",
+    archiveTitre: "Incomplete archive",
+    archiveTexte: (n: number) => `${n} file(s) could not be retrieved.`,
+  },
+};
+
 interface MediaRow {
   id: string;
   url: string;
@@ -36,6 +93,8 @@ const EventDetail = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { lang } = useLanguage();
+  const T = TEXTES[lang === "en" ? "en" : "fr"];
   const qrRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [event, setEvent] = useState<EventRow | null>(null);
@@ -58,8 +117,8 @@ const EventDetail = () => {
       await downloadMedia(lightbox.url, lightbox.file_name);
     } catch {
       toast({
-        title: "Téléchargement impossible",
-        description: "Réessayez dans un instant.",
+        title: T.echecTitre,
+        description: T.echecTexte,
         variant: "destructive",
       });
     } finally {
@@ -122,12 +181,12 @@ const EventDetail = () => {
     (async () => {
       const { data: ev, error } = await supabase.from("events").select("*").eq("id", id).maybeSingle();
       if (error || !ev) {
-        toast({ title: "Événement introuvable", variant: "destructive" });
+        toast({ title: T.introuvable, variant: "destructive" });
         navigate("/dashboard");
         return;
       }
       if (ev.user_id !== user.id) {
-        toast({ title: "Accès refusé", variant: "destructive" });
+        toast({ title: T.refuse, variant: "destructive" });
         navigate("/dashboard");
         return;
       }
@@ -142,6 +201,7 @@ const EventDetail = () => {
       setMedia(await fetchPage(0, "all"));
       setFetching(false);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, id, navigate, toast, fetchPage]);
 
   // Changement d'onglet : filtrage côté serveur, pagination remise à zéro
@@ -225,14 +285,14 @@ const EventDetail = () => {
       );
       if (echecs > 0) {
         toast({
-          title: "Archive incomplète",
-          description: `${echecs} fichier(s) n'ont pas pu être récupérés.`,
+          title: T.archiveTitre,
+          description: T.archiveTexte(echecs),
           variant: "destructive",
         });
       }
     } catch (err) {
       toast({
-        title: "Téléchargement impossible",
+        title: T.echecTitre,
         description: String((err as Error).message ?? err),
         variant: "destructive",
       });
@@ -256,12 +316,12 @@ const EventDetail = () => {
       <main className="pt-24 pb-20">
         <div className="container mx-auto px-4">
           <Button variant="ghost" onClick={() => navigate("/dashboard")} className="mb-6">
-            <ArrowLeft className="w-4 h-4" /> Retour au dashboard
+            <ArrowLeft className="w-4 h-4" /> {T.retour}
           </Button>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
             <div className="lg:col-span-2">
-              <div className="px-3 py-1 bg-accent rounded-full text-xs font-medium text-accent-foreground capitalize inline-block mb-3">
+              <div className="border border-border px-3 py-1 text-xs font-medium text-muted-foreground capitalize inline-block mb-3">
                 {event.event_type}
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-3">
@@ -269,39 +329,39 @@ const EventDetail = () => {
               </h1>
               <div className="flex items-center gap-2 text-muted-foreground mb-6">
                 <Calendar className="w-5 h-5" />
-                {new Date(event.event_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                {new Date(event.event_date).toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR", { day: "numeric", month: "long", year: "numeric" })}
               </div>
               <div className="p-6 bg-card rounded-2xl border border-border shadow-soft">
-                <p className="text-sm text-muted-foreground mb-2">Lien à partager avec vos invités :</p>
+                <p className="text-sm text-muted-foreground mb-2">{T.lien}</p>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <code className="flex-1 px-4 py-2 bg-muted rounded-lg text-sm break-all">{guestUrl}</code>
                   <Button variant="outline" onClick={copyLink}>
                     {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    {copied ? "Copié" : "Copier"}
+                    {copied ? T.copie : T.copier}
                   </Button>
                 </div>
               </div>
             </div>
 
             <div className="p-6 bg-gradient-card rounded-2xl border border-primary/30 shadow-card text-center">
-              <p className="text-sm font-medium text-muted-foreground mb-4">Votre QR Code</p>
+              <p className="text-sm font-medium text-muted-foreground mb-4">{T.qr}</p>
               <div ref={qrRef} className="bg-white p-4 rounded-xl inline-block mb-4">
                 <QRCodeCanvas value={guestUrl} size={180} level="H" />
               </div>
               <Button variant="hero" className="w-full" onClick={downloadQR}>
-                <Download className="w-4 h-4" /> Télécharger PNG
+                <Download className="w-4 h-4" /> {T.telechargerQR}
               </Button>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
             <h2 className="text-2xl font-bold">
-              Galerie <span className="text-muted-foreground text-lg font-normal">({counts.all})</span>
+              {T.galerie} <span className="text-muted-foreground text-lg font-normal">({counts.all})</span>
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <MediaTabs value={filter} onChange={changeFilter} counts={counts} />
               <Button variant="outline" onClick={downloadZip} disabled={zipping || counts.all === 0}>
-                <Download className="w-4 h-4" /> {avancement ? `Préparation ${avancement.faits}/${avancement.total}` : zipping ? "Préparation…" : "Tout télécharger (ZIP)"}
+                <Download className="w-4 h-4" /> {avancement ? `${T.preparation} ${avancement.faits}/${avancement.total}` : zipping ? `${T.preparation}…` : T.toutTelecharger}
               </Button>
             </div>
           </div>
@@ -309,11 +369,7 @@ const EventDetail = () => {
           {media.length === 0 && !loadingMore ? (
             <div className="text-center py-16 bg-card rounded-2xl border border-border">
               <p className="text-muted-foreground">
-                {filter === "video"
-                  ? "Aucune vidéo pour l'instant."
-                  : filter === "photo"
-                    ? "Aucune photo pour l'instant."
-                    : "Aucun souvenir pour l'instant. Partagez le QR code à vos invités !"}
+                {filter === "video" ? T.videVideos : filter === "photo" ? T.videPhotos : T.videTout}
               </p>
             </div>
           ) : (
@@ -348,6 +404,27 @@ const EventDetail = () => {
           <div ref={sentinelRef} className="h-10 flex items-center justify-center">
             {loadingMore && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
           </div>
+
+          {PLANS_AVEC_LIVRE_DOR.includes(event.plan) && (
+            <LivreDorHote eventId={event.id} lang={lang} />
+          )}
+
+          <ReglagesEvenement
+            eventId={event.id}
+            eventDate={event.event_date}
+            lang={lang}
+            livreDorInclus={PLANS_AVEC_LIVRE_DOR.includes(event.plan)}
+            valeurs={{
+              message_accueil: event.message_accueil,
+              collecte_fin: event.collecte_fin,
+              livre_dor_actif: event.livre_dor_actif,
+              livre_dor_vocal: event.livre_dor_vocal,
+              livre_dor_public: event.livre_dor_public,
+            }}
+            onEnregistre={(r: Reglages) =>
+              setEvent((prev) => (prev ? { ...prev, ...r } : prev))
+            }
+          />
         </div>
 
         {lightbox && (

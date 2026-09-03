@@ -83,7 +83,7 @@ const META: Record<string, { fr: Meta; en: Meta }> = {
 
 /* Les espaces privés et les galeries d'invités n'ont rien à faire dans un
    moteur de recherche : une galerie de mariage indexée serait une fuite. */
-const PRIVE = ["/dashboard", "/auth", "/event/", "/paiement-reussi"];
+const PRIVE = ["/dashboard", "/admin", "/auth", "/event/", "/paiement-reussi"];
 
 const poser = (selecteur: string, creer: () => HTMLElement, valeur: string) => {
   let el = document.head.querySelector(selecteur) as HTMLElement | null;

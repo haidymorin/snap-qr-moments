@@ -23,6 +23,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Auth = lazy(() => import("./pages/Auth"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Admin = lazy(() => import("./pages/Admin"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const GuestEvent = lazy(() => import("./pages/GuestEvent"));
 const PaiementReussi = lazy(() => import("./pages/PaiementReussi"));
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="/dashboard/event/:id" element={<EventDetail />} />
               <Route path="/event/:id" element={<GuestEvent />} />
               <Route path="/paiement-reussi" element={<PaiementReussi />} />
