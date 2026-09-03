@@ -8,7 +8,7 @@ const Privacy = () => {
       <main className="pt-24 pb-20">
         <div className="container mx-auto px-4 max-w-3xl">
           <h1 className="text-4xl md:text-5xl font-bold mb-8">
-            Politique de <span className="bg-gradient-hero bg-clip-text text-transparent">confidentialité</span>
+            Politique de <span>confidentialité</span>
           </h1>
 
           <div className="space-y-8 text-muted-foreground leading-relaxed">

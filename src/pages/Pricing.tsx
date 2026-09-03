@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { startCheckout, type PlanId } from "@/lib/checkout";
-import { useToast } from "@/hooks/use-toast";
+import { type PlanId } from "@/lib/checkout";
+import CommandeDialog from "@/components/CommandeDialog";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
@@ -327,24 +327,12 @@ const Check = () => (
 const Pricing = () => {
   const { t, lang } = useLanguage();
   const [tab, setTab] = useState<"particuliers" | "professionnels">("particuliers");
-  const [pending, setPending] = useState<PlanId | null>(null);
-  const { toast } = useToast();
-
-  /* Le bouton d'un palier envoie vers la page de paiement Stripe. */
-  const choose = async (plan: PlanId) => {
-    if (pending) return;
-    setPending(plan);
-    try {
-      await startCheckout(plan);
-    } catch (err) {
-      setPending(null);
-      toast({
-        title: "Le paiement n'a pas pu s'ouvrir",
-        description: String((err as Error).message ?? err),
-        variant: "destructive",
-      });
-    }
-  };
+  /* Le bouton d'un palier n'envoie plus directement vers Stripe : il ouvre
+     d'abord le formulaire de commande. La date y est demandée parce qu'elle
+     seule détermine s'il faut recueillir le renoncement au délai de
+     rétractation — un consentement demandé après le paiement ne vaudrait
+     rien. */
+  const [commande, setCommande] = useState<PlanId | null>(null);
   const { plans, trial, extras, extrasNote, pro, agency, faqs } = data[lang];
 
   return (
@@ -445,15 +433,14 @@ const Pricing = () => {
 
                         <button
                           type="button"
-                          onClick={() => choose(plan.id)}
-                          disabled={pending !== null}
+                          onClick={() => setCommande(plan.id)}
                           className={`mt-8 inline-flex min-h-[48px] items-center justify-center border px-6 py-4 text-xs font-semibold uppercase tracking-[0.1em] transition-colors disabled:opacity-60 ${
                             dark
                               ? "border-night-foreground bg-night-foreground text-night hover:bg-transparent hover:text-night-foreground"
                               : "border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary"
                           }`}
                         >
-                          {pending === plan.id ? "Redirection…" : plan.ctaLabel}
+                          {plan.ctaLabel}
                         </button>
                       </article>
                     );
@@ -576,6 +563,8 @@ const Pricing = () => {
       </main>
 
       <Footer />
+
+      <CommandeDialog plan={commande} onClose={() => setCommande(null)} />
     </div>
   );
 };

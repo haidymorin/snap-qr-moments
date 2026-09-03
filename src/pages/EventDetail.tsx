@@ -266,7 +266,7 @@ const EventDetail = () => {
                 {event.event_type}
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-3">
-                <span className="bg-gradient-hero bg-clip-text text-transparent">{event.name}</span>
+                <span>{event.name}</span>
               </h1>
               <div className="flex items-center gap-2 text-muted-foreground mb-6">
                 <Calendar className="w-5 h-5" />

@@ -71,7 +71,7 @@ const Contact = () => {
           {/* Hero */}
           <div className="text-center mb-16 animate-fade-in">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Créez votre <span className="bg-gradient-hero bg-clip-text text-transparent">événement</span>
+              Créez votre <span>événement</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Remplissez le formulaire ci-dessous et nous vous contacterons rapidement pour configurer votre album événement.
