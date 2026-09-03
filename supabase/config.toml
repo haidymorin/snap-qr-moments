@@ -13,3 +13,7 @@ verify_jwt = false
 
 [functions.commande-statut]
 verify_jwt = false
+# Le formulaire de contact s'adresse à des visiteurs qui n'ont pas de compte :
+# exiger un jeton reviendrait à ne recevoir aucune demande.
+[functions.contact]
+verify_jwt = false
