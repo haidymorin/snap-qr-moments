@@ -379,7 +379,6 @@ export type Database = {
       guest_list_by_ids: {
         Args: { p_event_id: string; p_ids: string[] }
         Returns: {
-          created_at: string
           event_id: string
           faces_indexed_at: string | null
           file_name: string
@@ -387,8 +386,15 @@ export type Database = {
           media_type: string
           storage_path: string
           thumbnail_url: string | null
+          uploaded_at: string
           url: string
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "photos"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       guest_list_media: {
         Args: {
