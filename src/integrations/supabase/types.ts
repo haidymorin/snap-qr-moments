@@ -19,8 +19,13 @@ export type Database = {
           created_at: string
           event_date: string
           event_type: string
+          expire_le: string | null
           id: string
           name: string
+          paye_le: string | null
+          plan: string
+          statut: string
+          stripe_session_id: string | null
           unique_code: string
           user_id: string
         }
@@ -28,8 +33,13 @@ export type Database = {
           created_at?: string
           event_date: string
           event_type: string
+          expire_le?: string | null
           id?: string
           name: string
+          paye_le?: string | null
+          plan?: string
+          statut?: string
+          stripe_session_id?: string | null
           unique_code?: string
           user_id: string
         }
@@ -37,8 +47,13 @@ export type Database = {
           created_at?: string
           event_date?: string
           event_type?: string
+          expire_le?: string | null
           id?: string
           name?: string
+          paye_le?: string | null
+          plan?: string
+          statut?: string
+          stripe_session_id?: string | null
           unique_code?: string
           user_id?: string
         }
@@ -170,6 +185,53 @@ export type Database = {
           },
         ]
       }
+      paiements: {
+        Row: {
+          acces_delivre_le: string | null
+          charge_utile: Json | null
+          devise: string
+          email: string | null
+          event_id: string | null
+          montant_centimes: number | null
+          plan: string | null
+          recu_le: string
+          statut: string
+          stripe_session_id: string
+        }
+        Insert: {
+          acces_delivre_le?: string | null
+          charge_utile?: Json | null
+          devise?: string
+          email?: string | null
+          event_id?: string | null
+          montant_centimes?: number | null
+          plan?: string | null
+          recu_le?: string
+          statut?: string
+          stripe_session_id: string
+        }
+        Update: {
+          acces_delivre_le?: string | null
+          charge_utile?: Json | null
+          devise?: string
+          email?: string | null
+          event_id?: string | null
+          montant_centimes?: number | null
+          plan?: string | null
+          recu_le?: string
+          statut?: string
+          stripe_session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paiements_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       photo_faces: {
         Row: {
           created_at: string
@@ -274,11 +336,31 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      est_admin: { Args: { p_user?: string }; Returns: boolean }
+      evenement_actif: { Args: { p_event_id: string }; Returns: boolean }
       event_exists: { Args: { p_event_id: string }; Returns: boolean }
       guest_count_media: {
         Args: { p_event_id: string; p_media?: string }
