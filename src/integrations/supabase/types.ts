@@ -21,6 +21,9 @@ export type Database = {
           event_type: string
           expire_le: string | null
           id: string
+          livre_dor_actif: boolean
+          livre_dor_public: boolean
+          livre_dor_vocal: boolean
           name: string
           paye_le: string | null
           plan: string
@@ -35,6 +38,9 @@ export type Database = {
           event_type: string
           expire_le?: string | null
           id?: string
+          livre_dor_actif?: boolean
+          livre_dor_public?: boolean
+          livre_dor_vocal?: boolean
           name: string
           paye_le?: string | null
           plan?: string
@@ -49,6 +55,9 @@ export type Database = {
           event_type?: string
           expire_le?: string | null
           id?: string
+          livre_dor_actif?: boolean
+          livre_dor_public?: boolean
+          livre_dor_vocal?: boolean
           name?: string
           paye_le?: string | null
           plan?: string
@@ -178,6 +187,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "guest_contacts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      livre_dor: {
+        Row: {
+          audio_secondes: number | null
+          audio_url: string | null
+          auteur: string
+          created_at: string
+          event_id: string
+          id: string
+          masque: boolean
+          photo_thumb_url: string | null
+          photo_url: string | null
+          texte: string | null
+        }
+        Insert: {
+          audio_secondes?: number | null
+          audio_url?: string | null
+          auteur: string
+          created_at?: string
+          event_id: string
+          id?: string
+          masque?: boolean
+          photo_thumb_url?: string | null
+          photo_url?: string | null
+          texte?: string | null
+        }
+        Update: {
+          audio_secondes?: number | null
+          audio_url?: string | null
+          auteur?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          masque?: boolean
+          photo_thumb_url?: string | null
+          photo_url?: string | null
+          texte?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "livre_dor_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
@@ -362,6 +418,7 @@ export type Database = {
       est_admin: { Args: { p_user?: string }; Returns: boolean }
       evenement_actif: { Args: { p_event_id: string }; Returns: boolean }
       event_exists: { Args: { p_event_id: string }; Returns: boolean }
+      guest_count_livre_dor: { Args: { p_event_id: string }; Returns: number }
       guest_count_media: {
         Args: { p_event_id: string; p_media?: string }
         Returns: number
@@ -396,6 +453,19 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      guest_list_livre_dor: {
+        Args: { p_event_id: string; p_limit?: number; p_offset?: number }
+        Returns: {
+          audio_secondes: number
+          audio_url: string
+          auteur: string
+          created_at: string
+          id: string
+          photo_thumb_url: string
+          photo_url: string
+          texte: string
+        }[]
+      }
       guest_list_media: {
         Args: {
           p_event_id: string
@@ -412,6 +482,14 @@ export type Database = {
           url: string
         }[]
       }
+      guest_reglages: {
+        Args: { p_event_id: string }
+        Returns: {
+          livre_dor: boolean
+          messages_publics: boolean
+          vocal: boolean
+        }[]
+      }
       guest_self_register: {
         Args: { p_email?: string; p_event_id: string; p_phone?: string }
         Returns: undefined
@@ -424,6 +502,7 @@ export type Database = {
           first_name: string
         }[]
       }
+      livre_dor_ouvert: { Args: { p_event_id: string }; Returns: boolean }
       purge_expired_face_consents: {
         Args: never
         Returns: {
