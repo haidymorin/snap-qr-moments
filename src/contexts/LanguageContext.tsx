@@ -76,6 +76,8 @@ const translations: Record<Lang, Dict> = {
       legalNotice: "Mentions légales",
       privacy: "Confidentialité",
       terms: "Conditions de vente",
+      madeWith: "Fait avec",
+      by: "par QR Memories",
     },
     notFound: {
       title: "Cette page n'existe pas",
@@ -369,6 +371,8 @@ const translations: Record<Lang, Dict> = {
       legalNotice: "Legal notice",
       privacy: "Privacy",
       terms: "Terms of sale",
+      madeWith: "Made with",
+      by: "by QR Memories",
     },
     notFound: {
       title: "This page doesn't exist",
