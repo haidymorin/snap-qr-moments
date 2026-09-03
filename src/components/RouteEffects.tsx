@@ -42,7 +42,7 @@ const META: Record<string, { fr: Meta; en: Meta }> = {
     },
     en: {
       title: "Plans and pricing · QR Memories",
-      desc: "Essential €59, Keepsake €179, Heirloom €390. Album, newspaper and printed keepsakes à la carte. No subscription, no app.",
+      desc: "Essential €59, Souvenir €179, Heritage €390. Album, newspaper and printed keepsakes à la carte. No subscription, no app.",
     },
   },
   "/contact": {

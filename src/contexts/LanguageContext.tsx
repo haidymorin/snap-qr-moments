@@ -448,15 +448,15 @@ const translations: Record<Lang, Dict> = {
       plan1Price: "€59",
       plan1Desc:
         "The QR code, the shared gallery, automatic clean-up of the misfires and printable signage. Photos kept six months.",
-      plan2Name: "Keepsake",
+      plan2Name: "Souvenir",
       plan2Price: "€179",
       plan2Badge: "Most chosen",
       plan2Desc:
         "Everything in Essential, plus the guest book, face sorting and the slideshow projected during the party. Photos kept six months.",
-      plan3Name: "Heirloom",
+      plan3Name: "Heritage",
       plan3Price: "€390",
       plan3Desc:
-        "Everything in Keepsake, plus the large-format album and fifty copies of the newspaper. Photos kept six months.",
+        "Everything in Souvenir, plus the large-format album and fifty copies of the newspaper. Photos kept six months.",
       planDetail: "The detail",
 
       objEyebrow: "What is left of it",

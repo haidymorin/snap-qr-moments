@@ -101,18 +101,27 @@ const TEXTES = {
   },
 };
 
-/* Les noms des formules ne se traduisent pas.
+/* Les noms des formules, dans les deux langues.
  *
- * Ce sont des noms propres, pas des descriptions : « Souvenir » est déjà un
- * mot anglais, et l'accent d'« Héritage » est justement ce qui le fait lire
- * comme un nom français plutôt que comme une faute de frappe. C'est la ligne
- * de toutes les maisons françaises — on ne traduit pas un nom de produit, on
- * l'explique en dessous. */
-const PALIERS: Record<string, string> = {
-  essentiel: "Essentiel",
-  souvenir: "Souvenir",
-  heritage: "Héritage",
-  admin: "Administration",
+ * « Souvenir » ne bouge pas : c'est déjà un mot anglais, et c'est lui qui fait
+ * le pont entre les deux versions. Les deux autres s'écrivent correctement
+ * dans chaque langue plutôt qu'à moitié — « Essentiel » sur une page anglaise
+ * se lirait comme une faute de frappe pour *Essential*, et l'accent
+ * d'« Héritage » comme une coquille. Un nom de produit doit avoir l'air
+ * choisi, jamais raté. */
+const PALIERS: Record<"fr" | "en", Record<string, string>> = {
+  fr: {
+    essentiel: "Essentiel",
+    souvenir: "Souvenir",
+    heritage: "Héritage",
+    admin: "Administration",
+  },
+  en: {
+    essentiel: "Essential",
+    souvenir: "Souvenir",
+    heritage: "Heritage",
+    admin: "Administration",
+  },
 };
 
 const creerSchema = (T: (typeof TEXTES)["fr"]) =>
@@ -318,7 +327,7 @@ const Dashboard = () => {
                       </span>
                       {ev.plan && (
                         <span className="label-mono border border-border px-2 py-1">
-                          {PALIERS[ev.plan] ?? ev.plan}
+                          {PALIERS[lang === "en" ? "en" : "fr"][ev.plan] ?? ev.plan}
                         </span>
                       )}
                     </div>
