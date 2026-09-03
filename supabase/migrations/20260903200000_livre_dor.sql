@@ -74,9 +74,16 @@ grant all on public.livre_dor to service_role;
 
 create index if not exists idx_livre_dor_event on public.livre_dor(event_id, created_at desc);
 
+/* Les politiques disent qui a le droit ; les GRANT disent que la table est
+   visible depuis l'API. Sans eux, PostgREST refuse tout, politiques ou non —
+   la même omission avait déjà bloqué les tables de reconnaissance faciale. */
+grant insert on public.livre_dor to anon, authenticated;
+grant select, update on public.livre_dor to authenticated;
+
 /* Écrire : ouvert à tous, sur un événement ouvert dont la formule inclut le
    livre d'or. C'est la même logique que le dépôt d'une photo — un invité n'a
    pas de compte, et ne doit pas en avoir. */
+drop policy if exists "Un invite peut laisser un message" on public.livre_dor;
 create policy "Un invite peut laisser un message"
   on public.livre_dor for insert to anon, authenticated
   with check (public.livre_dor_ouvert(event_id) and masque = false);
@@ -84,6 +91,7 @@ create policy "Un invite peut laisser un message"
 /* Lire depuis la table : réservé aux hôtes, qui voient tout, masqués compris.
    Les invités passent par la fonction plus bas, qui applique le réglage de
    visibilité. */
+drop policy if exists "Les hotes lisent leur livre d'or" on public.livre_dor;
 create policy "Les hotes lisent leur livre d'or"
   on public.livre_dor for select to authenticated
   using (
@@ -92,6 +100,7 @@ create policy "Les hotes lisent leur livre d'or"
     or public.est_admin()
   );
 
+drop policy if exists "Les hotes masquent un message" on public.livre_dor;
 create policy "Les hotes masquent un message"
   on public.livre_dor for update to authenticated
   using (

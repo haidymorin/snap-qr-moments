@@ -15,6 +15,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Calendar, Image as ImageIcon, Plus, QrCode } from "lucide-react";
 
 interface EventRow {
@@ -29,6 +30,84 @@ interface EventRow {
   photo_count?: number;
 }
 
+/* Les textes de cette page, dans les deux langues.
+ *
+ * Elle était entièrement écrite en français dans le code : basculer en anglais
+ * ne changeait rien, ce que voyait tout de suite un visiteur anglophone connecté.
+ *
+ * Les noms des formules, eux, ne sont pas traduits — voir plus bas. */
+const TEXTES = {
+  fr: {
+    chargement: "Chargement…",
+    titre: "Mes événements",
+    sousTitre: "Gérez vos albums et partagez vos QR codes",
+    creer: "Créer un événement",
+    nouvel: "Nouvel événement",
+    nom: "Nom de l'événement",
+    nomExemple: "Mariage de Camille et Sacha",
+    date: "Date",
+    type: "Type",
+    choisirType: "Choisir un type",
+    types: {
+      mariage: "Mariage", anniversaire: "Anniversaire", soiree: "Soirée",
+      entreprise: "Entreprise", autre: "Autre",
+    } as Record<string, string>,
+    envoi: "Création…",
+    valider: "Créer l'événement",
+    chargementListe: "Chargement de vos événements…",
+    vide: "Aucun événement pour l'instant",
+    videTexte: "Choisissez une formule pour créer votre premier événement.",
+    premier: "Créer mon premier événement",
+    choisirFormule: "Choisir ma formule",
+    photo: "photo", photos: "photos",
+    conservees: "Photos conservées jusqu'au",
+    creeTitre: "Événement créé",
+    creeTexte: "Votre QR code est prêt.",
+    erreur: "Erreur",
+    nomCourt: "Nom trop court",
+    dateRequise: "Date requise",
+    typeRequis: "Type requis",
+  },
+  en: {
+    chargement: "Loading…",
+    titre: "My events",
+    sousTitre: "Manage your albums and share your QR codes",
+    creer: "Create an event",
+    nouvel: "New event",
+    nom: "Event name",
+    nomExemple: "Camille and Sacha's wedding",
+    date: "Date",
+    type: "Type",
+    choisirType: "Choose a type",
+    types: {
+      mariage: "Wedding", anniversaire: "Birthday", soiree: "Party",
+      entreprise: "Company event", autre: "Other",
+    } as Record<string, string>,
+    envoi: "Creating…",
+    valider: "Create the event",
+    chargementListe: "Loading your events…",
+    vide: "No events yet",
+    videTexte: "Choose a plan to create your first event.",
+    premier: "Create my first event",
+    choisirFormule: "Choose my plan",
+    photo: "photo", photos: "photos",
+    conservees: "Photos kept until",
+    creeTitre: "Event created",
+    creeTexte: "Your QR code is ready.",
+    erreur: "Error",
+    nomCourt: "Name too short",
+    dateRequise: "Date required",
+    typeRequis: "Type required",
+  },
+};
+
+/* Les noms des formules ne se traduisent pas.
+ *
+ * Ce sont des noms propres, pas des descriptions : « Souvenir » est déjà un
+ * mot anglais, et l'accent d'« Héritage » est justement ce qui le fait lire
+ * comme un nom français plutôt que comme une faute de frappe. C'est la ligne
+ * de toutes les maisons françaises — on ne traduit pas un nom de produit, on
+ * l'explique en dessous. */
 const PALIERS: Record<string, string> = {
   essentiel: "Essentiel",
   souvenir: "Souvenir",
@@ -36,16 +115,19 @@ const PALIERS: Record<string, string> = {
   admin: "Administration",
 };
 
-const createSchema = z.object({
-  name: z.string().trim().min(2, "Nom trop court").max(100),
-  event_date: z.string().min(1, "Date requise"),
-  event_type: z.string().min(1, "Type requis"),
-});
+const creerSchema = (T: (typeof TEXTES)["fr"]) =>
+  z.object({
+    name: z.string().trim().min(2, T.nomCourt).max(100),
+    event_date: z.string().min(1, T.dateRequise),
+    event_type: z.string().min(1, T.typeRequis),
+  });
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { lang } = useLanguage();
+  const T = TEXTES[lang === "en" ? "en" : "fr"];
   const [events, setEvents] = useState<EventRow[]>([]);
   const [fetching, setFetching] = useState(true);
   const [open, setOpen] = useState(false);
@@ -74,7 +156,7 @@ const Dashboard = () => {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
     if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      toast({ title: T.erreur, description: error.message, variant: "destructive" });
     } else {
       // Get photo counts
       const ids = (ev ?? []).map((e) => e.id);
@@ -102,7 +184,7 @@ const Dashboard = () => {
     if (!user) return;
     setSubmitting(true);
     try {
-      const data = createSchema.parse(form);
+      const data = creerSchema(T).parse(form);
       const { error } = await supabase.from("events").insert({
         user_id: user.id,
         name: data.name,
@@ -112,13 +194,13 @@ const Dashboard = () => {
         statut: "actif",
       });
       if (error) throw error;
-      toast({ title: "Événement créé !", description: "Votre QR code est prêt." });
+      toast({ title: T.creeTitre, description: T.creeTexte });
       setOpen(false);
       setForm({ name: "", event_date: "", event_type: "" });
       loadEvents();
     } catch (err: any) {
       toast({
-        title: "Erreur",
+        title: T.erreur,
         description: err.errors?.[0]?.message || err.message,
         variant: "destructive",
       });
@@ -130,7 +212,7 @@ const Dashboard = () => {
   if (loading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Chargement...</p>
+        <p className="text-muted-foreground">{T.chargement}</p>
       </div>
     );
   }
@@ -142,41 +224,39 @@ const Dashboard = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-4 animate-fade-in">
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-2">
-                Mes <span>événements</span>
-              </h1>
-              <p className="text-muted-foreground">Gérez vos albums et partagez vos QR codes</p>
+              <h1 className="text-4xl md:text-5xl font-bold mb-2">{T.titre}</h1>
+              <p className="text-muted-foreground">{T.sousTitre}</p>
             </div>
             {!admin && (
               <Button variant="hero" size="lg" asChild>
                 <Link to="/pricing">
-                  <Plus className="w-5 h-5" /> Créer un événement
+                  <Plus className="w-5 h-5" /> {T.creer}
                 </Link>
               </Button>
             )}
             <Dialog open={admin && open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <Button variant="hero" size="lg" className={admin ? "" : "hidden"}>
-                  <Plus className="w-5 h-5" /> Créer un événement
+                  <Plus className="w-5 h-5" /> {T.creer}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Nouvel événement</DialogTitle>
+                  <DialogTitle>{T.nouvel}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleCreate} className="space-y-4 mt-2">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nom de l'événement</Label>
+                    <Label htmlFor="name">{T.nom}</Label>
                     <Input
                       id="name"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="Mariage de Sophie & Marc"
+                      placeholder={T.nomExemple}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="date">Date</Label>
+                    <Label htmlFor="date">{T.date}</Label>
                     <Input
                       id="date"
                       type="date"
@@ -186,20 +266,18 @@ const Dashboard = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="type">Type</Label>
+                    <Label htmlFor="type">{T.type}</Label>
                     <Select value={form.event_type} onValueChange={(v) => setForm({ ...form, event_type: v })}>
-                      <SelectTrigger><SelectValue placeholder="Choisir un type" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={T.choisirType} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="mariage">Mariage</SelectItem>
-                        <SelectItem value="anniversaire">Anniversaire</SelectItem>
-                        <SelectItem value="soiree">Soirée</SelectItem>
-                        <SelectItem value="entreprise">Entreprise</SelectItem>
-                        <SelectItem value="autre">Autre</SelectItem>
+                        {(["mariage", "anniversaire", "soiree", "entreprise", "autre"] as const).map((k) => (
+                          <SelectItem key={k} value={k}>{T.types[k]}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <Button type="submit" variant="hero" size="lg" className="w-full" disabled={submitting}>
-                    {submitting ? "Création..." : "Créer l'événement"}
+                    {submitting ? T.envoi : T.valider}
                   </Button>
                 </form>
               </DialogContent>
@@ -207,20 +285,20 @@ const Dashboard = () => {
           </div>
 
           {fetching ? (
-            <p className="text-center text-muted-foreground py-12">Chargement de vos événements...</p>
+            <p className="text-center text-muted-foreground py-12">{T.chargementListe}</p>
           ) : events.length === 0 ? (
             <div className="text-center py-16 bg-card rounded-2xl border border-border">
               <QrCode className="w-16 h-16 text-primary mx-auto mb-4 opacity-60" />
-              <h2 className="text-xl font-semibold mb-2">Aucun événement pour l'instant</h2>
-              <p className="text-muted-foreground mb-6">Créez votre premier événement pour commencer.</p>
+              <h2 className="text-xl font-semibold mb-2">{T.vide}</h2>
+              <p className="text-muted-foreground mb-6">{T.videTexte}</p>
               {admin ? (
                 <Button variant="hero" size="lg" onClick={() => setOpen(true)}>
-                  <Plus className="w-5 h-5" /> Créer mon premier événement
+                  <Plus className="w-5 h-5" /> {T.premier}
                 </Button>
               ) : (
                 <Button variant="hero" size="lg" asChild>
                   <Link to="/pricing">
-                    <Plus className="w-5 h-5" /> Choisir ma formule
+                    <Plus className="w-5 h-5" /> {T.choisirFormule}
                   </Link>
                 </Button>
               )}
@@ -236,7 +314,7 @@ const Dashboard = () => {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="border border-border px-2 py-1 text-xs font-medium capitalize text-muted-foreground">
-                        {ev.event_type}
+                        {T.types[ev.event_type] ?? ev.event_type}
                       </span>
                       {ev.plan && (
                         <span className="label-mono border border-border px-2 py-1">
@@ -249,16 +327,16 @@ const Dashboard = () => {
                   <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{ev.name}</h3>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                     <Calendar className="w-4 h-4" />
-                    {new Date(ev.event_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                    {new Date(ev.event_date).toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <ImageIcon className="w-4 h-4" />
-                    {ev.photo_count} photo{ev.photo_count !== 1 ? "s" : ""}
+                    {ev.photo_count} {ev.photo_count === 1 ? T.photo : T.photos}
                   </div>
                   {ev.expire_le && (
                     <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
-                      Photos conservées jusqu'au{" "}
-                      {new Date(`${ev.expire_le}T12:00:00Z`).toLocaleDateString("fr-FR", {
+                      {T.conservees}{" "}
+                      {new Date(`${ev.expire_le}T12:00:00Z`).toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR", {
                         day: "numeric", month: "long", year: "numeric",
                       })}
                     </p>
