@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      demandes_contact: {
+        Row: {
+          cree_le: string
+          date_evenement: string | null
+          email: string
+          id: string
+          message: string | null
+          nom: string
+          origine: string | null
+          traitee_le: string | null
+          type_evenement: string | null
+        }
+        Insert: {
+          cree_le?: string
+          date_evenement?: string | null
+          email: string
+          id?: string
+          message?: string | null
+          nom: string
+          origine?: string | null
+          traitee_le?: string | null
+          type_evenement?: string | null
+        }
+        Update: {
+          cree_le?: string
+          date_evenement?: string | null
+          email?: string
+          id?: string
+          message?: string | null
+          nom?: string
+          origine?: string | null
+          traitee_le?: string | null
+          type_evenement?: string | null
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           collecte_fin: string | null
