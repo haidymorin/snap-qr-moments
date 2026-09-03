@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Heart } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
@@ -75,9 +74,10 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t border-border text-center">
-          <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-            {t("footer.madeWith")} <Heart className="h-4 w-4 text-primary fill-primary" /> {t("footer.by")}
-          </p>
+          {/* Une marque qui se félicite elle-même sonne creux, et le cœur rouge
+              jurait avec la charte. Le nom et la ville suffisent : c'est ce
+              qu'attend un prescripteur qui vérifie à qui il a affaire. */}
+          <p className="label-mono text-muted-foreground">QR Memories · Paris</p>
         </div>
       </div>
     </footer>
