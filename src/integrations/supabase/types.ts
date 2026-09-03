@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       events: {
         Row: {
+          collecte_fin: string | null
           created_at: string
           event_date: string
           event_type: string
@@ -24,6 +25,7 @@ export type Database = {
           livre_dor_actif: boolean
           livre_dor_public: boolean
           livre_dor_vocal: boolean
+          message_accueil: string | null
           name: string
           paye_le: string | null
           plan: string
@@ -33,6 +35,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          collecte_fin?: string | null
           created_at?: string
           event_date: string
           event_type: string
@@ -41,6 +44,7 @@ export type Database = {
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
+          message_accueil?: string | null
           name: string
           paye_le?: string | null
           plan?: string
@@ -50,6 +54,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          collecte_fin?: string | null
           created_at?: string
           event_date?: string
           event_type?: string
@@ -58,6 +63,7 @@ export type Database = {
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
+          message_accueil?: string | null
           name?: string
           paye_le?: string | null
           plan?: string
@@ -415,6 +421,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_evenements: {
+        Args: never
+        Returns: {
+          email: string
+          event_date: string
+          event_type: string
+          expire_le: string
+          id: string
+          medias: number
+          messages: number
+          montant_centimes: number
+          name: string
+          paye_le: string
+          plan: string
+          statut: string
+        }[]
+      }
+      collecte_ouverte: { Args: { p_event_id: string }; Returns: boolean }
       est_admin: { Args: { p_user?: string }; Returns: boolean }
       evenement_actif: { Args: { p_event_id: string }; Returns: boolean }
       event_exists: { Args: { p_event_id: string }; Returns: boolean }
@@ -485,7 +509,10 @@ export type Database = {
       guest_reglages: {
         Args: { p_event_id: string }
         Returns: {
+          collecte_fin: string
+          collecte_ouverte: boolean
           livre_dor: boolean
+          message_accueil: string
           messages_publics: boolean
           vocal: boolean
         }[]
