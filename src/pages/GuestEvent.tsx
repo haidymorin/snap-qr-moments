@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import FaceSearch from "@/components/FaceSearch";
 import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
 import { downloadMedia } from "@/lib/downloadMedia";
+import { telechargerEnLots, type Avancement } from "@/lib/telechargerLot";
 import { envoyerSurR2, extensionDe, typeDeclare } from "@/lib/r2";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
@@ -16,7 +17,45 @@ interface EventRow {
   name: string;
   event_date: string;
   event_type: string;
+  /** La formule payée : elle décide de ce que la page propose. */
+  plan: string;
 }
+
+/* Les formules qui incluent la recherche par visage. L'Essentiel à 59 € ne
+   l'inclut pas : y afficher le bouton serait promettre ce qui n'a pas été
+   vendu, et envoyer des images chez Amazon pour un événement qui ne les a pas
+   payées. */
+const PLANS_AVEC_VISAGE = ["souvenir", "heritage", "admin"];
+
+/* Ce que ce téléphone a déposé.
+ *
+ * L'invité ne se connecte pas : on ne sait donc pas qui il est, et c'est très
+ * bien ainsi. Mais son navigateur, lui, peut se souvenir de ce qu'il a envoyé.
+ * La liste reste sur l'appareil, ne part nulle part, et répond à la seule
+ * question qu'il se pose vraiment : « est-ce que mes photos sont bien
+ * arrivées ? » */
+const cleEnvois = (eventId: string) => `qrm:envois:${eventId}`;
+
+const lireEnvois = (eventId: string): string[] => {
+  try {
+    const brut = localStorage.getItem(cleEnvois(eventId));
+    const liste = brut ? JSON.parse(brut) : [];
+    return Array.isArray(liste) ? liste.filter((x) => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+};
+
+const noterEnvoi = (eventId: string, photoId: string) => {
+  try {
+    const liste = lireEnvois(eventId);
+    if (liste.includes(photoId)) return;
+    localStorage.setItem(cleEnvois(eventId), JSON.stringify([photoId, ...liste].slice(0, 500)));
+  } catch {
+    /* Navigation privée, stockage plein : l'onglet n'apparaîtra pas, et le
+       dépôt fonctionne quand même. C'est un confort, jamais une dépendance. */
+  }
+};
 interface MediaRow {
   id: string;
   url: string;
@@ -124,6 +163,8 @@ const GuestEvent = () => {
      galerie : on doit pouvoir passer de ses photos à toutes les photos sans
      perdre ni l'une ni l'autre. */
   const [mesPhotos, setMesPhotos] = useState<MediaRow[]>([]);
+  /* Les lignes correspondant aux identifiants gardés sur cet appareil. */
+  const [mesEnvois, setMesEnvois] = useState<MediaRow[]>([]);
   /* Ce que l'album affiche réellement. `media` reste la source de vérité ;
      la recherche par visage n'est qu'un filtre posé par-dessus, ce qui évite
      de dupliquer l'état et de le désynchroniser au chargement des pages
@@ -131,12 +172,58 @@ const GuestEvent = () => {
   /* Ce que la galerie affiche : soit les photos reconnues, soit la page
      courante de l'album. Une seule source par onglet, donc pas de
      désynchronisation possible au chargement des pages suivantes. */
-  const visibles = useMemo(
-    () => (filter === "mine" ? mesPhotos : media),
-    [filter, media, mesPhotos],
-  );
+  const visibles = useMemo(() => {
+    if (filter === "mine") return mesPhotos;
+    if (filter === "envois") return mesEnvois;
+    return media;
+  }, [filter, media, mesPhotos, mesEnvois]);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
+
+  /* Tout l'onglet courant, en une ou plusieurs archives.
+   *
+   * On ne télécharge que ce que l'onglet montre : « Photos de moi » et
+   * « Mes envois » tiennent en un seul fichier, l'album complet en plusieurs.
+   * Sur l'album, seule la page déjà chargée est disponible côté navigateur —
+   * on va donc chercher la liste entière avant de commencer, sinon on
+   * n'archiverait que ce que l'invité a fait défiler. */
+  const [lot, setLot] = useState<Avancement | null>(null);
+
+  const toutTelecharger = async () => {
+    if (!id || !event || lot) return;
+    let liste = visibles;
+    if (filter !== "mine" && filter !== "envois") {
+      const { data } = await supabase.rpc("guest_list_media", {
+        p_event_id: id, p_media: filter, p_limit: 2000, p_offset: 0,
+      });
+      liste = ((data ?? []) as MediaRow[]);
+    }
+    if (liste.length === 0) return;
+    setLot({ faits: 0, total: liste.length, lot: 1, lots: 1 });
+    try {
+      await telechargerEnLots(
+        liste.map((m) => ({ url: m.url, nom: m.file_name || `${m.id}.jpg` })),
+        (event.name || "souvenirs").replace(/\s+/g, "-").toLowerCase(),
+        setLot,
+      );
+    } finally {
+      setLot(null);
+    }
+  };
+
+  /* Enregistrer un fichier depuis la grille, sans passer par la visionneuse. */
+  const [enregistrement, setEnregistrement] = useState<string | null>(null);
+  const enregistrer = async (row: MediaRow) => {
+    if (enregistrement) return;
+    setEnregistrement(row.id);
+    try {
+      await downloadMedia(row.url, row.file_name);
+    } catch {
+      /* L'échec est déjà signalé dans la visionneuse ; ici on reste discret. */
+    } finally {
+      setEnregistrement(null);
+    }
+  };
 
   const saveCurrent = async () => {
     if (!lightbox || saving) return;
@@ -193,6 +280,14 @@ const GuestEvent = () => {
     [id]
   );
 
+  const chargerEnvois = useCallback(async () => {
+    if (!id) return;
+    const ids = lireEnvois(id);
+    if (ids.length === 0) { setMesEnvois([]); return; }
+    const { data } = await supabase.rpc("guest_list_by_ids", { p_event_id: id, p_ids: ids });
+    setMesEnvois((data ?? []) as MediaRow[]);
+  }, [id]);
+
   const loadCounts = useCallback(async () => {
     if (!id) return;
     const [photoRes, videoRes] = await Promise.all([
@@ -210,6 +305,7 @@ const GuestEvent = () => {
       const { data: evRows } = await supabase.rpc("guest_get_event", { p_event_id: id });
       const ev = Array.isArray(evRows) ? evRows[0] ?? null : null;
       setEvent(ev);
+      await chargerEnvois();
       await loadCounts();
       setMedia(await fetchPage(0, "all"));
       setLoading(false);
@@ -289,15 +385,16 @@ const GuestEvent = () => {
     });
 
     const thumbnailUrl = await uploadThumb(uuid, thumb);
-    const { error: dbErr } = await supabase.from("photos").insert({
+    const { data: ligne, error: dbErr } = await supabase.from("photos").insert({
       event_id: id!,
       url,
       thumbnail_url: thumbnailUrl,
       file_name: file.name,
       storage_path: path,
       media_type: "photo",
-    });
+    }).select("id").single();
     if (dbErr) throw dbErr;
+    if (ligne?.id) noterEnvoi(id!, ligne.id);
   };
 
   const uploadVideo = async (file: File, onProgress?: (ratio: number) => void) => {
@@ -315,15 +412,16 @@ const GuestEvent = () => {
     });
 
     const thumbnailUrl = await uploadThumb(uuid, thumb);
-    const { error: dbErr } = await supabase.from("photos").insert({
+    const { data: ligne, error: dbErr } = await supabase.from("photos").insert({
       event_id: id!,
       url,
       thumbnail_url: thumbnailUrl,
       file_name: file.name,
       storage_path: path,
       media_type: "video",
-    });
+    }).select("id").single();
     if (dbErr) throw dbErr;
+    if (ligne?.id) noterEnvoi(id!, ligne.id);
   };
 
   const mark = (key: string, state: ItemState, reason?: string, detail?: string) =>
@@ -372,11 +470,12 @@ const GuestEvent = () => {
       Array.from({ length: Math.min(CONCURRENCY, queue.length) }, worker)
     );
     setBusy(false);
+    await chargerEnvois();
     await loadCounts();
     setHasMore(true);
     setMedia(await fetchPage(0, filter));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchPage, filter, loadCounts, id]);
+  }, [fetchPage, filter, loadCounts, chargerEnvois, id]);
 
   const handleSelection = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !id || !event) return;
@@ -576,6 +675,7 @@ const GuestEvent = () => {
           )}
         </section>
 
+        {PLANS_AVEC_VISAGE.includes(event.plan) && (
         <FaceSearch
           eventId={event.id}
           onResultats={(photos) => {
@@ -585,6 +685,7 @@ const GuestEvent = () => {
             setFilter(photos && photos.length ? "mine" : "all");
           }}
         />
+        )}
 
         {/* Album */}
         <div className="mt-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -592,12 +693,28 @@ const GuestEvent = () => {
             {t("guest.album")}{" "}
             <span className="text-muted-foreground">({counts.all})</span>
           </h2>
-          <MediaTabs
-            value={filter}
-            onChange={changeFilter}
-            counts={counts}
-            mineCount={mesPhotos.length}
-          />
+          <div className="flex flex-col items-start gap-3 sm:items-end">
+            <MediaTabs
+              value={filter}
+              onChange={changeFilter}
+              counts={counts}
+              mineCount={mesPhotos.length}
+              envoisCount={mesEnvois.length}
+            />
+            {visibles.length > 0 && (
+              <button
+                type="button"
+                onClick={toutTelecharger}
+                disabled={lot !== null}
+                className="label-mono inline-flex min-h-[44px] items-center gap-2 border border-border px-4 transition-colors hover:border-primary disabled:opacity-50"
+              >
+                <Download className="h-4 w-4" />
+                {lot
+                  ? `${t("guest.zipEnCours")} ${lot.faits}/${lot.total}`
+                  : `${t("guest.zipTout")} (${visibles.length})`}
+              </button>
+            )}
+          </div>
         </div>
 
         {visibles.length === 0 && !loadingMore ? (
@@ -613,12 +730,16 @@ const GuestEvent = () => {
         ) : (
           <div className="mt-6 grid grid-cols-2 gap-1 sm:grid-cols-3 md:grid-cols-4">
             {visibles.map((p) => (
-              <button
+              <div
                 key={p.id}
+                style={{ aspectRatio: "1 / 1" }}
+                className="group relative w-full overflow-hidden bg-muted"
+              >
+              <button
                 type="button"
                 onClick={() => setLightbox(p)}
-                style={{ aspectRatio: "1 / 1" }}
-                className="relative w-full overflow-hidden bg-muted transition-opacity hover:opacity-90"
+                aria-label={p.file_name}
+                className="block h-full w-full transition-opacity hover:opacity-90"
               >
                 <img
                   src={
@@ -636,6 +757,18 @@ const GuestEvent = () => {
                 />
                 {p.media_type === "video" && <PlayOverlay />}
               </button>
+              <button
+                type="button"
+                onClick={() => enregistrer(p)}
+                aria-label={t("guest.save")}
+                title={t("guest.save")}
+                className="absolute right-1 top-1 flex h-9 w-9 items-center justify-center border border-white/40 bg-black/45 text-white transition-opacity hover:bg-black/70 focus-visible:opacity-100"
+              >
+                {enregistrement === p.id
+                  ? <Loader2 className="h-4 w-4 animate-spin" />
+                  : <Download className="h-4 w-4" />}
+              </button>
+              </div>
             ))}
           </div>
         )}
