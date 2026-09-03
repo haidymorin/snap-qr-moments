@@ -1,0 +1,9 @@
+# Les fichiers versionnés par le build portent une empreinte dans leur nom :
+# ils ne changent jamais, on peut donc les garder un an en cache. La page
+# d'accueil, elle, doit être revérifiée à chaque visite, sinon un invité
+# continuerait de voir l'ancienne version après un déploiement.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate

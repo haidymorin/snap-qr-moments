@@ -1,0 +1,13 @@
+# Toutes les adresses sont servies par la même page.
+#
+# Le site est une application d'une seule page : c'est le navigateur qui décide
+# quoi afficher selon l'adresse, pas le serveur. Sans cette ligne, un hébergeur
+# cherche un fichier `/event/xxx` sur son disque, ne le trouve pas, et renvoie
+# une erreur 404 — donc tout marche tant qu'on navigue depuis l'accueil, et
+# tout casse dès qu'un invité ouvre directement le lien de sa galerie. C'est
+# exactement le cas d'usage du produit : personne n'arrive par l'accueil, tout
+# le monde arrive par un QR code.
+#
+# Le 200 est important : une redirection 301 changerait l'adresse dans la barre
+# du navigateur et ferait perdre l'identifiant de l'événement.
+/*    /index.html   200
