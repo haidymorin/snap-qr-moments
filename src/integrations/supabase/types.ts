@@ -19,10 +19,8 @@ export type Database = {
           created_at: string
           event_date: string
           event_type: string
-          collecte_fin: string | null
           expire_le: string | null
           id: string
-          message_accueil: string | null
           livre_dor_actif: boolean
           livre_dor_public: boolean
           livre_dor_vocal: boolean
@@ -38,10 +36,8 @@ export type Database = {
           created_at?: string
           event_date: string
           event_type: string
-          collecte_fin?: string | null
           expire_le?: string | null
           id?: string
-          message_accueil?: string | null
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
@@ -57,10 +53,8 @@ export type Database = {
           created_at?: string
           event_date?: string
           event_type?: string
-          collecte_fin?: string | null
           expire_le?: string | null
           id?: string
-          message_accueil?: string | null
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
@@ -424,27 +418,6 @@ export type Database = {
       est_admin: { Args: { p_user?: string }; Returns: boolean }
       evenement_actif: { Args: { p_event_id: string }; Returns: boolean }
       event_exists: { Args: { p_event_id: string }; Returns: boolean }
-      admin_evenements: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          email: string
-          event_date: string
-          event_type: string
-          expire_le: string
-          id: string
-          medias: number
-          messages: number
-          montant_centimes: number
-          name: string
-          paye_le: string
-          plan: string
-          statut: string
-        }[]
-      }
-      collecte_ouverte: {
-        Args: { p_event_id: string }
-        Returns: boolean
-      }
       guest_count_livre_dor: { Args: { p_event_id: string }; Returns: number }
       guest_count_media: {
         Args: { p_event_id: string; p_media?: string }
@@ -512,10 +485,7 @@ export type Database = {
       guest_reglages: {
         Args: { p_event_id: string }
         Returns: {
-          collecte_fin: string
-          collecte_ouverte: boolean
           livre_dor: boolean
-          message_accueil: string
           messages_publics: boolean
           vocal: boolean
         }[]
