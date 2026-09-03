@@ -16,16 +16,16 @@ export type Database = {
     Tables: {
       events: {
         Row: {
+          collecte_fin: string | null
           created_at: string
           event_date: string
           event_type: string
-          collecte_fin: string | null
           expire_le: string | null
           id: string
-          message_accueil: string | null
           livre_dor_actif: boolean
           livre_dor_public: boolean
           livre_dor_vocal: boolean
+          message_accueil: string | null
           name: string
           paye_le: string | null
           plan: string
@@ -35,16 +35,16 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          collecte_fin?: string | null
           created_at?: string
           event_date: string
           event_type: string
-          collecte_fin?: string | null
           expire_le?: string | null
           id?: string
-          message_accueil?: string | null
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
+          message_accueil?: string | null
           name: string
           paye_le?: string | null
           plan?: string
@@ -54,16 +54,16 @@ export type Database = {
           user_id: string
         }
         Update: {
+          collecte_fin?: string | null
           created_at?: string
           event_date?: string
           event_type?: string
-          collecte_fin?: string | null
           expire_le?: string | null
           id?: string
-          message_accueil?: string | null
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
+          message_accueil?: string | null
           name?: string
           paye_le?: string | null
           plan?: string
@@ -421,11 +421,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      est_admin: { Args: { p_user?: string }; Returns: boolean }
-      evenement_actif: { Args: { p_event_id: string }; Returns: boolean }
-      event_exists: { Args: { p_event_id: string }; Returns: boolean }
       admin_evenements: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           email: string
           event_date: string
@@ -441,10 +438,10 @@ export type Database = {
           statut: string
         }[]
       }
-      collecte_ouverte: {
-        Args: { p_event_id: string }
-        Returns: boolean
-      }
+      collecte_ouverte: { Args: { p_event_id: string }; Returns: boolean }
+      est_admin: { Args: { p_user?: string }; Returns: boolean }
+      evenement_actif: { Args: { p_event_id: string }; Returns: boolean }
+      event_exists: { Args: { p_event_id: string }; Returns: boolean }
       guest_count_livre_dor: { Args: { p_event_id: string }; Returns: number }
       guest_count_media: {
         Args: { p_event_id: string; p_media?: string }

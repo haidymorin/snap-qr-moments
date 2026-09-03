@@ -56,7 +56,7 @@ const Admin = () => {
   const charger = useCallback(async () => {
     const { data, error } = await supabase.rpc("admin_evenements");
     if (error) { setRefuse(true); return; }
-    setLignes((data ?? []) as Ligne[]);
+    setLignes((data ?? []) as unknown as Ligne[]);
   }, []);
 
   useEffect(() => { if (user) charger(); }, [user, charger]);
