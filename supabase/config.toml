@@ -1,1 +1,15 @@
 project_id = "suewfrgrddcuqphwegtn"
+
+# Stripe n'envoie jamais de jeton Supabase : il signe chaque appel avec
+# STRIPE_WEBHOOK_SECRET, vérifié dans le code de la fonction. Exiger un JWT
+# ici ferait échouer tous les paiements en silence.
+[functions.stripe-webhook]
+verify_jwt = false
+
+# Appelées depuis le navigateur, avant même que le client ait un compte
+# connecté (page de paiement, puis page de confirmation juste après l'achat).
+[functions.create-checkout-session]
+verify_jwt = false
+
+[functions.commande-statut]
+verify_jwt = false
