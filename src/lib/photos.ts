@@ -1,7 +1,7 @@
-/* --- Les vraies photos --- */
-/* Le mariage livré en juin 2026, avec l'accord des mariés. Une vraie photo
-   d'un vrai mariage vaut dix banques d'images : c'est la seule preuve qu'on
-   a déjà fait le travail. Recadrées en carré, 900 px, ~120 Ko chacune. */
+/* Le mariage livré en juin 2026, avec l'accord des mariés. Elles ne sont plus
+   présentées à part sous une légende : la légende laissait entendre que les
+   autres photos du site étaient fausses. Elles se fondent dans le mur de la
+   page d'accueil. Recadrées en carré, 900 px, ~120 Ko chacune. */
 import danse from "@/assets/mariage/01-premiere-danse.jpg";
 import signature from "@/assets/mariage/02-signature.jpg";
 import sortie from "@/assets/mariage/03-sortie-mairie.jpg";

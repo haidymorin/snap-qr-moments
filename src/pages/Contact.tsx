@@ -21,8 +21,7 @@ const TEXTES = {
   fr: {
     eyebrow: "Écrire",
     titre: "Une question avant de vous décider ?",
-    chapo:
-      "Dites-nous en deux lignes ce que vous cherchez. Vous aurez une réponse écrite, pas un formulaire automatique.",
+    chapo: "Dites-nous en deux lignes ce que vous cherchez.",
     achat: "Vous savez déjà ce que vous voulez ?",
     achatLien: "Voir les formules",
     nom: "Votre nom",
@@ -51,8 +50,7 @@ const TEXTES = {
   en: {
     eyebrow: "Write",
     titre: "A question before you decide?",
-    chapo:
-      "Tell us in two lines what you are looking for. You will get a written reply, not an automated form.",
+    chapo: "Tell us in two lines what you are looking for.",
     achat: "Already know what you want?",
     achatLien: "See the plans",
     nom: "Your name",

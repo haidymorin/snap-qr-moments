@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -97,6 +97,20 @@ function PhotoWall() {
     return () => timers.current.forEach(clearTimeout);
   }, [play]);
 
+  /* Les photos du mariage déjà livré ne sont plus exposées dans une bande à
+     part, légendée « un vrai mariage » : la légende laissait entendre que les
+     autres photos du site étaient fausses. Elles sont désormais réparties
+     dans le mur, à intervalles réguliers pour qu'aucune ne se retrouve
+     collée à une autre. Le mur se remplissant dans un ordre aléatoire, elles
+     apparaissent à des moments différents. */
+  const reelles = useMemo(() => {
+    const m = new Map<number, string>();
+    MARIAGE_REEL.forEach((p, k) =>
+      m.set(Math.floor(((k + 0.5) * size) / MARIAGE_REEL.length), p.src),
+    );
+    return m;
+  }, [size]);
+
   const cols = "grid-cols-3 sm:grid-cols-5 lg:grid-cols-8";
 
   return (
@@ -112,7 +126,7 @@ function PhotoWall() {
             }}
           >
             <img
-              src={photo(i * 5 + (i % 7))}
+              src={reelles.get(i) ?? photo(i * 5 + (i % 7))}
               alt=""
               loading={i < 12 ? "eager" : "lazy"}
               decoding="async"
@@ -375,29 +389,6 @@ const Index = () => {
             </figure>
           </div>
         </div>
-      </section>
-
-      {/* Le seul endroit du site où l'on montre un vrai mariage déjà livré.
-          C'est la preuve, pas une respiration : elle est légendée. */}
-      <section className="border-y border-border">
-        <div className="grid grid-cols-2 md:grid-cols-4">
-          {MARIAGE_REEL.map((p) => (
-            <div key={p.src} className="relative aspect-square overflow-hidden bg-secondary">
-              <img
-                src={p.src}
-                alt={t(`home.${p.alt}`)}
-                loading="lazy"
-                decoding="async"
-                width={900}
-                height={900}
-                className="h-full w-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
-        <p className="label-mono border-t border-border px-[clamp(20px,5vw,48px)] py-4 text-center text-muted-foreground">
-          {t("home.bandCaption")}
-        </p>
       </section>
 
       {/* Les offres, sur la surface claire */}

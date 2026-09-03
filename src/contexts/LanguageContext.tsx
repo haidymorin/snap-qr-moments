@@ -127,11 +127,6 @@ const translations: Record<Lang, Dict> = {
       stepsAlt3: "Un couple regarde sur une tablette la galerie de son mariage, remplie de photos.",
       gridFull: "Exemple · la galerie complète du mariage",
       gridMatched: "↓ Ce que Camille reçoit : les photos où elle apparaît",
-      bandCaption: "Un vrai mariage, collecté avec QR Memories — juin 2026",
-      mariageAltSortie: "Les mariés à la sortie de la mairie, entourés de leurs invités",
-      mariageAltDanse: "La première danse des mariés",
-      mariageAltSignature: "La signature du registre à la mairie",
-      mariageAltVoiture: "La voiture des mariés devant l'hôtel de ville",
 
       guestbookEyebrow: "Le livre d'or",
       guestbookTitle1: "Ce que personne",
@@ -418,11 +413,6 @@ const translations: Record<Lang, Dict> = {
       stepsAlt3: "A couple looking at their wedding gallery on a tablet, full of photos.",
       gridFull: "Example · the full wedding gallery",
       gridMatched: "↓ What Camille gets: the photos she appears in",
-      bandCaption: "A real wedding, collected with QR Memories — June 2026",
-      mariageAltSortie: "The couple leaving the town hall, surrounded by their guests",
-      mariageAltDanse: "The couple's first dance",
-      mariageAltSignature: "Signing the register at the town hall",
-      mariageAltVoiture: "The wedding car in front of the town hall",
 
       guestbookEyebrow: "The guest book",
       guestbookTitle1: "What nobody",
