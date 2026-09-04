@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CarteLueur from "@/components/CarteLueur";
 import { Link } from "react-router-dom";
 import { type PlanId } from "@/lib/checkout";
 import CommandeDialog from "@/components/CommandeDialog";
@@ -374,9 +375,9 @@ const Pricing = () => {
                   {plans.map((plan) => {
                     const dark = plan.highlighted;
                     return (
+                      <CarteLueur key={plan.name} className="h-full">
                       <article
-                        key={plan.name}
-                        className={`flex flex-col border p-[clamp(24px,2.6vw,34px)] ${
+                        className={`flex h-full flex-col border p-[clamp(24px,2.6vw,34px)] ${
                           dark
                             ? "border-night bg-night text-night-foreground"
                             : "border-border bg-card text-foreground"
@@ -434,6 +435,7 @@ const Pricing = () => {
                           {plan.ctaLabel}
                         </button>
                       </article>
+                      </CarteLueur>
                     );
                   })}
                 </div>

@@ -8,6 +8,7 @@ import etape3 from "@/assets/steps/etape-3-galerie.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
 import { RubanPhotos, CarrouselInertie } from "@/components/GaleriesAnimees";
+import CarteLueur from "@/components/CarteLueur";
 
 /* Les photos libres de droits sont désormais partagées avec la page
    « Comment ça marche » : voir src/lib/photos.ts. */
@@ -473,9 +474,9 @@ const Index = () => {
 
           <div className="grid gap-[clamp(13px,1.7vw,20px)] md:grid-cols-3">
             {plans.map((p, i) => (
+              <CarteLueur key={i} className="h-full">
               <article
-                key={i}
-                className={`flex flex-col border p-[clamp(22px,2.4vw,30px)] ${
+                className={`flex h-full flex-col border p-[clamp(22px,2.4vw,30px)] ${
                   p.highlighted
                     ? "border-night bg-night text-night-foreground"
                     : "border-border bg-card text-foreground"
@@ -506,6 +507,7 @@ const Index = () => {
                   {t("home.planDetail")}
                 </Link>
               </article>
+              </CarteLueur>
             ))}
           </div>
         </div>
