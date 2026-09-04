@@ -65,6 +65,7 @@ export type Database = {
           name: string
           paye_le: string | null
           plan: string
+          rappel_envoye_le: string | null
           statut: string
           stripe_session_id: string | null
           unique_code: string
@@ -84,6 +85,7 @@ export type Database = {
           name: string
           paye_le?: string | null
           plan?: string
+          rappel_envoye_le?: string | null
           statut?: string
           stripe_session_id?: string | null
           unique_code?: string
@@ -103,6 +105,7 @@ export type Database = {
           name?: string
           paye_le?: string | null
           plan?: string
+          rappel_envoye_le?: string | null
           statut?: string
           stripe_session_id?: string | null
           unique_code?: string
