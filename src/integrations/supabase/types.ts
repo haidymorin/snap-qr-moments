@@ -14,63 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      clients: {
-        Row: {
-          a_achete: boolean
-          cree_le: string
-          email: string
-          evenement_date: string | null
-          evenement_nom: string | null
-          evenement_type: string | null
-          formule_envisagee: string | null
-          id: string
-          maj_le: string
-          marketing: boolean
-          marketing_le: string | null
-          nom: string | null
-          origine: string
-          premier_achat_le: string | null
-          prenom: string | null
-          telephone: string | null
-        }
-        Insert: {
-          a_achete?: boolean
-          cree_le?: string
-          email: string
-          evenement_date?: string | null
-          evenement_nom?: string | null
-          evenement_type?: string | null
-          formule_envisagee?: string | null
-          id?: string
-          maj_le?: string
-          marketing?: boolean
-          marketing_le?: string | null
-          nom?: string | null
-          origine?: string
-          premier_achat_le?: string | null
-          prenom?: string | null
-          telephone?: string | null
-        }
-        Update: {
-          a_achete?: boolean
-          cree_le?: string
-          email?: string
-          evenement_date?: string | null
-          evenement_nom?: string | null
-          evenement_type?: string | null
-          formule_envisagee?: string | null
-          id?: string
-          maj_le?: string
-          marketing?: boolean
-          marketing_le?: string | null
-          nom?: string | null
-          origine?: string
-          premier_achat_le?: string | null
-          prenom?: string | null
-          telephone?: string | null
-        }
-        Relationships: []
-      }
       demandes_contact: {
         Row: {
           cree_le: string
@@ -526,24 +469,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      enregistrer_client: {
-        Args: {
-          p_email: string
-          p_prenom?: string | null
-          p_nom?: string | null
-          p_telephone?: string | null
-          p_marketing?: boolean
-          p_ev_nom?: string | null
-          p_ev_date?: string | null
-          p_ev_type?: string | null
-          p_formule?: string | null
-        }
-        Returns: undefined
-      }
-      desinscrire_client: {
-        Args: { p_email: string }
-        Returns: undefined
-      }
       admin_evenements: {
         Args: never
         Returns: {
