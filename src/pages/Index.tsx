@@ -7,6 +7,7 @@ import etape2 from "@/assets/steps/etape-2-invites.jpg";
 import etape3 from "@/assets/steps/etape-3-galerie.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
+import { RubanPhotos, CarrouselInertie } from "@/components/GaleriesAnimees";
 
 /* Les photos libres de droits sont désormais partagées avec la page
    « Comment ça marche » : voir src/lib/photos.ts. */
@@ -120,13 +121,28 @@ function PhotoWall() {
 
   const cols = "grid-cols-3 sm:grid-cols-5 lg:grid-cols-8";
 
+  /* Toutes les vignettes de la même taille donnent un damier, et un damier ne
+     ressemble pas à un album. Une sur sept occupe deux colonnes et deux
+     rangées : la grille respire sans qu'on ait à la dessiner à la main. */
+  const grande = (i: number) => i % 7 === 3 || i % 11 === 8;
+
   return (
     <section className="relative flex min-h-[min(86vh,730px)] items-center justify-center overflow-hidden bg-[#DCD7CF]">
-      <div ref={wallRef} aria-hidden className={`absolute inset-0 grid gap-1 p-1 ${cols}`}>
+      <style>{`@keyframes mur-derive {
+        from { transform: translate3d(0,0,0) scale(1.02); }
+        to   { transform: translate3d(-2.2%,-1.4%,0) scale(1.06); }
+      }`}</style>
+      <div
+        ref={wallRef}
+        aria-hidden
+        className={`absolute inset-[-3%] grid auto-rows-fr gap-1 p-1 ${cols} motion-safe:animate-[mur-derive_46s_ease-in-out_infinite_alternate]`}
+      >
         {Array.from({ length: size }, (_, i) => (
           <div
             key={i}
-            className="relative overflow-hidden bg-secondary transition-[opacity,transform] duration-500 ease-out"
+            className={`group relative overflow-hidden bg-secondary transition-[opacity,transform] duration-500 ease-out hover:z-10 ${
+              grande(i) ? "col-span-2 row-span-2" : ""
+            }`}
             style={{
               opacity: shown.includes(i) ? 1 : 0,
               transform: shown.includes(i) ? "scale(1)" : "scale(0.93)",
@@ -137,7 +153,7 @@ function PhotoWall() {
               alt=""
               loading={i < 12 ? "eager" : "lazy"}
               decoding="async"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover transition-transform duration-[700ms] ease-out group-hover:scale-[1.06]"
               onError={(e) => {
                 e.currentTarget.style.visibility = "hidden";
               }}
@@ -210,6 +226,31 @@ function PhotoWall() {
 
 const Index = () => {
   const { t } = useLanguage();
+
+  /* La grille du tri était figée : le visiteur voyait un résultat, jamais le
+     geste. Elle part maintenant complète, puis les photos où la mariée
+     n'apparaît pas s'effacent une à une — c'est le produit qui se montre. */
+  const grille = useRef<HTMLDivElement>(null);
+  const [trie, setTrie] = useState(false);
+
+  useEffect(() => {
+    const el = grille.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setTrie(true);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        obs.disconnect();
+        window.setTimeout(() => setTrie(true), 700);
+      },
+      { threshold: 0.35 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const steps = [
     { n: t("home.step1Num"), title: t("home.step1Title"), text: t("home.step1Desc") },
@@ -288,6 +329,10 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Le ruban : la première galerie en mouvement de la page. Elle ne dit
+          rien, elle montre — c'est ce que le produit fabrique. */}
+      <RubanPhotos depart={40} />
+
       {/* Le tri automatique, sur fond sombre */}
       <section className="bg-night py-[clamp(58px,7.5vw,100px)] text-night-foreground">
         <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
@@ -307,7 +352,7 @@ const Index = () => {
                   alt=""
                   loading="lazy"
                   decoding="async"
-                  style={{ objectPosition: "64% 30%" }}
+                  style={{ objectPosition: "44% 26%" }}
                   className="h-20 w-16 shrink-0 border border-night-border object-cover"
                 />
                 <div className="min-w-[210px] flex-1">
@@ -326,14 +371,17 @@ const Index = () => {
 
             <div>
               <span className="label-mono text-night-muted">{t("home.gridFull")}</span>
-              <div className="mt-3 grid grid-cols-4 gap-1.5 sm:grid-cols-6">
-                {ALBUM_DEMO.map((p) => (
+              <div ref={grille} className="mt-3 grid grid-cols-4 gap-1.5 sm:grid-cols-6">
+                {ALBUM_DEMO.map((p, i) => (
                   <div
                     key={p.id}
-                    className={`relative aspect-square overflow-hidden bg-night-surface ${
-                      p.camille
-                        ? "outline outline-1 outline-offset-2 outline-night-foreground"
-                        : "opacity-[0.18] grayscale"
+                    style={{ transitionDelay: `${i * 45}ms` }}
+                    className={`relative aspect-square overflow-hidden bg-night-surface transition-all duration-700 ease-out ${
+                      !trie
+                        ? ""
+                        : p.camille
+                          ? "outline outline-1 outline-offset-2 outline-night-foreground"
+                          : "scale-[0.86] opacity-[0.18] grayscale"
                     }`}
                   >
                     <img
@@ -395,6 +443,20 @@ const Index = () => {
               </div>
             </figure>
           </div>
+        </div>
+      </section>
+
+      {/* Le carrousel à inertie : on attrape les photos et on les lance.
+          C'est le seul endroit de la page où le visiteur touche la matière. */}
+      <section className="border-t border-border bg-paper py-[clamp(44px,6vw,80px)]">
+        <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
+          <p className="eyebrow text-center">{t("home.carrouselEyebrow")}</p>
+          <h2 className="mx-auto mt-3 max-w-[22ch] text-center text-[clamp(26px,3.8vw,44px)] text-wrap balance">
+            {t("home.carrouselTitle")}
+          </h2>
+        </div>
+        <div className="mt-[clamp(22px,3vw,40px)]">
+          <CarrouselInertie depart={62} nombre={12} />
         </div>
       </section>
 

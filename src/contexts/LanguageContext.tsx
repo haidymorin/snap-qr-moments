@@ -127,6 +127,8 @@ const translations: Record<Lang, Dict> = {
       stepsAlt3: "Un couple regarde sur une tablette la galerie de son mariage, remplie de photos.",
       gridFull: "Exemple · la galerie complète du mariage",
       gridMatched: "↓ Ce que Camille reçoit : les photos où elle apparaît",
+      carrouselEyebrow: "La galerie",
+      carrouselTitle: "Attrapez-les, lancez-les.",
 
       guestbookEyebrow: "Le livre d'or",
       guestbookTitle1: "Ce que personne",
@@ -413,6 +415,8 @@ const translations: Record<Lang, Dict> = {
       stepsAlt3: "A couple looking at their wedding gallery on a tablet, full of photos.",
       gridFull: "Example · the full wedding gallery",
       gridMatched: "↓ What Camille gets: the photos she appears in",
+      carrouselEyebrow: "The gallery",
+      carrouselTitle: "Grab them, throw them.",
 
       guestbookEyebrow: "The guest book",
       guestbookTitle1: "What nobody",
