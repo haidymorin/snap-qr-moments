@@ -11,40 +11,47 @@ import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
 /* Les photos libres de droits sont désormais partagées avec la page
    « Comment ça marche » : voir src/lib/photos.ts. */
 
-/* Démonstration du tri : un seul et même mariage, comme un vrai album.
-   Six photos sur vingt-quatre montrent la même invitée en robe rouge —
-   c'est ce que la reconnaissance retrouve quand elle identifie quelqu'un. Mise en scène,
-   présentée comme telle dans le texte de la section. */
+/* Démonstration de la recherche par visage.
+ *
+ * Elle ne veut rien dire si l'on ne reconnaît pas la personne : c'est tout le
+ * propos. La série précédente échouait sur les deux points — le selfie venait
+ * d'un autre mariage, et les photos « retrouvées » montraient la mariée de dos
+ * ou de trop loin pour qu'on l'identifie.
+ *
+ * Une seule et même personne, donc : la mariée. Huit photos où son visage est
+ * net et de face, douze où elle est absente ou vue de dos. Le selfie est un
+ * gros plan de ce même visage. Mise en scène, et présentée comme telle dans le
+ * texte de la section.
+ */
 /* Les trois images du déroulé, fournies par Haïdy et servies depuis le projet
    (pas de dépendance à un service extérieur sur cette section) :
    le carton QR posé sur la table, les invités qui déposent, la galerie triée. */
 const STEP_IMAGES = [etape1, etape2, etape3];
 const STEP_ALT = ["stepsAlt1", "stepsAlt2", "stepsAlt3"];
-const CAMILLE_SELFIE = 11988908;
+
+/** Le gros plan du visage recherché. */
+const CAMILLE_SELFIE = 13434422;
+
 const ALBUM_DEMO: { id: number; camille: boolean }[] = [
-  { id: 13434416, camille: false },
-  { id: 13434419, camille: false },
-  { id: 13434413, camille: true },
   { id: 13434420, camille: false },
-  { id: 13434422, camille: false },
-  { id: 13434417, camille: true },
-  { id: 13434423, camille: false },
-  { id: 13434424, camille: false },
+  { id: 13434416, camille: true },
+  { id: 13434417, camille: false },
+  { id: 13434413, camille: true },
+  { id: 13434421, camille: false },
+  { id: 13434425, camille: false },
+  { id: 13434423, camille: true },
   { id: 13434426, camille: false },
-  { id: 13434421, camille: true },
-  { id: 13434429, camille: false },
-  { id: 13434430, camille: false },
-  { id: 13434433, camille: false },
+  { id: 13434424, camille: true },
+  { id: 13434427, camille: false },
+  { id: 13434431, camille: false },
+  { id: 13434430, camille: true },
   { id: 13434434, camille: false },
-  { id: 13434425, camille: true },
-  { id: 13434436, camille: false },
-  { id: 13434437, camille: false },
-  { id: 13434438, camille: false },
-  { id: 13434427, camille: true },
   { id: 13434439, camille: false },
+  { id: 13434433, camille: true },
   { id: 13434440, camille: false },
-  { id: 13434431, camille: true },
+  { id: 13434437, camille: true },
   { id: 13434443, camille: false },
+  { id: 13434429, camille: true },
   { id: 13434444, camille: false },
 ];
 
