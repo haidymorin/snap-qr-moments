@@ -526,24 +526,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      enregistrer_client: {
-        Args: {
-          p_email: string
-          p_prenom?: string | null
-          p_nom?: string | null
-          p_telephone?: string | null
-          p_marketing?: boolean
-          p_ev_nom?: string | null
-          p_ev_date?: string | null
-          p_ev_type?: string | null
-          p_formule?: string | null
-        }
-        Returns: undefined
-      }
-      desinscrire_client: {
-        Args: { p_email: string }
-        Returns: undefined
-      }
       admin_evenements: {
         Args: never
         Returns: {
@@ -562,7 +544,22 @@ export type Database = {
         }[]
       }
       collecte_ouverte: { Args: { p_event_id: string }; Returns: boolean }
+      desinscrire_client: { Args: { p_email: string }; Returns: undefined }
       distance_empreintes: { Args: { a: string; b: string }; Returns: number }
+      enregistrer_client: {
+        Args: {
+          p_email: string
+          p_ev_date?: string
+          p_ev_nom?: string
+          p_ev_type?: string
+          p_formule?: string
+          p_marketing?: boolean
+          p_nom?: string
+          p_prenom?: string
+          p_telephone?: string
+        }
+        Returns: undefined
+      }
       est_admin: { Args: { p_user?: string }; Returns: boolean }
       evenement_actif: { Args: { p_event_id: string }; Returns: boolean }
       event_exists: { Args: { p_event_id: string }; Returns: boolean }
