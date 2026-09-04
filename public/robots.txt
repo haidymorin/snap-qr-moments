@@ -20,4 +20,4 @@ Disallow: /event/
 Disallow: /auth
 Disallow: /paiement-reussi
 
-Sitemap: https://snap-qr-moments.lovable.app/sitemap.xml
+Sitemap: https://qr-memories.fr/sitemap.xml

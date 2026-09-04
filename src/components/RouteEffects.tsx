@@ -10,7 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
    Ce composant corrige cela à chaque changement de route, et remonte la page
    en haut — ou à l'ancre visée, sans quoi /pricing#faq n'irait nulle part. */
 
-const SITE = "https://snap-qr-moments.lovable.app";
+const SITE = "https://qr-memories.fr";
 
 type Meta = { title: string; desc: string; noindex?: boolean };
 
