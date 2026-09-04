@@ -374,33 +374,42 @@ export type Database = {
       }
       photos: {
         Row: {
+          ecarte: string | null
+          empreinte: string | null
           event_id: string
           faces_indexed_at: string | null
           file_name: string
           id: string
           media_type: string
+          nettete: number | null
           storage_path: string
           thumbnail_url: string | null
           uploaded_at: string
           url: string
         }
         Insert: {
+          ecarte?: string | null
+          empreinte?: string | null
           event_id: string
           faces_indexed_at?: string | null
           file_name: string
           id?: string
           media_type?: string
+          nettete?: number | null
           storage_path: string
           thumbnail_url?: string | null
           uploaded_at?: string
           url: string
         }
         Update: {
+          ecarte?: string | null
+          empreinte?: string | null
           event_id?: string
           faces_indexed_at?: string | null
           file_name?: string
           id?: string
           media_type?: string
+          nettete?: number | null
           storage_path?: string
           thumbnail_url?: string | null
           uploaded_at?: string
@@ -478,6 +487,7 @@ export type Database = {
         }[]
       }
       collecte_ouverte: { Args: { p_event_id: string }; Returns: boolean }
+      distance_empreintes: { Args: { a: string; b: string }; Returns: number }
       est_admin: { Args: { p_user?: string }; Returns: boolean }
       evenement_actif: { Args: { p_event_id: string }; Returns: boolean }
       event_exists: { Args: { p_event_id: string }; Returns: boolean }
@@ -499,11 +509,14 @@ export type Database = {
       guest_list_by_ids: {
         Args: { p_event_id: string; p_ids: string[] }
         Returns: {
+          ecarte: string | null
+          empreinte: string | null
           event_id: string
           faces_indexed_at: string | null
           file_name: string
           id: string
           media_type: string
+          nettete: number | null
           storage_path: string
           thumbnail_url: string | null
           uploaded_at: string
