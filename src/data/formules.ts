@@ -8,10 +8,10 @@ import { type Lang } from "@/contexts/LanguageContext";
  * à diverger. Une personne qui lit « le tri » sur une page et « le nettoyage
  * automatique » sur la suivante ne sait pas si c'est la même chose.
  *
- * Le vocabulaire est celui d'une personne qui n'a jamais vu le produit. On
- * écrit « QR code », pas « QR ». On écrit « galerie en ligne », et on dit ce
- * que c'est. Chaque ligne répond à la question « concrètement, il se passe
- * quoi ? » — sans devenir une notice.
+ * Le vocabulaire est explicite — on écrit « QR code » et « galerie en ligne »,
+ * jamais « QR » ni « la collecte » — mais on n'explique pas ce qu'est un QR
+ * code. Une personne qui organise un mariage en 2026 en a scanné cent. Une
+ * ligne dit ce qu'on livre, pas comment ça marche.
  */
 
 export interface Formule {
@@ -26,7 +26,7 @@ export interface Formule {
   resume: string;
   /** « Tout ce que contient X, et en plus : » */
   herite?: string;
-  points: { titre: string; detail: string }[];
+  points: string[];
   badge?: string;
   vedette?: boolean;
   cta: string;
@@ -46,41 +46,13 @@ export const FORMULES: Record<Lang, Formule[]> = {
         "Le QR code, la galerie en ligne, le tri automatique et les affiches à imprimer. Vos photos restent six mois en ligne.",
       cta: "Choisir l'Essentiel",
       points: [
-        {
-          titre: "Votre QR code personnalisé",
-          detail:
-            "Le petit carré à scanner avec un téléphone. Vous l'imprimez et vous le posez sur les tables.",
-        },
-        {
-          titre: "Aucune application à installer pour vos invités",
-          detail:
-            "Ils dirigent l'appareil photo de leur téléphone vers le QR code, une page s'ouvre, ils envoient leurs photos. Pas de compte à créer, pas de mot de passe.",
-        },
-        {
-          titre: "Une galerie en ligne privée",
-          detail:
-            "Une page web à vous seuls, où toutes les photos et toutes les vidéos arrivent au fur et à mesure de la soirée. Sans limite de nombre.",
-        },
-        {
-          titre: "Vos invités récupèrent aussi les photos des autres",
-          detail:
-            "En qualité d'origine, sans perte. Chacun repart avec les photos où il se trouve, même celles prises par quelqu'un d'autre.",
-        },
-        {
-          titre: "Le tri automatique des doublons et des photos floues",
-          detail:
-            "Les cinq photos identiques d'une même rafale et les photos bougées sont mises de côté. Rien n'est effacé : vous pouvez les revoir d'un bouton.",
-        },
-        {
-          titre: "Les affiches à imprimer, prêtes à l'emploi",
-          detail:
-            "Un fichier PDF avec le panneau d'accueil et les petits chevalets à poser sur chaque table. Vous les imprimez chez vous ou chez un imprimeur.",
-        },
-        {
-          titre: "Tout télécharger en un clic, et six mois pour le faire",
-          detail:
-            "L'album entier en un seul fichier, quand vous voulez. La galerie reste en ligne six mois après votre événement.",
-        },
+        "Un QR code personnalisé, à imprimer et à poser sur les tables",
+        "Une galerie en ligne privée, photos et vidéos illimitées",
+        "Aucune application à installer et aucun compte à créer pour vos invités",
+        "Le tri automatique des doublons et des photos floues",
+        "Téléchargement en qualité d'origine, pour vous comme pour vos invités",
+        "Les affiches et les chevalets de table, en PDF prêt à imprimer",
+        "Galerie en ligne six mois, et tout l'album téléchargeable en un clic",
       ],
     },
     {
@@ -98,26 +70,10 @@ export const FORMULES: Record<Lang, Formule[]> = {
       herite: "Tout ce que contient l'Essentiel, et en plus :",
       cta: "Choisir le Souvenir",
       points: [
-        {
-          titre: "Le livre d'or numérique",
-          detail:
-            "Depuis le même QR code, vos invités vous laissent un mot écrit, un message vocal ou une petite vidéo. Vous les retrouvez à côté des photos.",
-        },
-        {
-          titre: "La recherche par visage",
-          detail:
-            "Un invité prend un selfie et retrouve aussitôt toutes les photos où il apparaît, sans faire défiler les huit cents autres. C'est facultatif : personne n'y est obligé.",
-        },
-        {
-          titre: "Le diaporama en direct",
-          detail:
-            "Les photos s'affichent au fur et à mesure sur un écran ou un vidéoprojecteur pendant la soirée. Il suffit d'ouvrir une page web sur l'ordinateur relié à l'écran.",
-        },
-        {
-          titre: "Vos couleurs et votre nom partout",
-          detail:
-            "La page que voient vos invités, le QR code et les affiches reprennent le nom de votre événement et les couleurs que vous choisissez.",
-        },
+        "Le livre d'or numérique : messages écrits, vocaux et vidéo",
+        "La reconnaissance faciale : chaque invité retrouve ses photos avec un selfie",
+        "Le diaporama en direct, projeté sur un écran pendant la soirée",
+        "Votre page, votre QR code et vos affiches à vos couleurs et à votre nom",
       ],
     },
     {
@@ -133,21 +89,9 @@ export const FORMULES: Record<Lang, Formule[]> = {
       herite: "Tout ce que contient le Souvenir, et en plus :",
       cta: "Choisir l'Héritage",
       points: [
-        {
-          titre: "L'album photo imprimé, grand format",
-          detail:
-            "30 × 30 cm, papier épais, couverture toilée, s'ouvre bien à plat. Vos photos et les mots de vos invités en vis-à-vis. Commandé seul, il coûte 249 €.",
-        },
-        {
-          titre: "La gazette de votre événement, 50 exemplaires",
-          detail:
-            "Un petit journal de quatre pages qui raconte votre journée, à distribuer à vos invités. Commandée seule, elle coûte 149 €.",
-        },
-        {
-          titre: "La mise en page est faite par nous",
-          detail:
-            "Nous choisissons et plaçons les photos, vous relisez tout et vous validez avant l'impression. Vous ne touchez à aucun logiciel.",
-        },
+        "L'album photo imprimé grand format 30 × 30 (249 € s'il est pris seul)",
+        "La gazette de votre événement, 50 exemplaires (149 € si elle est prise seule)",
+        "La mise en page faite par nos soins, que vous validez avant impression",
       ],
     },
   ],
@@ -165,40 +109,13 @@ export const FORMULES: Record<Lang, Formule[]> = {
         "The QR code, the online gallery, automatic sorting and printable signs. Your photos stay online for six months.",
       cta: "Choose Essential",
       points: [
-        {
-          titre: "Your own QR code",
-          detail: "The little square you scan with a phone. You print it and put it on the tables.",
-        },
-        {
-          titre: "No app for your guests to install",
-          detail:
-            "They point their phone camera at the QR code, a page opens, they send their photos. No account, no password.",
-        },
-        {
-          titre: "A private online gallery",
-          detail:
-            "A web page of your own where every photo and video lands as the evening goes on. No limit on how many.",
-        },
-        {
-          titre: "Guests can save each other's photos too",
-          detail:
-            "At full original quality. Everyone leaves with the photos they are in, including the ones somebody else took.",
-        },
-        {
-          titre: "Automatic sorting of duplicates and blurry shots",
-          detail:
-            "Five near-identical frames from one burst, and shaken photos, are set aside. Nothing is deleted: one button brings them back.",
-        },
-        {
-          titre: "Printable signs, ready to use",
-          detail:
-            "A PDF with the welcome sign and the little table cards. Print them at home or at a print shop.",
-        },
-        {
-          titre: "Download everything in one click, six months to do it",
-          detail:
-            "The whole album as a single file, whenever you like. The gallery stays online for six months after your event.",
-        },
+        "A personalised QR code, to print and put on the tables",
+        "A private online gallery, unlimited photos and videos",
+        "No app to install and no account to create for your guests",
+        "Automatic sorting of duplicates and blurry photos",
+        "Original-quality downloads, for you and for your guests",
+        "Signs and table cards, as a print-ready PDF",
+        "Six months online, and the whole album downloadable in one click",
       ],
     },
     {
@@ -216,26 +133,10 @@ export const FORMULES: Record<Lang, Formule[]> = {
       herite: "Everything in Essential, plus:",
       cta: "Choose Souvenir",
       points: [
-        {
-          titre: "The digital guest book",
-          detail:
-            "From the same QR code, guests leave you a written note, a voice message or a short video. You find them next to the photos.",
-        },
-        {
-          titre: "Face search",
-          detail:
-            "A guest takes a selfie and immediately finds every photo they appear in, without scrolling past the other eight hundred. It is optional.",
-        },
-        {
-          titre: "The live slideshow",
-          detail:
-            "Photos appear on a screen or projector as they arrive. Just open a web page on the computer wired to the screen.",
-        },
-        {
-          titre: "Your colours and your name throughout",
-          detail:
-            "The page your guests see, the QR code and the signs all carry your event's name and the colours you choose.",
-        },
+        "The digital guest book: written, voice and video messages",
+        "Face recognition: every guest finds their photos from a selfie",
+        "The live slideshow, projected on a screen during the party",
+        "Your page, your QR code and your signs in your colours and name",
       ],
     },
     {
@@ -250,21 +151,9 @@ export const FORMULES: Record<Lang, Formule[]> = {
       herite: "Everything in Souvenir, plus:",
       cta: "Choose Heritage",
       points: [
-        {
-          titre: "The large printed photo album",
-          detail:
-            "30 × 30 cm, heavy paper, cloth cover, lies flat when open. Your photos facing your guests' words. On its own it costs €249.",
-        },
-        {
-          titre: "Your event newspaper, 50 copies",
-          detail:
-            "A four-page paper telling the story of your day, to hand out to guests. On its own it costs €149.",
-        },
-        {
-          titre: "We do the layout",
-          detail:
-            "We pick and place the photos, you read it all and approve before printing. You never open a design tool.",
-        },
+        "The large-format 30 × 30 printed photo album (€249 on its own)",
+        "Your event newspaper, 50 copies (€149 on its own)",
+        "Layout done by us, approved by you before printing",
       ],
     },
   ],

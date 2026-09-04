@@ -42,7 +42,7 @@ const TEXTES: Record<Lang, {
   evDate: string; evDateAide: string;
   evType: string; typeChoisir: string;
   types: Record<string, string>;
-  marketing: string;
+  marketing: string; marketingAide: string;
   donnees: string;
   /* Pas 2 */
   formuleTitre: string; formuleChapo: string;
@@ -89,7 +89,9 @@ const TEXTES: Record<Lang, {
       autre: "Autre",
     },
     marketing:
-      "J'accepte de recevoir par email les conseils et nouveautés de QR Memories. Une adresse pour se désinscrire figure dans chaque message.",
+      "Je ne souhaite pas recevoir d'informations commerciales de QR Memories par email.",
+    marketingAide:
+      "Sinon, nous pourrons vous écrire au sujet de nos offres. Chaque message contient un lien de désinscription, et vous pouvez changer d'avis à tout moment.",
     donnees:
       "Vos coordonnées servent à créer votre événement et à vous envoyer vos accès. Elles ne sont ni vendues ni transmises à des tiers.",
     formuleTitre: "Quelle formule ?",
@@ -163,7 +165,9 @@ const TEXTES: Record<Lang, {
       autre: "Other",
     },
     marketing:
-      "I agree to receive QR Memories tips and news by email. Every message carries an unsubscribe link.",
+      "I do not wish to receive marketing emails from QR Memories.",
+    marketingAide:
+      "Otherwise we may write to you about our offers. Every message carries an unsubscribe link, and you can change your mind at any time.",
     donnees:
       "Your details are used to create your event and send you your access. They are never sold or passed on.",
     formuleTitre: "Which plan?",
@@ -243,7 +247,8 @@ const CreerEvenement = () => {
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
   const [telephone, setTelephone] = useState("");
-  const [marketing, setMarketing] = useState(false);
+  /* Case d'opposition, pas de consentement : cochée, elle vaut refus. */
+  const [refusMarketing, setRefusMarketing] = useState(false);
   const [evNom, setEvNom] = useState("");
   const [evDate, setEvDate] = useState("");
   const [evType, setEvType] = useState("");
@@ -288,7 +293,7 @@ const CreerEvenement = () => {
       prenom: prenom.trim(),
       nom: nom.trim(),
       telephone: telephone.trim(),
-      marketing,
+      marketing: !refusMarketing,
       evenementNom: evNom.trim(),
       evenementDate: evDate,
       evenementType: evType,
@@ -464,12 +469,13 @@ const CreerEvenement = () => {
 
                     <label className="flex cursor-pointer gap-3 rounded-xl border border-border bg-background p-4">
                       <input
-                        type="checkbox" checked={marketing}
-                        onChange={(e) => setMarketing(e.target.checked)}
+                        type="checkbox" checked={refusMarketing}
+                        onChange={(e) => setRefusMarketing(e.target.checked)}
                         className="mt-1 h-4 w-4 shrink-0 accent-[hsl(var(--primary))]"
                       />
                       <span className="text-[13.5px] leading-relaxed text-foreground">
                         {T.marketing}
+                        <span className="mt-1 block text-muted-foreground">{T.marketingAide}</span>
                       </span>
                     </label>
 
@@ -545,15 +551,11 @@ const CreerEvenement = () => {
                           {f.herite && (
                             <p className="mb-4 text-[14px] font-semibold text-foreground">{f.herite}</p>
                           )}
-                          <ul className="space-y-4">
+                          <ul className="space-y-2.5">
                             {f.points.map((p) => (
-                              <li key={p.titre}>
-                                <strong className="block text-[14.5px] font-semibold leading-snug text-foreground">
-                                  {p.titre}
-                                </strong>
-                                <span className="mt-1 block text-[13.5px] leading-relaxed text-muted-foreground">
-                                  {p.detail}
-                                </span>
+                              <li key={p} className="flex gap-3 text-[14.5px] leading-relaxed text-foreground">
+                                <span aria-hidden className="mt-[9px] block h-px w-3 shrink-0 bg-current opacity-45" />
+                                <span>{p}</span>
                               </li>
                             ))}
                           </ul>

@@ -176,18 +176,11 @@ const Pricing = () => {
                         {f.herite && (
                           <p className="mb-4 text-[14px] font-semibold">{f.herite}</p>
                         )}
-                        <ul className="space-y-4">
+                        <ul className="space-y-3">
                           {f.points.map((p) => (
-                            <li key={p.titre} className="flex gap-3">
+                            <li key={p} className="flex gap-3 text-[14.5px] leading-relaxed">
                               <Puce />
-                              <div>
-                                <strong className="block text-[14.5px] font-semibold leading-snug">
-                                  {p.titre}
-                                </strong>
-                                <span className="mt-1 block text-[13.5px] leading-relaxed opacity-80">
-                                  {p.detail}
-                                </span>
-                              </div>
+                              <span>{p}</span>
                             </li>
                           ))}
                         </ul>

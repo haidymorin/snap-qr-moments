@@ -12,9 +12,12 @@
 -- qu'elle est passée.
 --
 -- Deux garde-fous, parce que garder des coordonnées engage :
---   · le consentement commercial est une colonne à part, faux par défaut, avec
---     sa date. Créer son événement ne vaut pas accord pour recevoir des
---     newsletters — ce sont deux choses distinctes et la loi les distingue.
+--   · la prospection commerciale est une colonne à part, avec sa date. Le
+--     formulaire propose une case d'OPPOSITION, pas de consentement : la loi
+--     l'autorise pour ses propres clients, sur des produits analogues
+--     (art. L34-5 du code des postes). Pour une personne qui n'a jamais
+--     acheté, cette tolérance ne s'applique pas — d'où le croisement avec
+--     a_achete au moment d'exporter.
 --   · la table est fermée. Aucune politique ne l'ouvre à qui que ce soit
 --     d'autre qu'un administrateur ; l'écriture ne passe que par la fonction
 --     ci-dessous, qui n'accepte rien d'autre que ce dont elle a besoin.
@@ -27,8 +30,11 @@ create table if not exists public.clients (
   nom                    text,
   telephone              text,
 
-  -- Le consentement commercial, séparé de tout le reste.
-  marketing              boolean     not null default false,
+  -- La prospection commerciale, séparée de tout le reste. Vraie par défaut :
+  -- c'est une case d'opposition, cochée par la personne qui ne veut rien
+  -- recevoir. Ce qui décide vraiment de l'envoi, c'est le croisement avec
+  -- a_achete au moment de l'export.
+  marketing              boolean     not null default true,
   marketing_le           timestamptz,
 
   -- Ce qu'on sait de son projet au moment où elle laisse ses coordonnées.
@@ -81,7 +87,7 @@ create or replace function public.enregistrer_client(
   p_prenom    text default null,
   p_nom       text default null,
   p_telephone text default null,
-  p_marketing boolean default false,
+  p_marketing boolean default null,
   p_ev_nom    text default null,
   p_ev_date   date default null,
   p_ev_type   text default null,
@@ -110,8 +116,8 @@ begin
     nullif(btrim(coalesce(p_prenom, '')), ''),
     nullif(btrim(coalesce(p_nom, '')), ''),
     nullif(btrim(coalesce(p_telephone, '')), ''),
-    coalesce(p_marketing, false),
-    case when p_marketing then now() end,
+    coalesce(p_marketing, true),
+    case when coalesce(p_marketing, true) then now() end,
     nullif(btrim(coalesce(p_ev_nom, '')), ''),
     p_ev_date,
     nullif(btrim(coalesce(p_ev_type, '')), ''),
@@ -121,9 +127,12 @@ begin
     prenom            = coalesce(excluded.prenom, c.prenom),
     nom               = coalesce(excluded.nom, c.nom),
     telephone         = coalesce(excluded.telephone, c.telephone),
-    marketing         = c.marketing or excluded.marketing,
+    -- Un appel qui ne dit rien de la prospection ne doit pas la réinitialiser :
+    -- le webhook Stripe repasse ici après le paiement sans rien en savoir.
+    marketing         = coalesce(p_marketing, c.marketing),
     marketing_le      = case
-                          when excluded.marketing and not c.marketing then now()
+                          when coalesce(p_marketing, c.marketing) and not c.marketing
+                            then now()
                           else c.marketing_le
                         end,
     evenement_nom     = coalesce(excluded.evenement_nom, c.evenement_nom),
@@ -137,6 +146,9 @@ $$;
 grant execute on function public.enregistrer_client(
   text, text, text, text, boolean, text, date, text, text
 ) to anon, authenticated;
+
+-- Les lignes déjà en base sous l'ancienne règle restent à false : on ne
+-- requalifie pas rétroactivement un silence en acceptation.
 
 -- ─────────────────────────────────────────────────────────────
 -- La désinscription

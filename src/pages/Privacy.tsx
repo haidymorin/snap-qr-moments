@@ -50,10 +50,14 @@ const Privacy = () => {
                 donné au moment du dépôt (article 6.1.a).
               </p>
               <p>
-                Pour l'envoi de nos actualités et conseils par email : votre consentement
-                exprès, recueilli par une case à cocher distincte, jamais pré-cochée, et
-                indépendante de la commande. Chaque message contient un lien de désinscription ;
-                vous pouvez aussi nous écrire à contact@qr-memories.fr.
+                Pour l'envoi d'offres par email à nos clients : notre intérêt légitime, dans les
+                conditions prévues à l'article L34-5 du code des postes et des communications
+                électroniques, qui autorise un professionnel à écrire à ses propres clients au
+                sujet de produits analogues, dès lors qu'ils ont pu s'y opposer au moment de la
+                collecte. Une case d'opposition figure sur le formulaire de création. Les
+                personnes n'ayant pas passé commande ne reçoivent aucune offre. Chaque message
+                contient un lien de désinscription ; vous pouvez aussi nous écrire à
+                contact@qr-memories.fr.
               </p>
             </section>
 
@@ -71,8 +75,8 @@ const Privacy = () => {
                 loi l'impose.
               </p>
               <p>
-                Coordonnées des personnes ayant accepté de recevoir nos emails : jusqu'à leur
-                désinscription, et au plus trois ans sans réaction de leur part.
+                Coordonnées utilisées pour nos offres : jusqu'à opposition ou désinscription,
+                et au plus trois ans sans réaction.
               </p>
             </section>
 
