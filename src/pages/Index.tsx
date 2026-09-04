@@ -75,7 +75,11 @@ function PhotoWall() {
     const cols = el && el.clientWidth < 560 ? 3 : el && el.clientWidth < 900 ? 5 : 8;
     const w = el?.clientWidth ?? 1200;
     const h = el?.clientHeight ?? 700;
-    const total = cols * Math.max(Math.ceil(h / (w / cols)), 3);
+    /* Une vignette double occupe quatre cases : à nombre d'images égal, la
+       grille se remplit moins loin. On compte donc large — le débordement est
+       masqué, un trou en bas ne l'est pas. */
+    const rangees = Math.max(Math.ceil(h / (w / cols)) + 2, 4);
+    const total = Math.ceil(cols * rangees * 1.45);
     setSize(total);
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -136,7 +140,7 @@ function PhotoWall() {
       <div
         ref={wallRef}
         aria-hidden
-        className={`absolute inset-[-3%] grid auto-rows-fr gap-1 p-1 ${cols} motion-safe:animate-[mur-derive_46s_ease-in-out_infinite_alternate]`}
+        className={`absolute inset-[-4%] grid auto-rows-[minmax(0,1fr)] gap-1 p-1 ${cols} motion-safe:animate-[mur-derive_46s_ease-in-out_infinite_alternate]`}
       >
         {Array.from({ length: size }, (_, i) => (
           <div
@@ -452,9 +456,6 @@ const Index = () => {
       <section className="border-t border-border bg-paper py-[clamp(44px,6vw,80px)]">
         <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <p className="eyebrow text-center">{t("home.carrouselEyebrow")}</p>
-          <h2 className="mx-auto mt-3 max-w-[22ch] text-center text-[clamp(26px,3.8vw,44px)] text-wrap balance">
-            {t("home.carrouselTitle")}
-          </h2>
         </div>
         <div className="mt-[clamp(22px,3vw,40px)]">
           <CarrouselInertie depart={62} nombre={12} />
