@@ -22,12 +22,24 @@ export const MARIAGE_REEL = [
    Charte : un produit qui promet de belles photos ne montre jamais un
    dégradé à la place d'une photo. Tout aplat décoratif passe par ici. */
 
+/* La banque d'images du site.
+ *
+ * L'ancienne série montrait surtout des tables dressées, des fleurs et des
+ * décors : joli, et à côté du sujet. Ce que le produit collecte, ce sont des
+ * gens — des invités qui se prennent en photo, qui dansent, qui lèvent leur
+ * verre. Une page qui ne montre que du décor ne ressemble pas à ce qu'on
+ * reçoit le lendemain d'un mariage.
+ *
+ * Ces vingt-cinq photos viennent d'un seul et même mariage, comme un vrai
+ * album, et chacune a été regardée avant d'être retenue. */
 export const PHOTO_IDS = [
-  36028957, 10622328, 12919433, 19691776,
-  6918173, 2765703, 8210489, 1128784,
-  28123410, 15964962, 10360902, 15964954,
-  26558729, 30505255, 10360901, 17111049,
+  13434416, 13434419, 13434413, 13434420, 13434422,
+  13434417, 13434423, 13434424, 13434426, 13434421,
+  13434429, 13434430, 13434433, 13434434, 13434425,
+  13434436, 13434437, 13434438, 13434427, 13434439,
+  13434440, 13434431, 13434443, 13434444, 11988908,
 ];
+
 
 export const photoUrl = (id: number, size = 420) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${size}&h=${size}&fit=crop`;

@@ -78,8 +78,8 @@ function PhotoWall() {
     /* Une vignette double occupe quatre cases : à nombre d'images égal, la
        grille se remplit moins loin. On compte donc large — le débordement est
        masqué, un trou en bas ne l'est pas. */
-    const rangees = Math.max(Math.ceil(h / (w / cols)) + 2, 4);
-    const total = Math.ceil(cols * rangees * 1.45);
+    const rangees = Math.max(Math.ceil(h / (w / cols)) + 3, 5);
+    const total = Math.ceil(cols * rangees * 1.9);
     setSize(total);
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -140,7 +140,7 @@ function PhotoWall() {
       <div
         ref={wallRef}
         aria-hidden
-        className={`absolute inset-[-4%] grid auto-rows-[minmax(0,1fr)] gap-1 p-1 ${cols} motion-safe:animate-[mur-derive_46s_ease-in-out_infinite_alternate]`}
+        className={`absolute inset-[-7%] grid auto-rows-[minmax(0,1fr)] gap-1.5 p-1 ${cols} motion-safe:animate-[mur-derive_46s_ease-in-out_infinite_alternate]`}
       >
         {Array.from({ length: size }, (_, i) => (
           <div
@@ -204,13 +204,13 @@ function PhotoWall() {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               to="/auth"
-              className="inline-flex min-h-[48px] items-center border border-primary bg-primary px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
+              className="inline-flex min-h-[48px] items-center rounded-full border border-primary bg-primary px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
             >
               {t("home.ctaCreate")}
             </Link>
             <Link
               to="/how-it-works"
-              className="inline-flex min-h-[48px] items-center border border-border px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary"
+              className="inline-flex min-h-[48px] items-center rounded-xl border border-border px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary"
             >
               {t("home.ctaDiscover")}
             </Link>
@@ -221,7 +221,7 @@ function PhotoWall() {
       <button
         type="button"
         onClick={play}
-        className="label-mono absolute bottom-4 right-4 z-10 min-h-[38px] border border-border bg-card px-4 py-2 transition-colors hover:text-foreground"
+        className="label-mono absolute bottom-4 right-4 z-10 min-h-[38px] rounded-xl border border-border bg-card px-4 py-2 transition-colors hover:text-foreground"
       >
         {t("home.replay")}
       </button>
@@ -351,14 +351,14 @@ const Index = () => {
               </h2>
               <p className="lead mt-5 max-w-[50ch] text-night-foreground">{t("home.aiDesc")}</p>
 
-              <div className="mt-6 flex flex-wrap items-center gap-4 border border-night-border bg-night-surface px-5 py-4">
+              <div className="mt-6 flex flex-wrap items-center gap-4 rounded-xl border border-night-border bg-night-surface px-5 py-4">
                 <img
                   src={photoUrl(CAMILLE_SELFIE)}
                   alt=""
                   loading="lazy"
                   decoding="async"
                   style={{ objectPosition: "44% 26%" }}
-                  className="h-20 w-16 shrink-0 border border-night-border object-cover"
+                  className="h-20 w-16 shrink-0 rounded-xl border border-night-border object-cover"
                 />
                 <div className="min-w-[210px] flex-1">
                   <strong className="block text-[15px] font-semibold text-night-foreground">{t("home.selfieTitle")}</strong>
@@ -420,7 +420,7 @@ const Index = () => {
               <p className="mt-4 max-w-[50ch] leading-relaxed text-foreground">{t("home.guestbookP2")}</p>
             </div>
 
-            <figure className="m-0 border border-border bg-card p-[clamp(26px,3.6vw,42px)]">
+            <figure className="m-0 rounded-xl border border-border bg-card p-[clamp(26px,3.6vw,42px)]">
               <div className="font-display text-[88px] leading-[0.52] opacity-30">&ldquo;</div>
               <blockquote className="m-0 mt-2 font-display text-[clamp(24px,3.1vw,34px)] italic leading-[1.32]">
                 {t("home.quoteText")}
@@ -431,8 +431,8 @@ const Index = () => {
                   <span className="label-mono">{t("home.quoteMeta")}</span>
                 </div>
               </figcaption>
-              <div className="mt-5 flex items-center gap-3 border border-border bg-background px-4 py-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center border border-foreground text-[10px] text-foreground">
+              <div className="mt-5 flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-foreground text-[10px] text-foreground">
                   ▶
                 </span>
                 <div className="flex h-6 flex-1 items-center gap-[2.5px]">
@@ -454,10 +454,7 @@ const Index = () => {
       {/* Le carrousel à inertie : on attrape les photos et on les lance.
           C'est le seul endroit de la page où le visiteur touche la matière. */}
       <section className="border-t border-border bg-paper py-[clamp(44px,6vw,80px)]">
-        <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
-          <p className="eyebrow text-center">{t("home.carrouselEyebrow")}</p>
-        </div>
-        <div className="mt-[clamp(22px,3vw,40px)]">
+        <div className="pt-1">
           <CarrouselInertie depart={62} nombre={12} />
         </div>
       </section>
@@ -526,12 +523,12 @@ const Index = () => {
 
           <div className="grid gap-[clamp(13px,1.7vw,20px)] sm:grid-cols-2 xl:grid-cols-4">
             {objects.map((o, i) => (
-              <article key={i} className="flex flex-col border border-border bg-background">
+              <article key={i} className="flex flex-col rounded-xl border border-border bg-background">
                 {/* Pas de photo tant que l'objet n'existe pas : un aplat sombre
                     et une mention honnête valent mieux que l'album d'un autre. */}
                 <div className="relative flex aspect-[3/2] items-center justify-center overflow-hidden border-b border-border bg-night">
                   <span className="label-mono text-night-foreground">{t("home.objSoon")}</span>
-                  <span className="label-mono absolute left-2.5 top-2.5 border border-night-border px-2 py-1 text-night-muted">
+                  <span className="label-mono absolute left-2.5 top-2.5 rounded-xl border border-night-border px-2 py-1 text-night-muted">
                     {o.tag}
                   </span>
                 </div>
@@ -562,7 +559,7 @@ const Index = () => {
             <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed">{t("home.finalDesc")}</p>
             <Link
               to="/auth"
-              className="mt-8 inline-flex min-h-[48px] items-center border border-primary-foreground bg-primary-foreground px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-transparent hover:text-primary-foreground"
+              className="mt-8 inline-flex min-h-[48px] items-center rounded-full border border-primary-foreground bg-primary-foreground px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-transparent hover:text-primary-foreground"
             >
               {t("home.finalCta")}
             </Link>

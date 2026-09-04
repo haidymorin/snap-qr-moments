@@ -24,7 +24,7 @@ const LanguageSwitcher = ({ className = "" }: { className?: string }) => {
 
   return (
     <div
-      className={`inline-flex items-center divide-x divide-border border border-border ${className}`}
+      className={`inline-flex items-center divide-x divide-border rounded-xl border border-border ${className}`}
     >
       {btn("fr", "FR")}
       {btn("en", "EN")}

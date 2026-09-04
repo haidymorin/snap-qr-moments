@@ -139,10 +139,10 @@ const Auth = () => {
               <p className="text-muted-foreground">{t("auth.subtitle")}</p>
             </div>
 
-            <div className="p-8 bg-card border border-border">
+            <div className="p-8 bg-card rounded-xl border border-border">
               {signUpSuccess ? (
                 <div className="text-center space-y-5 py-4 animate-fade-in">
-                  <div className="w-16 h-16 mx-auto border border-foreground flex items-center justify-center">
+                  <div className="w-16 h-16 mx-auto rounded-full border border-foreground flex items-center justify-center">
                     <MailCheck className="w-7 h-7 text-foreground" />
                   </div>
                   <h2 className="text-2xl font-bold">{t("auth.checkEmailTitle")}</h2>

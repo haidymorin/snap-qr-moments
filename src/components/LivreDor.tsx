@@ -106,7 +106,7 @@ const LecteurVocal = ({ url, secondes }: { url: string; secondes: number | null 
   const [joue, setJoue] = useState(false);
 
   return (
-    <div className="flex items-center gap-3 border border-border px-3 py-2">
+    <div className="flex items-center gap-3 rounded-xl border border-border px-3 py-2">
       <button
         type="button"
         onClick={() => {
@@ -117,7 +117,7 @@ const LecteurVocal = ({ url, secondes }: { url: string; secondes: number | null 
           el.play();
         }}
         aria-label={joue ? "Pause" : "Lecture"}
-        className="flex h-10 w-10 shrink-0 items-center justify-center border border-primary text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-primary text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
       >
         {joue ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
       </button>
@@ -307,7 +307,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
       {!messagesPublics && <p className="label-mono mt-2">{T.prive}</p>}
 
       {envoye ? (
-        <div className="mt-8 border border-border p-6">
+        <div className="mt-8 rounded-xl border border-border p-6">
           <p className="text-lg">{T.merci}</p>
           <button
             type="button"
@@ -318,7 +318,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
           </button>
         </div>
       ) : (
-        <form onSubmit={envoyer} className="mt-8 flex flex-col gap-5 border border-border p-5 sm:p-6">
+        <form onSubmit={envoyer} className="mt-8 flex flex-col gap-5 rounded-xl border border-border p-5 sm:p-6">
           <div className="flex flex-col gap-2">
             <label htmlFor="ld-prenom" className="label-mono">{T.prenom}</label>
             <input
@@ -327,7 +327,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
               onChange={(e) => setPrenom(e.target.value)}
               maxLength={60}
               required
-              className="min-h-[48px] border border-border bg-background px-3 text-base outline-none focus:border-primary"
+              className="min-h-[48px] rounded-xl border border-border bg-background px-3 text-base outline-none focus:border-primary"
             />
           </div>
 
@@ -358,7 +358,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
                 placeholder={T.messagePlaceholder}
                 rows={5}
                 maxLength={2000}
-                className="border border-border bg-background p-3 text-base outline-none focus:border-primary"
+                className="rounded-xl border border-border bg-background p-3 text-base outline-none focus:border-primary"
               />
             </div>
           ) : (
@@ -369,7 +369,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
                   <button
                     type="button"
                     onClick={refaire}
-                    className="label-mono inline-flex min-h-[44px] items-center gap-2 border border-border px-4 hover:border-primary"
+                    className="label-mono inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-border px-4 hover:border-primary"
                   >
                     <Trash2 className="h-4 w-4" /> {T.micRefait}
                   </button>
@@ -387,7 +387,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
                 <button
                   type="button"
                   onClick={commencer}
-                  className="inline-flex min-h-[56px] items-center justify-center gap-3 border border-primary px-6 transition-colors hover:bg-primary hover:text-primary-foreground"
+                  className="inline-flex min-h-[56px] items-center justify-center gap-3 rounded-full border border-primary px-6 transition-colors hover:bg-primary hover:text-primary-foreground"
                 >
                   <Mic className="h-4 w-4" />
                   <span className="label-mono">{T.micDemarrer}</span>
@@ -406,7 +406,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
             />
             {apercu ? (
               <div className="flex items-center gap-3">
-                <img src={apercu} alt="" className="h-16 w-16 border border-border object-cover" />
+                <img src={apercu} alt="" className="h-16 w-16 rounded-xl border border-border object-cover" />
                 <button
                   type="button"
                   onClick={retirerPhoto}
@@ -419,7 +419,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
               <button
                 type="button"
                 onClick={() => photoInput.current?.click()}
-                className="label-mono inline-flex min-h-[44px] items-center gap-2 border border-border px-4 hover:border-primary"
+                className="label-mono inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-border px-4 hover:border-primary"
               >
                 <ImageIcon className="h-4 w-4" /> {T.photo}
               </button>
@@ -433,7 +433,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
           <button
             type="submit"
             disabled={!pret}
-            className="inline-flex min-h-[52px] items-center justify-center gap-2 border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
           >
             {envoi && <Loader2 className="h-4 w-4 animate-spin" />}
             {envoi ? T.envoi : T.envoyer}
@@ -444,7 +444,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
       {messagesPublics && (
         <div className="mt-10">
           {messages.length === 0 ? (
-            <p className="border border-border px-6 py-12 text-center text-muted-foreground">
+            <p className="rounded-xl border border-border px-6 py-12 text-center text-muted-foreground">
               {T.aucun}
             </p>
           ) : (
@@ -468,7 +468,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
                         src={m.photo_thumb_url ?? m.photo_url}
                         alt=""
                         loading="lazy"
-                        className="max-h-[280px] w-full border border-border object-cover"
+                        className="max-h-[280px] w-full rounded-xl border border-border object-cover"
                       />
                     )}
                   </li>

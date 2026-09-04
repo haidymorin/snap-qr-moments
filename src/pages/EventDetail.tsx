@@ -362,7 +362,7 @@ const EventDetail = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
             <div className="lg:col-span-2">
-              <div className="border border-border px-3 py-1 text-xs font-medium text-muted-foreground capitalize inline-block mb-3">
+              <div className="rounded-xl border border-border px-3 py-1 text-xs font-medium text-muted-foreground capitalize inline-block mb-3">
                 {event.event_type}
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-3">
@@ -372,7 +372,7 @@ const EventDetail = () => {
                 <Calendar className="w-5 h-5" />
                 {new Date(event.event_date).toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR", { day: "numeric", month: "long", year: "numeric" })}
               </div>
-              <div className="p-6 bg-card rounded-2xl border border-border shadow-soft">
+              <div className="p-6 bg-card rounded-2xl rounded-xl border border-border shadow-soft">
                 <p className="text-sm text-muted-foreground mb-2">{T.lien}</p>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <code className="flex-1 px-4 py-2 bg-muted rounded-lg text-sm break-all">{guestUrl}</code>
@@ -384,7 +384,7 @@ const EventDetail = () => {
               </div>
             </div>
 
-            <div className="p-6 bg-gradient-card rounded-2xl border border-primary/30 shadow-card text-center">
+            <div className="p-6 bg-gradient-card rounded-2xl rounded-full border border-primary/30 shadow-card text-center">
               <p className="text-sm font-medium text-muted-foreground mb-4">{T.qr}</p>
               <div ref={qrRef} className="bg-white p-4 rounded-xl inline-block mb-4">
                 <QRCodeCanvas value={guestUrl} size={180} level="H" />
@@ -411,7 +411,7 @@ const EventDetail = () => {
               un, une photo jugée floue peut être la seule où figure quelqu'un :
               rien n'est supprimé, tout se réaffiche d'un bouton. */}
           {(nbEcartees > 0 || ecartees) && (
-            <div className="mb-6 border border-border bg-card px-4 py-3">
+            <div className="mb-6 rounded-xl border border-border bg-card px-4 py-3">
               <button
                 type="button"
                 onClick={basculerEcartees}
@@ -428,7 +428,7 @@ const EventDetail = () => {
           )}
 
           {media.length === 0 && !loadingMore ? (
-            <div className="text-center py-16 bg-card rounded-2xl border border-border">
+            <div className="text-center py-16 bg-card rounded-2xl rounded-xl border border-border">
               <p className="text-muted-foreground">
                 {ecartees
                   ? T.videEcartees
@@ -443,7 +443,7 @@ const EventDetail = () => {
                   type="button"
                   onClick={() => setLightbox(p)}
                   style={{ aspectRatio: "1 / 1" }}
-                  className="relative w-full overflow-hidden rounded-xl bg-muted border border-border shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300"
+                  className="relative w-full overflow-hidden rounded-xl bg-muted rounded-xl border border-border shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300"
                 >
                   <img
                     src={

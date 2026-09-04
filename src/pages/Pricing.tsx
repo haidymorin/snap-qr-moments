@@ -443,7 +443,7 @@ const Pricing = () => {
               </>
             ) : (
               <div className="grid gap-[clamp(14px,1.8vw,22px)] lg:grid-cols-[1.55fr_1fr]">
-                <article className="flex flex-col border border-night bg-night p-[clamp(24px,2.6vw,34px)] text-night-foreground">
+                <article className="flex flex-col rounded-xl border border-night bg-night p-[clamp(24px,2.6vw,34px)] text-night-foreground">
                   <h2 className="text-[clamp(26px,2.6vw,34px)] leading-none">{pro.name}</h2>
                   <div className="mt-5 flex items-baseline gap-2">
                     <span className="font-display text-[clamp(42px,4.6vw,58px)] leading-none">{pro.price}</span>
@@ -466,10 +466,10 @@ const Pricing = () => {
                   </Link>
                 </article>
 
-                <article className="flex flex-col border border-border bg-card p-[clamp(24px,2.6vw,34px)]">
+                <article className="flex flex-col rounded-xl border border-border bg-card p-[clamp(24px,2.6vw,34px)]">
                   <div className="flex items-start justify-between gap-3">
                     <h2 className="text-[clamp(24px,2.3vw,30px)] leading-none">{agency.name}</h2>
-                    <span className="label-mono shrink-0 border border-border px-2 py-1 text-foreground opacity-100">
+                    <span className="label-mono shrink-0 rounded-xl border border-border px-2 py-1 text-foreground opacity-100">
                       {t("pricing.soon")}
                     </span>
                   </div>
@@ -484,7 +484,7 @@ const Pricing = () => {
                   </ul>
                   <Link
                     to="/contact"
-                    className="mt-auto inline-flex min-h-[48px] items-center justify-center border border-border px-6 py-4 pt-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary"
+                    className="mt-auto inline-flex min-h-[48px] items-center justify-center rounded-xl border border-border px-6 py-4 pt-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary"
                     style={{ marginTop: "2rem" }}
                   >
                     {agency.ctaLabel}

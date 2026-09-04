@@ -606,7 +606,7 @@ const GuestEvent = () => {
 
       <main className="mx-auto max-w-4xl px-5 pb-20">
         {/* Dépôt */}
-        <section className="mt-8 border border-border bg-card p-6 sm:p-8">
+        <section className="mt-8 rounded-xl border border-border bg-card p-6 sm:p-8">
           <input
             ref={cameraInputRef}
             type="file"
@@ -629,7 +629,7 @@ const GuestEvent = () => {
               type="button"
               onClick={() => cameraInputRef.current?.click()}
               disabled={busy}
-              className="inline-flex min-h-[56px] items-center justify-center gap-3 border border-primary bg-primary px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-50"
+              className="inline-flex min-h-[56px] items-center justify-center gap-3 rounded-full border border-primary bg-primary px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-50"
             >
               <Camera className="h-5 w-5" aria-hidden="true" />
               {t("guest.takePhoto")}
@@ -638,7 +638,7 @@ const GuestEvent = () => {
               type="button"
               onClick={() => libraryInputRef.current?.click()}
               disabled={busy}
-              className="inline-flex min-h-[56px] items-center justify-center gap-3 border border-border px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary disabled:opacity-50"
+              className="inline-flex min-h-[56px] items-center justify-center gap-3 rounded-xl border border-border px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary disabled:opacity-50"
             >
               <Images className="h-5 w-5" aria-hidden="true" />
               {t("guest.choosePhotos")}
@@ -701,7 +701,7 @@ const GuestEvent = () => {
                       <button
                         type="button"
                         onClick={retryFailed}
-                        className="inline-flex min-h-[44px] items-center border border-primary px-5 py-2 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                        className="inline-flex min-h-[44px] items-center rounded-full border border-primary px-5 py-2 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
                       >
                         {t("guest.retry")}
                       </button>
@@ -750,7 +750,7 @@ const GuestEvent = () => {
               <button
                 type="button"
                 onClick={() => setSelection((prev) => (prev ? null : new Set()))}
-                className="label-mono inline-flex min-h-[44px] items-center gap-2 border border-border px-4 transition-colors hover:border-primary"
+                className="label-mono inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-border px-4 transition-colors hover:border-primary"
               >
                 {selection ? <X className="h-4 w-4" /> : <CheckSquare className="h-4 w-4" />}
                 {selection ? t("guest.selAnnuler") : t("guest.selChoisir")}
@@ -760,7 +760,7 @@ const GuestEvent = () => {
         </div>
 
         {visibles.length === 0 && !loadingMore ? (
-          <div className="mt-6 border border-border px-6 py-16 text-center">
+          <div className="mt-6 rounded-xl border border-border px-6 py-16 text-center">
             <p className="text-muted-foreground">
               {filter === "video"
                 ? t("guest.emptyVideos")
@@ -856,7 +856,7 @@ const GuestEvent = () => {
                 type="button"
                 onClick={enregistrerSelection}
                 disabled={selection.size === 0 || enCours !== null}
-                className="inline-flex min-h-[48px] items-center gap-2 border border-primary bg-primary px-6 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-40"
+                className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-primary bg-primary px-6 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-40"
               >
                 {enCours ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                 {enCours ? `${enCours.faits}/${enCours.total}` : t("guest.selEnregistrer")}

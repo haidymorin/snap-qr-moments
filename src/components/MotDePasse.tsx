@@ -44,7 +44,7 @@ const TEXTES = {
 } as const;
 
 const champ =
-  "min-h-[52px] w-full border border-border bg-card px-4 text-[15px] text-foreground outline-none transition-colors focus:border-foreground";
+  "min-h-[52px] w-full rounded-xl border border-border bg-card px-4 text-[15px] text-foreground outline-none transition-colors focus:border-foreground";
 
 const MotDePasse = () => {
   const { lang } = useLanguage();
@@ -136,7 +136,7 @@ const MotDePasse = () => {
           </div>
 
           {erreur && (
-            <p className="mt-5 border border-border bg-card px-4 py-3 text-[15px] text-foreground">
+            <p className="mt-5 rounded-xl border border-border bg-card px-4 py-3 text-[15px] text-foreground">
               {erreur}
             </p>
           )}
@@ -145,7 +145,7 @@ const MotDePasse = () => {
             <button
               type="submit"
               disabled={etat === "envoi"}
-              className="inline-flex min-h-[52px] items-center border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-60"
+              className="inline-flex min-h-[52px] items-center rounded-full border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-60"
             >
               {etat === "envoi" && <Loader2 className="mr-3 h-4 w-4 animate-spin" />}
               {etat === "envoi" ? T.encours : T.valider}

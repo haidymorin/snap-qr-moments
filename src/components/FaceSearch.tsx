@@ -113,7 +113,7 @@ function Scanner({ faites, total }: { faites: number; total: number }) {
             <div
               key={i}
               className={`relative aspect-square transition-opacity duration-500 ${
-                faite ? "bg-foreground opacity-90" : "border border-border opacity-70"
+                faite ? "bg-foreground opacity-90" : "rounded-xl border border-border opacity-70"
               }`}
             >
               {vise && (
@@ -253,7 +253,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
   // --- Le bandeau, quand rien n'est ouvert ---------------------------------
   if (etape === "ferme") {
     return (
-      <section className="mt-8 border border-border bg-card p-6 sm:p-8">
+      <section className="mt-8 rounded-xl border border-border bg-card p-6 sm:p-8">
         <p className="eyebrow">Vos photos</p>
         <h2 className="mt-2 text-[clamp(20px,3.4vw,26px)]">
           Retrouvez les photos où vous apparaissez
@@ -268,7 +268,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
           <button
             type="button"
             onClick={() => setEtape("consentement")}
-            className="inline-flex min-h-[48px] items-center border border-primary bg-primary px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
+            className="inline-flex min-h-[48px] items-center rounded-full border border-primary bg-primary px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
           >
             Retrouver mes photos
           </button>
@@ -289,7 +289,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
   // --- Le consentement -----------------------------------------------------
   if (etape === "consentement") {
     return (
-      <section className="mt-8 border border-border bg-card p-6 sm:p-8">
+      <section className="mt-8 rounded-xl border border-border bg-card p-6 sm:p-8">
         <p className="eyebrow">Avant de commencer</p>
         <h2 className="mt-2 text-[clamp(20px,3.4vw,26px)]">Ce qui va se passer</h2>
 
@@ -315,7 +315,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
             onChange={(e) => setPrenom(e.target.value)}
             maxLength={60}
             placeholder="Camille"
-            className="mt-2 block w-full max-w-xs border border-border bg-background px-4 py-3 text-[16px] outline-none focus:border-primary"
+            className="mt-2 block w-full max-w-xs rounded-xl border border-border bg-background px-4 py-3 text-[16px] outline-none focus:border-primary"
           />
         </label>
 
@@ -353,7 +353,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
             type="button"
             disabled={!consent || !prenom.trim()}
             onClick={() => champCamera.current?.click()}
-            className="inline-flex min-h-[48px] items-center border border-primary bg-primary px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex min-h-[48px] items-center rounded-full border border-primary bg-primary px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
           >
             Me prendre en photo
           </button>
@@ -361,7 +361,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
             type="button"
             disabled={!consent || !prenom.trim()}
             onClick={() => champGalerie.current?.click()}
-            className="inline-flex min-h-[48px] items-center border border-border px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex min-h-[48px] items-center rounded-xl border border-border px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary disabled:cursor-not-allowed disabled:opacity-40"
           >
             Choisir une photo de moi
           </button>
@@ -401,7 +401,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
   if (etape === "analyse") {
     const { faites, total } = progression;
     return (
-      <section className="mt-8 border border-border bg-card p-6 sm:p-8">
+      <section className="mt-8 rounded-xl border border-border bg-card p-6 sm:p-8">
         <p className="eyebrow">Analyse en cours</p>
         <h2 className="mt-2 text-[clamp(20px,3.4vw,26px)]">
           L'intelligence artificielle regarde les photos une à une
@@ -419,14 +419,14 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
   // --- L'erreur ------------------------------------------------------------
   if (etape === "erreur") {
     return (
-      <section className="mt-8 border border-border bg-card p-6 sm:p-8">
+      <section className="mt-8 rounded-xl border border-border bg-card p-6 sm:p-8">
         <p className="eyebrow">Recherche</p>
         <p className="mt-3 max-w-[54ch] text-[15px] leading-relaxed">{erreur}</p>
         <div className="mt-6 flex flex-wrap gap-4">
           <button
             type="button"
             onClick={() => setEtape("consentement")}
-            className="inline-flex min-h-[48px] items-center border border-primary px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] transition-colors hover:bg-primary hover:text-primary-foreground"
+            className="inline-flex min-h-[48px] items-center rounded-full border border-primary px-6 py-3 text-xs font-semibold uppercase tracking-[0.1em] transition-colors hover:bg-primary hover:text-primary-foreground"
           >
             Réessayer
           </button>
@@ -444,7 +444,7 @@ const FaceSearch = ({ eventId, onResultats }: Props) => {
 
   // --- Les résultats -------------------------------------------------------
   return (
-    <section className="mt-8 border border-border bg-card p-6 sm:p-8">
+    <section className="mt-8 rounded-xl border border-border bg-card p-6 sm:p-8">
       <p className="eyebrow">Vos photos</p>
       <h2 className="mt-2 text-[clamp(20px,3.4vw,26px)]">
         {trouvees > 0

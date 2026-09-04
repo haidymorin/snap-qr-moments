@@ -53,7 +53,7 @@ const Lecteur = ({ url, secondes }: { url: string; secondes: number | null }) =>
   const [joue, setJoue] = useState(false);
   const [el, setEl] = useState<HTMLAudioElement | null>(null);
   return (
-    <div className="flex items-center gap-3 border border-border px-3 py-2">
+    <div className="flex items-center gap-3 rounded-xl border border-border px-3 py-2">
       <button
         type="button"
         onClick={() => {
@@ -63,7 +63,7 @@ const Lecteur = ({ url, secondes }: { url: string; secondes: number | null }) =>
           el.play();
         }}
         aria-label={joue ? "Pause" : "Lecture"}
-        className="flex h-9 w-9 shrink-0 items-center justify-center border border-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-primary transition-colors hover:bg-primary hover:text-primary-foreground"
       >
         {joue ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
       </button>
@@ -131,7 +131,7 @@ const LivreDorHote = ({ eventId, lang }: { eventId: string; lang: string }) => {
       </div>
 
       {messages.length === 0 ? (
-        <p className="mt-6 border border-border px-6 py-12 text-center text-muted-foreground">
+        <p className="mt-6 rounded-xl border border-border px-6 py-12 text-center text-muted-foreground">
           {T.vide}
         </p>
       ) : (
@@ -159,14 +159,14 @@ const LivreDorHote = ({ eventId, lang }: { eventId: string; lang: string }) => {
                   src={m.photo_thumb_url ?? m.photo_url}
                   alt=""
                   loading="lazy"
-                  className="max-h-[240px] w-full border border-border object-cover"
+                  className="max-h-[240px] w-full rounded-xl border border-border object-cover"
                 />
               )}
               <button
                 type="button"
                 onClick={() => basculer(m)}
                 disabled={enCours === m.id}
-                className="label-mono mt-1 inline-flex min-h-[40px] w-fit items-center gap-2 border border-border px-3 transition-colors hover:border-primary disabled:opacity-50"
+                className="label-mono mt-1 inline-flex min-h-[40px] w-fit items-center gap-2 rounded-xl border border-border px-3 transition-colors hover:border-primary disabled:opacity-50"
               >
                 {enCours === m.id
                   ? <Loader2 className="h-4 w-4 animate-spin" />

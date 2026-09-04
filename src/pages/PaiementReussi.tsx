@@ -183,13 +183,13 @@ const PaiementReussi = () => {
             <div className="mt-9 flex flex-wrap gap-3">
               <Link
                 to="/auth?mode=signin"
-                className="inline-flex min-h-[52px] items-center border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
+                className="inline-flex min-h-[52px] items-center rounded-full border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
               >
                 {T.connexion}
               </Link>
               <Link
                 to="/contact"
-                className="inline-flex min-h-[52px] items-center border border-border px-8 text-xs font-semibold uppercase tracking-[0.1em] transition-colors hover:border-primary"
+                className="inline-flex min-h-[52px] items-center rounded-xl border border-border px-8 text-xs font-semibold uppercase tracking-[0.1em] transition-colors hover:border-primary"
               >
                 {T.contact}
               </Link>
@@ -225,13 +225,13 @@ const PaiementReussi = () => {
                 </dl>
 
                 <p className="label-mono mt-7">{T.lien}</p>
-                <p className="mt-2 break-all border border-border bg-card px-4 py-3 font-mono text-[13px]">
+                <p className="mt-2 break-all rounded-xl border border-border bg-card px-4 py-3 font-mono text-[13px]">
                   {lienInvites}
                 </p>
               </div>
 
               <div className="flex flex-col items-center gap-3 md:pl-4">
-                <div className="border border-border bg-white p-4">
+                <div className="rounded-xl border border-border bg-white p-4">
                   <QRCodeCanvas value={lienInvites} size={168} level="H" />
                 </div>
               </div>
@@ -244,7 +244,7 @@ const PaiementReussi = () => {
                     type="button"
                     onClick={entrerDansEspace}
                     disabled={entree === "encours"}
-                    className="inline-flex min-h-[52px] items-center border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-60"
+                    className="inline-flex min-h-[52px] items-center rounded-full border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-60"
                   >
                     {entree === "encours" && <Loader2 className="mr-3 h-4 w-4 animate-spin" />}
                     {T.entrer}
@@ -255,7 +255,7 @@ const PaiementReussi = () => {
                 <>
                   <Link
                     to="/auth?mode=signin"
-                    className="inline-flex min-h-[52px] items-center border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
+                    className="inline-flex min-h-[52px] items-center rounded-full border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
                   >
                     {T.connexion}
                   </Link>

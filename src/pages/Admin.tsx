@@ -94,7 +94,7 @@ const Admin = () => {
         <h1 className="mt-3 text-[clamp(30px,4.5vw,52px)]">Tous les événements</h1>
 
         {refuse || (lignes && lignes.length === 0 && !bilan.actifs) ? (
-          <p className="mt-8 border border-border px-6 py-12 text-center text-muted-foreground">
+          <p className="mt-8 rounded-xl border border-border px-6 py-12 text-center text-muted-foreground">
             {refuse
               ? "Ce compte n'a pas le rôle administrateur."
               : "Aucun événement pour l'instant."}
@@ -103,7 +103,7 @@ const Admin = () => {
           <Loader2 className="mt-10 h-6 w-6 animate-spin text-muted-foreground" />
         ) : (
           <>
-            <dl className="mt-10 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+            <dl className="mt-10 grid gap-px rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
               {[
                 ["Encaissé", euros(bilan.encaisse)],
                 ["Événements actifs", String(bilan.actifs)],

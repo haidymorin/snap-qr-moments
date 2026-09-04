@@ -297,7 +297,7 @@ const Dashboard = () => {
           {fetching ? (
             <p className="text-center text-muted-foreground py-12">{T.chargementListe}</p>
           ) : events.length === 0 ? (
-            <div className="text-center py-16 bg-card rounded-2xl border border-border">
+            <div className="text-center py-16 bg-card rounded-2xl rounded-xl border border-border">
               <QrCode className="w-16 h-16 text-primary mx-auto mb-4 opacity-60" />
               <h2 className="text-xl font-semibold mb-2">{T.vide}</h2>
               <p className="text-muted-foreground mb-6">{T.videTexte}</p>
@@ -319,15 +319,15 @@ const Dashboard = () => {
                 <Link
                   key={ev.id}
                   to={`/dashboard/event/${ev.id}`}
-                  className="p-6 bg-card rounded-2xl border border-border shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300 group"
+                  className="p-6 bg-card rounded-2xl rounded-xl border border-border shadow-soft hover:shadow-card hover:-translate-y-1 transition-all duration-300 group"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="border border-border px-2 py-1 text-xs font-medium capitalize text-muted-foreground">
+                      <span className="rounded-xl border border-border px-2 py-1 text-xs font-medium capitalize text-muted-foreground">
                         {T.types[ev.event_type] ?? ev.event_type}
                       </span>
                       {ev.plan && (
-                        <span className="label-mono border border-border px-2 py-1">
+                        <span className="label-mono rounded-xl border border-border px-2 py-1">
                           {PALIERS[lang === "en" ? "en" : "fr"][ev.plan] ?? ev.plan}
                         </span>
                       )}

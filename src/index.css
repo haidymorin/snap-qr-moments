@@ -10,7 +10,7 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --paper: 300 14% 98%;
+    --paper: 0 0% 100%;
     --foreground: 260 12% 7%;
 
     --card: 0 0% 100%;
@@ -22,10 +22,10 @@
     --primary: 311 33% 19%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 300 12% 96%;
+    --secondary: 300 8% 97%;
     --secondary-foreground: 260 12% 7%;
 
-    --muted: 300 10% 96%;
+    --muted: 300 8% 97%;
     --muted-foreground: 285 6% 40%;
 
     --accent: 27 51% 50%;
@@ -129,6 +129,25 @@
   }
 }
 
+@layer base {
+  /* Les angles vifs étaient posés par défaut, pas par choix classe par classe :
+     changer la configuration Tailwind ne suffisait donc pas. On arrondit ici
+     les éléments qui n'ont aucune classe d'angle, et toute classe `rounded-*`
+     posée plus tard reprend la main. */
+  img, video, canvas {
+    border-radius: 12px;
+  }
+
+  button, [role="button"], input, textarea, select {
+    border-radius: 12px;
+  }
+
+  /* Les blocs de contenu : cartes de formule, étapes, encadrés. */
+  article, aside, figure {
+    border-radius: 14px;
+  }
+}
+
 @layer components {
   /* Petites étiquettes techniques : chiffres, codes, numéros d'étape.
      Le seul endroit où la police à chasse fixe apparaît. */
@@ -150,14 +169,15 @@
   }
 
   /* La ligne en italique posée au-dessus des grands titres */
+  /* L'exergue : jadis un serif en italique, dernier reste du vieux journal.
+     Désormais une étiquette technique, comme le reste des petites mentions. */
   .eyebrow {
-    font-family: "Playfair Display", Georgia, serif;
-    font-style: italic;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11.5px;
     font-weight: 500;
-    font-size: clamp(17px, 1.9vw, 22px);
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    @apply text-foreground;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    @apply text-accent;
   }
 
   /* Le mot posé en très grand derrière une section */

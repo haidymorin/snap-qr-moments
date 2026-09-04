@@ -18,7 +18,7 @@ function QrVisual() {
   const filled = (r: number, c: number) => ((r * 5 + c * 3 + ((r * c) % 7)) % 11) < 5;
 
   return (
-    <div className="relative aspect-square w-full max-w-[380px] border border-border bg-card p-[9%]">
+    <div className="relative aspect-square w-full max-w-[380px] rounded-xl border border-border bg-card p-[9%]">
       <div className="relative grid h-full w-full grid-cols-11 gap-[2px]">
         {Array.from({ length: N * N }, (_, i) => {
           const r = Math.floor(i / N);
@@ -57,7 +57,7 @@ function QrVisual() {
 function UploadVisual() {
   const pending = [3, 7, 10];
   return (
-    <div className="w-full border border-night-border bg-night-surface p-4">
+    <div className="w-full rounded-xl border border-night-border bg-night-surface p-4">
       <div className="grid grid-cols-4 gap-1.5">
         {Array.from({ length: 12 }, (_, i) => (
           <div
@@ -117,7 +117,7 @@ function ObjectsVisual() {
       {items.map((o, i) => (
         <div key={i}>
           <div
-            className={`${o.ratio} grid place-items-center border border-border bg-night px-2 text-center`}
+            className={`${o.ratio} grid place-items-center rounded-xl border border-border bg-night px-2 text-center`}
           >
             <span className="label-mono text-night-foreground">{t("home.objSoon")}</span>
           </div>
@@ -260,7 +260,7 @@ const HowItWorks = () => {
               <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed">{t("how.ctaDesc")}</p>
               <Link
                 to="/auth"
-                className="mt-8 inline-flex min-h-[48px] items-center border border-primary-foreground bg-primary-foreground px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-transparent hover:text-primary-foreground"
+                className="mt-8 inline-flex min-h-[48px] items-center rounded-full border border-primary-foreground bg-primary-foreground px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-transparent hover:text-primary-foreground"
               >
                 {t("how.ctaButton")}
               </Link>

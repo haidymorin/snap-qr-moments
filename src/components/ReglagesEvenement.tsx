@@ -160,7 +160,7 @@ const ReglagesEvenement = ({
             value={form.message_accueil ?? ""}
             placeholder={T.accueilExemple}
             onChange={(e) => setForm({ ...form, message_accueil: e.target.value })}
-            className="border border-border bg-background p-3 text-base outline-none focus:border-primary"
+            className="rounded-xl border border-border bg-background p-3 text-base outline-none focus:border-primary"
           />
           <p className="text-xs text-muted-foreground">{T.accueilAide}</p>
         </div>
@@ -173,7 +173,7 @@ const ReglagesEvenement = ({
             min={eventDate}
             value={form.collecte_fin ?? parDefaut}
             onChange={(e) => setForm({ ...form, collecte_fin: e.target.value })}
-            className="min-h-[48px] border border-border bg-background px-3 text-base outline-none focus:border-primary"
+            className="min-h-[48px] rounded-xl border border-border bg-background px-3 text-base outline-none focus:border-primary"
           />
           <p className="text-xs text-muted-foreground">{T.collecteAide}</p>
         </div>
@@ -211,7 +211,7 @@ const ReglagesEvenement = ({
         type="button"
         onClick={enregistrer}
         disabled={!modifie || envoi}
-        className="mt-8 inline-flex min-h-[48px] items-center gap-2 border border-primary bg-primary px-6 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-40"
+        className="mt-8 inline-flex min-h-[48px] items-center gap-2 rounded-full border border-primary bg-primary px-6 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-40"
       >
         {envoi && <Loader2 className="h-4 w-4 animate-spin" />}
         {T.enregistrer}

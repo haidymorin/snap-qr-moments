@@ -172,7 +172,7 @@ const CommandeDialog = ({ plan, onClose }: Props) => {
           </div>
 
           {demandeRenoncement && (
-            <div className="border border-border p-4">
+            <div className="rounded-xl border border-border p-4">
               <p className="label-mono mb-2">{T.renoncementTitre(jours)}</p>
               <label className="flex cursor-pointer items-start gap-3 text-sm">
                 <input
@@ -194,7 +194,7 @@ const CommandeDialog = ({ plan, onClose }: Props) => {
           <button
             type="submit"
             disabled={!pret || envoi}
-            className="inline-flex min-h-[52px] items-center justify-center gap-2 border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
           >
             {envoi && <Loader2 className="h-4 w-4 animate-spin" />}
             {envoi ? T.envoi : T.payer}

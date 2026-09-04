@@ -29,13 +29,13 @@ const NotFound = () => {
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
               to="/"
-              className="inline-flex min-h-[48px] items-center border border-primary bg-primary px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
+              className="inline-flex min-h-[48px] items-center rounded-full border border-primary bg-primary px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
             >
               {t("notFound.home")}
             </Link>
             <Link
               to="/pricing"
-              className="inline-flex min-h-[48px] items-center border border-border px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary"
+              className="inline-flex min-h-[48px] items-center rounded-xl border border-border px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary"
             >
               {t("notFound.pricing")}
             </Link>
