@@ -19,5 +19,6 @@ Disallow: /dashboard
 Disallow: /event/
 Disallow: /auth
 Disallow: /paiement-reussi
+Disallow: /creer
 
 Sitemap: https://qr-memories.fr/sitemap.xml

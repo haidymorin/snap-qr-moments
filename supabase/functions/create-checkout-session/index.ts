@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
     const secret = Deno.env.get("STRIPE_SECRET_KEY");
     if (!secret) throw new Error("STRIPE_SECRET_KEY manquante");
 
-    const { plan, origin, nom, date, type, executionAnticipee } = await req.json();
+    const { plan, origin, nom, date, type, email, executionAnticipee } = await req.json();
 
     const chosen = PLANS[String(plan)];
     if (!chosen) return json({ error: "palier_inconnu" }, 400);
@@ -66,6 +66,14 @@ Deno.serve(async (req) => {
 
     const genre = TYPES.includes(String(type)) ? String(type) : "autre";
 
+    /* L'adresse est facultative ici : elle sert seulement à préremplir la page
+       de paiement pour éviter à la personne de la retaper. Si elle est
+       douteuse, on l'ignore plutôt que de refuser la vente — Stripe la
+       redemandera de toute façon. */
+    const adresse = String(email ?? "").trim().toLowerCase();
+    const adresseUtilisable =
+      adresse.length > 0 && adresse.length <= 254 && /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(adresse);
+
     const form = new URLSearchParams({
       mode: "payment",
       "line_items[0][quantity]": "1",
@@ -83,6 +91,8 @@ Deno.serve(async (req) => {
       "metadata[type]": genre,
       "metadata[execution_anticipee]": executionAnticipee === true ? "oui" : "non",
     });
+
+    if (adresseUtilisable) form.set("customer_email", adresse);
 
     const res = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST",

@@ -130,6 +130,30 @@ Deno.serve(async (req) => {
 
     await db.from("paiements").update({ event_id: cree.id }).eq("stripe_session_id", session.id);
 
+    /* Le fichier clients apprend que la vente est faite. La ligne existe déjà
+       dans neuf cas sur dix — elle a été écrite au premier pas du parcours —
+       mais pas toujours : un paiement peut arriver d'un lien direct. On la
+       crée alors, sans consentement commercial : payer n'est pas s'abonner à
+       une newsletter.
+
+       Volontairement après la création de l'événement, et sans jamais faire
+       échouer le webhook : une erreur ici ferait rejouer tout le traitement
+       par Stripe pour une colonne de statistiques. */
+    try {
+      await db.rpc("enregistrer_client", {
+        p_email: email,
+        p_ev_nom: meta.nom || null,
+        p_ev_date: meta.date || null,
+        p_ev_type: meta.type || null,
+        p_formule: meta.plan || null,
+      });
+      await db.from("clients")
+        .update({ a_achete: true, premier_achat_le: paye.toISOString() })
+        .ilike("email", email);
+    } catch (e) {
+      console.error("stripe-webhook fichier clients", e);
+    }
+
     return new Response("ok", { status: 200 });
   } catch (e) {
     // 500 volontaire : Stripe réessaiera, et la ligne de paiement déjà écrite

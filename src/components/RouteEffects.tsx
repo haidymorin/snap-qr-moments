@@ -45,6 +45,28 @@ const META: Record<string, { fr: Meta; en: Meta }> = {
       desc: "Essential €59, Souvenir €179, Heritage €390. Album, newspaper and printed keepsakes à la carte. No subscription, no app.",
     },
   },
+  "/albums": {
+    fr: {
+      title: "Albums, gazette et objets imprimés · QR Memories",
+      desc: "L'album photo grand format 30×30, la gazette de votre événement, le mini-album à offrir : ce qu'il reste de votre soirée quand la galerie a fermé.",
+    },
+    en: {
+      title: "Albums, newspaper and printed objects · QR Memories",
+      desc: "The 30×30 large photo album, your event newspaper, the mini album to give away: what remains of your night once the gallery has closed.",
+    },
+  },
+  "/creer": {
+    fr: {
+      title: "Créer mon événement · QR Memories",
+      desc: "Vos coordonnées, votre événement, votre formule. Vous ne payez qu'au dernier pas, une fois que vous avez tout relu.",
+      noindex: true,
+    },
+    en: {
+      title: "Create my event · QR Memories",
+      desc: "Your details, your event, your plan. You only pay at the last step, once you have read it all back.",
+      noindex: true,
+    },
+  },
   "/contact": {
     fr: {
       title: "Nous écrire · QR Memories",

@@ -62,6 +62,7 @@ const translations: Record<Lang, Dict> = {
       home: "Accueil",
       how: "Fonctionnement",
       pricing: "Tarifs",
+      albums: "Albums",
       contact: "Contact",
       dashboard: "Mon dashboard",
       cta: "Créer mon événement",
@@ -145,7 +146,7 @@ const translations: Record<Lang, Dict> = {
       plansEyebrow: "Ce que ça coûte",
       plansTitle: "Un prix par événement.",
       plansDesc:
-        "Pas d'abonnement, pas de commission sur vos photos. Vous choisissez une fois, avant la soirée.",
+        "Pas d'abonnement, pas de commission sur vos photos. Vous payez une seule fois, pour un seul événement, et le détail de chaque formule est écrit noir sur blanc.",
       plan1Name: "Essentiel",
       plan1Price: "59 €",
       plan1Desc:
@@ -166,7 +167,7 @@ const translations: Record<Lang, Dict> = {
       objDesc:
         "Une galerie s'oublie au bout de six mois. Un objet posé sur une table, non. Tout se commande après l'événement, une fois les photos triées.",
       onQuote: "Sur devis",
-      see: "Voir les tarifs",
+      see: "Voir les albums",
       obj1Tag: "Le lendemain",
       obj1Title: "L'album PDF",
       obj1Desc:
@@ -350,6 +351,7 @@ const translations: Record<Lang, Dict> = {
       home: "Home",
       how: "How it works",
       pricing: "Pricing",
+      albums: "Albums",
       contact: "Contact",
       dashboard: "My dashboard",
       cta: "Create my event",
@@ -454,7 +456,7 @@ const translations: Record<Lang, Dict> = {
       objDesc:
         "A gallery is forgotten within six months. An object sitting on a table is not. Everything is ordered after the event, once the photos are sorted.",
       onQuote: "On request",
-      see: "See pricing",
+      see: "See the albums",
       obj1Tag: "Next morning",
       obj1Title: "The PDF album",
       obj1Desc:

@@ -9,6 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
 import { RubanPhotos, CarrouselInertie } from "@/components/GaleriesAnimees";
 import CarteLueur from "@/components/CarteLueur";
+import { FORMULES } from "@/data/formules";
 
 /* Les photos libres de droits sont désormais partagées avec la page
    « Comment ça marche » : voir src/lib/photos.ts. */
@@ -72,14 +73,14 @@ function PhotoWall() {
     timers.current = [];
 
     const el = wallRef.current;
-    const cols = el && el.clientWidth < 560 ? 3 : el && el.clientWidth < 900 ? 5 : 8;
+    const cols = el && el.clientWidth < 560 ? 2 : el && el.clientWidth < 900 ? 3 : 5;
     const w = el?.clientWidth ?? 1200;
     const h = el?.clientHeight ?? 700;
     /* Une vignette double occupe quatre cases : à nombre d'images égal, la
        grille se remplit moins loin. On compte donc large — le débordement est
        masqué, un trou en bas ne l'est pas. */
     const rangees = Math.max(Math.ceil(h / (w / cols)) + 3, 5);
-    const total = Math.ceil(cols * rangees * 1.9);
+    const total = Math.ceil(cols * rangees * 1.35);
     setSize(total);
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -124,12 +125,12 @@ function PhotoWall() {
     return m;
   }, [size]);
 
-  const cols = "grid-cols-3 sm:grid-cols-5 lg:grid-cols-8";
+  const cols = "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5";
 
   /* Toutes les vignettes de la même taille donnent un damier, et un damier ne
      ressemble pas à un album. Une sur sept occupe deux colonnes et deux
      rangées : la grille respire sans qu'on ait à la dessiner à la main. */
-  const grande = (i: number) => i % 7 === 3 || i % 11 === 8;
+  const grande = (i: number) => i % 9 === 4;
 
   return (
     <section className="relative flex min-h-[min(86vh,730px)] items-center justify-center overflow-hidden bg-[#DCD7CF]">
@@ -154,10 +155,11 @@ function PhotoWall() {
             }}
           >
             <img
-              src={reelles.get(i) ?? photo(i * 5 + (i % 7))}
+              src={reelles.get(i) ?? photo(i * 5 + (i % 7), 760)}
               alt=""
-              loading={i < 12 ? "eager" : "lazy"}
+              loading={i < 8 ? "eager" : "lazy"}
               decoding="async"
+              style={{ objectPosition: "50% 34%" }}
               className="h-full w-full object-cover transition-transform duration-[700ms] ease-out group-hover:scale-[1.06]"
               onError={(e) => {
                 e.currentTarget.style.visibility = "hidden";
@@ -203,7 +205,7 @@ function PhotoWall() {
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
-              to="/auth"
+              to="/creer"
               className="inline-flex min-h-[48px] items-center rounded-full border border-primary bg-primary px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
             >
               {t("home.ctaCreate")}
@@ -230,7 +232,7 @@ function PhotoWall() {
 }
 
 const Index = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   /* La grille du tri était figée : le visiteur voyait un résultat, jamais le
      geste. Elle part maintenant complète, puis les photos où la mariée
@@ -270,25 +272,17 @@ const Index = () => {
     { tag: t("home.obj4Tag"), title: t("home.obj4Title"), text: t("home.obj4Desc") },
   ];
 
-  const plans = [
-    {
-      name: t("home.plan1Name"),
-      price: t("home.plan1Price"),
-      text: t("home.plan1Desc"),
-    },
-    {
-      name: t("home.plan2Name"),
-      price: t("home.plan2Price"),
-      text: t("home.plan2Desc"),
-      highlighted: true,
-      badge: t("home.plan2Badge"),
-    },
-    {
-      name: t("home.plan3Name"),
-      price: t("home.plan3Price"),
-      text: t("home.plan3Desc"),
-    },
-  ];
+  /* Les trois formules viennent du même fichier que la page des tarifs et que
+     le parcours d'achat. Elles étaient écrites une fois de plus ici, et les
+     deux versions avaient déjà divergé. */
+  const plans = FORMULES[lang].map((f) => ({
+    name: f.nom,
+    price: f.prix,
+    text: f.resume,
+    highlighted: f.vedette,
+    badge: f.badge,
+    id: f.id,
+  }));
 
   return (
     <div className="min-h-screen">
@@ -367,7 +361,7 @@ const Index = () => {
               </div>
 
               <Link
-                to="/auth"
+                to="/creer"
                 className="mt-7 inline-flex min-h-[48px] items-center border border-night-foreground bg-night-foreground px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-night transition-colors hover:bg-transparent hover:text-night-foreground"
               >
                 {t("home.aiCta")}
@@ -497,7 +491,7 @@ const Index = () => {
                   {p.text}
                 </p>
                 <Link
-                  to="/pricing"
+                  to={`/pricing#${p.id}`}
                   className={`label-mono mt-6 self-start border-b pb-0.5 opacity-100 transition-opacity hover:opacity-60 ${
                     p.highlighted ? "border-night-foreground text-night-foreground" : "border-foreground text-foreground"
                   }`}
@@ -537,7 +531,7 @@ const Index = () => {
                   <p className="mb-5 flex-1 text-[14.5px] leading-relaxed text-foreground">{o.text}</p>
                   <div className="border-t border-border pt-4">
                     <Link
-                      to="/pricing"
+                      to="/albums"
                       className="label-mono border-b border-foreground pb-0.5 text-foreground opacity-100 transition-opacity hover:opacity-60"
                     >
                       {t("home.see")}
@@ -558,7 +552,7 @@ const Index = () => {
             <h2 className="mx-auto mt-3 max-w-[22ch] text-[clamp(28px,4.3vw,50px)] text-wrap balance">{t("home.finalTitle")}</h2>
             <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed">{t("home.finalDesc")}</p>
             <Link
-              to="/auth"
+              to="/creer"
               className="mt-8 inline-flex min-h-[48px] items-center rounded-full border border-primary-foreground bg-primary-foreground px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-transparent hover:text-primary-foreground"
             >
               {t("home.finalCta")}

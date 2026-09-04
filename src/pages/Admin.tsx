@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Loader2 } from "lucide-react";
+import FichierClients from "@/components/FichierClients";
 
 /* L'espace d'administration.
  *
@@ -154,6 +155,8 @@ const Admin = () => {
             </div>
           </>
         )}
+
+        {!refuse && <FichierClients />}
       </main>
       <Footer />
     </div>

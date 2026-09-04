@@ -7,6 +7,8 @@ export const DELAI_RETRACTATION = 14;
 
 export interface Commande {
   plan: PlanId;
+  /** L'adresse saisie au premier pas : elle préremplit la page de paiement. */
+  email?: string;
   /** Le nom que porteront la galerie et la signalétique. */
   nom: string;
   /** Format AAAA-MM-JJ. */
@@ -45,6 +47,7 @@ const MOTIFS: Record<string, string> = {
   consentement_requis:
     "Votre événement a lieu dans moins de quatorze jours : cochez la case pour que nous puissions commencer tout de suite.",
   stripe_refuse: "Le paiement n'a pas pu être ouvert. Réessayez dans un instant.",
+  email_invalide: "Cette adresse email ne semble pas valide.",
 };
 
 /* Envoie le visiteur vers la page de paiement Stripe.
@@ -61,6 +64,7 @@ export async function startCheckout(commande: Commande): Promise<void> {
       nom: commande.nom,
       date: commande.date,
       type: commande.type,
+      email: commande.email ?? null,
       executionAnticipee: commande.executionAnticipee === true,
     },
   });

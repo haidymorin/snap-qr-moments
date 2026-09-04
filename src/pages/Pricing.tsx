@@ -1,160 +1,54 @@
-import { useState } from "react";
-import CarteLueur from "@/components/CarteLueur";
 import { Link } from "react-router-dom";
-import { type PlanId } from "@/lib/checkout";
-import CommandeDialog from "@/components/CommandeDialog";
+import CarteLueur from "@/components/CarteLueur";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
+import { FORMULES } from "@/data/formules";
 
-type Plan = {
-  id: PlanId;
-  name: string;
-  price: string;
-  period: string;
-  pitch: string;
-  inherits?: string;
-  features: string[];
-  badge?: string;
-  highlighted?: boolean;
-  ctaLabel: string;
-};
+/* La page des tarifs.
+ *
+ * L'offre professionnelle a été retirée : elle n'existe pas encore. Afficher
+ * « Pro Events, 149 € par mois » avec sept fonctionnalités qu'on ne sait pas
+ * livrer, c'est promettre à un photographe un produit qu'il ne recevra pas.
+ * Elle reviendra quand elle sera construite.
+ *
+ * Les objets imprimés ont leur propre onglet : ils étaient en bas de cette
+ * page, là où personne ne descend.
+ */
 
-type Extra = { title: string; price: string; description: string };
-
-const data: Record<Lang, {
-  plans: Plan[];
-  extras: Extra[];
-  extrasNote: string;
-  pro: { name: string; price: string; period: string; pitch: string; features: string[]; ctaLabel: string };
-  agency: { name: string; price: string; features: string[]; ctaLabel: string };
+const TEXTES: Record<Lang, {
+  eyebrow: string; titre: string; chapo: string;
+  detailTitre: string;
+  versObjets: string; versObjetsLien: string;
+  faqTitre: string;
   faqs: { q: string; a: string }[];
 }> = {
   fr: {
-    plans: [
-      {
-        name: "Essentiel",
-        price: "59 €",
-        period: "par événement",
-        pitch: "Le nécessaire, bien fait. Le QR code, la galerie, et rien qui traîne.",
-        features: [
-          "QR code et page de collecte, sans application à installer",
-          "Galerie partagée, photos et vidéos illimitées",
-          "Téléchargement en haute définition par vos invités",
-          "Nettoyage automatique : doublons, flous, photos ratées",
-          "PDF de signalétique à imprimer : panneau d'accueil et chevalets de table",
-          "Hébergement 6 mois",
-        ],
-        id: "essentiel",
-        ctaLabel: "Choisir l'Essentiel",
-      },
-      {
-        name: "Souvenir",
-        price: "179 €",
-        period: "par événement",
-        pitch: "Celui qu'on prend quand on veut vraiment garder quelque chose de la soirée.",
-        badge: "Le plus choisi",
-        highlighted: true,
-        inherits: "Tout l'Essentiel, plus :",
-        features: [
-          "Livre d'or numérique : messages écrits, vocaux et vidéo",
-          "Tri par visage : chaque invité retrouve ses propres photos",
-          "Diaporama en direct, à afficher sur l'écran de votre choix",
-          "Page, QR code et signalétique aux couleurs de votre événement",
-          "Hébergement 6 mois",
-        ],
-        id: "souvenir",
-        ctaLabel: "Choisir le Souvenir",
-      },
-      {
-        name: "Héritage",
-        price: "390 €",
-        period: "par événement",
-        pitch: "Tout le numérique, plus les objets imprimés qui restent après.",
-        inherits: "Tout le Souvenir, plus :",
-        features: [
-          "L'album imprimé grand format, photos et messages en regard",
-          "La gazette de votre mariage, 50 exemplaires à distribuer",
-          "Hébergement 6 mois",
-        ],
-        id: "heritage",
-        ctaLabel: "Choisir l'Héritage",
-      },
-    ],
-    extras: [
-      {
-        title: "Album grand format",
-        price: "249 €",
-        description:
-          "Format 30×30 qui s'ouvre à plat, papier épais, couverture toilée. Fabriqué par un imprimeur de photographes.",
-      },
-      {
-        title: "Gazette, 50 exemplaires",
-        price: "149 €",
-        description:
-          "Le journal de votre mariage, quatre pages, à distribuer à vos invités. Vos photos et leurs messages mis en page.",
-      },
-      {
-        title: "Gazette, 100 exemplaires",
-        price: "219 €",
-        description:
-          "La même gazette, en double. Pour les mariages à deux cents personnes ou les familles qui en redemandent.",
-      },
-      {
-        title: "Mini-album personnalisé",
-        price: "79 €",
-        description:
-          "Format carré 20×20, couverture souple, quarante pages. À offrir aux parents ou aux témoins.",
-      },
-      {
-        title: "Kit signalétique imprimé",
-        price: "89 €",
-        description:
-          "Le panneau d'accueil et les douze chevalets de table, imprimés et livrés. Le PDF reste inclus dans tous les paliers.",
-      },
-      {
-        title: "Année d'hébergement supplémentaire",
-        price: "29 €",
-        description:
-          "Pour garder la galerie en ligne un an de plus. À prendre autant de fois que vous voulez, tant que l'échéance n'est pas passée.",
-      },
-    ],
-    extrasNote: "Tout se commande après l'événement, une fois les photos triées. Rien n'est à décider maintenant.",
-    pro: {
-      name: "Pro Events",
-      price: "149 €",
-      period: "par mois",
-      pitch: "Pour les photographes, wedding planners et agences qui enchaînent les événements.",
-      features: [
-        "Événements illimités",
-        "Espace à votre nom et à votre logo",
-        "Gestion multi-clients et multi-événements",
-        "Galeries privées par client",
-        "Export haute définition",
-        "Statistiques de scans et de dépôts",
-        "Support dédié par email",
-      ],
-      ctaLabel: "Nous contacter",
-    },
-    agency: {
-      name: "Agence et revendeur",
-      price: "Sur devis",
-      features: [
-        "Accès multi-utilisateurs",
-        "Intégration à vos outils",
-        "Facturation en marque blanche",
-        "Interlocuteur dédié",
-      ],
-      ctaLabel: "Rejoindre la liste d'attente",
-    },
+    eyebrow: "Un prix par événement, pas d'abonnement",
+    titre: "Trois façons de garder votre soirée.",
+    chapo:
+      "Vous payez une seule fois, pour un seul événement. Aucun abonnement, aucune commission sur vos photos. Les albums et les objets imprimés se commandent après, une fois que vous avez vu les photos.",
+    detailTitre: "Ce que contient chaque formule",
+    versObjets:
+      "Les albums, la gazette et les objets imprimés se commandent séparément, après l'événement.",
+    versObjetsLien: "Voir les albums et objets",
+    faqTitre: "Questions fréquentes",
     faqs: [
       {
+        q: "Concrètement, il se passe quoi le jour J ?",
+        a: "Vous avez imprimé le panneau d'accueil et les petits chevalets que nous vous fournissons ; ils portent votre QR code. Vos invités dirigent l'appareil photo de leur téléphone dessus, une page s'ouvre, ils envoient leurs photos. Aucune application, aucun compte. Vous, vous ne faites rien : vous regardez la galerie se remplir.",
+      },
+      {
         q: "Combien de temps mes photos restent-elles en ligne ?",
-        a: "Six mois à compter de votre événement, quelle que soit la formule — largement le temps de tout récupérer. Nous vous prévenons trente jours avant l'échéance, et le téléchargement de la galerie entière tient en un clic. Vous pouvez aussi la prolonger d'une année pour 29 €, autant de fois que vous le souhaitez. Sans prolongation, tout est supprimé définitivement à l'échéance, sauvegardes comprises : c'est ce que nous devons à vos invités, qui ne nous ont pas confié leurs photos pour que nous les gardions indéfiniment.",
+        a: "Six mois à compter de votre événement, quelle que soit la formule — largement le temps de tout récupérer. Nous vous prévenons par email trente jours avant l'échéance, et le téléchargement de la galerie entière tient en un clic. Vous pouvez aussi la prolonger d'une année pour 29 €, autant de fois que vous le souhaitez. Sans prolongation, tout est supprimé définitivement à l'échéance, sauvegardes comprises : c'est ce que nous devons à vos invités, qui ne nous ont pas confié leurs photos pour que nous les gardions indéfiniment.",
+      },
+      {
+        q: "Y a-t-il une limite au nombre de photos ?",
+        a: "Non. Ni au nombre de photos, ni au nombre de vidéos, ni au nombre d'invités. Un mariage de deux cents personnes dépose souvent mille cinq cents photos : c'est compris.",
       },
       {
         q: "Que se passe-t-il si je change d'avis après l'événement ?",
-        a: "Vous pouvez passer d'un palier à l'autre tant que la galerie est en ligne. Vous ne payez que la différence. Les objets imprimés se commandent séparément, quand vous voulez, une fois les photos triées.",
+        a: "Vous pouvez passer à une formule supérieure tant que la galerie est en ligne, et vous ne payez que la différence. Les albums et objets imprimés se commandent quand vous voulez, séparément.",
       },
       {
         q: "Y a-t-il des frais cachés ?",
@@ -162,139 +56,40 @@ const data: Record<Lang, {
       },
       {
         q: "Mes invités doivent-ils créer un compte ?",
-        a: "Non. Ils scannent le QR code avec leur téléphone et déposent leurs photos, sans installer d'application et sans créer de compte. Le tri par visage leur demande un selfie, mais c'est facultatif : ceux qui ne le font pas ne sont simplement pas identifiés.",
+        a: "Non. Ils scannent le QR code avec leur téléphone et déposent leurs photos, sans installer d'application et sans créer de compte. La recherche par visage leur demande un selfie, mais c'est facultatif : ceux qui ne le font pas déposent leurs photos comme les autres.",
       },
       {
         q: "Le paiement est-il sécurisé ?",
-        a: "Oui. Les paiements passent par Stripe. Vos coordonnées bancaires ne transitent jamais par nos serveurs.",
+        a: "Oui. Les paiements passent par Stripe, le prestataire qu'utilisent la plupart des sites que vous connaissez. Votre numéro de carte ne transite jamais par nos serveurs et nous ne le voyons jamais.",
       },
     ],
   },
   en: {
-    plans: [
-      {
-        name: "Essential",
-        price: "€59",
-        period: "per event",
-        pitch: "What you need, done properly. The QR code, the gallery, nothing left lying around.",
-        features: [
-          "QR code and collection page, no app to install",
-          "Shared gallery, unlimited photos and videos",
-          "Full-resolution downloads for your guests",
-          "Automatic clean-up: duplicates, blurry shots, misfires",
-          "Printable signage PDF: welcome sign and table cards",
-          "6 months hosting",
-        ],
-        id: "essentiel",
-        ctaLabel: "Choose Essential",
-      },
-      {
-        name: "Souvenir",
-        price: "€179",
-        period: "per event",
-        pitch: "The one you pick when you actually want to keep something from the night.",
-        badge: "Most chosen",
-        highlighted: true,
-        inherits: "Everything in Essential, plus:",
-        features: [
-          "Digital guest book: written, voice and video messages",
-          "Face sorting: every guest finds their own photos",
-          "Live slideshow, shown on the screen of your choice",
-          "Page, QR code and signage in your event's colours",
-          "6 months hosting",
-        ],
-        id: "souvenir",
-        ctaLabel: "Choose Souvenir",
-      },
-      {
-        name: "Heritage",
-        price: "€390",
-        period: "per event",
-        pitch: "Everything digital, plus the printed objects that outlast it.",
-        inherits: "Everything in Souvenir, plus:",
-        features: [
-          "The large-format printed album, photos and messages side by side",
-          "Your wedding newspaper, 50 copies to hand out",
-          "6 months hosting",
-        ],
-        id: "heritage",
-        ctaLabel: "Choose Heritage",
-      },
-    ],
-    extras: [
-      {
-        title: "Large-format album",
-        price: "€249",
-        description:
-          "30×30 lay-flat format, heavy paper, cloth cover. Made by a printer who works for photographers.",
-      },
-      {
-        title: "Newspaper, 50 copies",
-        price: "€149",
-        description:
-          "Your wedding paper, four pages, to hand out to your guests. Your photos and their messages, laid out.",
-      },
-      {
-        title: "Newspaper, 100 copies",
-        price: "€219",
-        description:
-          "The same paper, twice over. For two-hundred-guest weddings, or families who keep asking.",
-      },
-      {
-        title: "Personalised mini album",
-        price: "€79",
-        description:
-          "20×20 square format, soft cover, forty pages. One for the parents, one for the witnesses.",
-      },
-      {
-        title: "Printed signage kit",
-        price: "€89",
-        description:
-          "The welcome sign and twelve table cards, printed and delivered. The PDF stays included in every plan.",
-      },
-      {
-        title: "Extra year of hosting",
-        price: "€29",
-        description:
-          "To keep the gallery online another year. Add it any time, before the deadline passes.",
-      },
-    ],
-    extrasNote: "Everything is ordered after the event, once the photos are sorted. Nothing to decide now.",
-    pro: {
-      name: "Pro Events",
-      price: "€149",
-      period: "per month",
-      pitch: "For photographers, wedding planners and agencies running events back to back.",
-      features: [
-        "Unlimited events",
-        "Workspace under your name and logo",
-        "Multi-client and multi-event management",
-        "Private gallery per client",
-        "Full-resolution export",
-        "Scan and upload statistics",
-        "Dedicated email support",
-      ],
-      ctaLabel: "Get in touch",
-    },
-    agency: {
-      name: "Agency and reseller",
-      price: "On request",
-      features: [
-        "Multi-user access",
-        "Integration with your tools",
-        "White-label invoicing",
-        "A dedicated contact",
-      ],
-      ctaLabel: "Join the waiting list",
-    },
+    eyebrow: "One price per event, no subscription",
+    titre: "Three ways to keep your night.",
+    chapo:
+      "You pay once, for one event. No subscription, no commission on your photos. Albums and printed objects are ordered afterwards, once you have seen the photos.",
+    detailTitre: "What each plan includes",
+    versObjets:
+      "Albums, the newspaper and printed objects are ordered separately, after the event.",
+    versObjetsLien: "See albums and objects",
+    faqTitre: "Frequently asked questions",
     faqs: [
       {
+        q: "What actually happens on the day?",
+        a: "You have printed the welcome sign and the little table cards we give you; they carry your QR code. Your guests point their phone camera at it, a page opens, they send their photos. No app, no account. You do nothing: you watch the gallery fill up.",
+      },
+      {
         q: "How long do my photos stay online?",
-        a: "Six months from your event, whatever the plan — ample time to save everything. We warn you thirty days before the deadline, and downloading the whole gallery takes one click. You can also extend it by a year for €29, as many times as you like. Without an extension, everything is permanently deleted at the deadline, backups included: that is what we owe your guests, who did not hand us their photos for us to keep forever.",
+        a: "Six months from your event, whatever the plan — ample time to save everything. We email you thirty days before the deadline, and downloading the whole gallery takes one click. You can extend it by a year for €29, as many times as you like. Without an extension, everything is permanently deleted at the deadline, backups included: that is what we owe your guests, who did not hand us their photos for us to keep forever.",
+      },
+      {
+        q: "Is there a limit on the number of photos?",
+        a: "No. No limit on photos, videos or guests. A two-hundred-guest wedding often uploads fifteen hundred photos: that is included.",
       },
       {
         q: "What if I change my mind after the event?",
-        a: "You can move up a plan while the gallery is still online, and you only pay the difference. Printed objects are ordered separately, whenever you like, once the photos are sorted.",
+        a: "You can move up a plan while the gallery is still online, and you only pay the difference. Printed albums and objects are ordered whenever you like, separately.",
       },
       {
         q: "Are there hidden fees?",
@@ -302,239 +97,143 @@ const data: Record<Lang, {
       },
       {
         q: "Do my guests need an account?",
-        a: "No. They scan the QR code with their phone and upload their photos, with no app and no account. Face sorting asks them for a selfie, but it's optional: those who skip it simply aren't identified.",
+        a: "No. They scan the QR code with their phone and upload their photos, with no app and no account. Face search asks for a selfie, but it is optional: those who skip it upload like everyone else.",
       },
       {
         q: "Is payment secure?",
-        a: "Yes. Payments go through Stripe. Your card details never pass through our servers.",
+        a: "Yes. Payments go through Stripe, the provider behind most of the sites you already use. Your card number never passes through our servers and we never see it.",
       },
     ],
   },
 };
 
-const Check = () => (
+const Puce = () => (
   <span aria-hidden className="mt-[9px] block h-px w-3 shrink-0 bg-current opacity-45" />
 );
 
 const Pricing = () => {
-  const { t, lang } = useLanguage();
-  const [tab, setTab] = useState<"particuliers" | "professionnels">("particuliers");
-  /* Le bouton d'un palier n'envoie plus directement vers Stripe : il ouvre
-     d'abord le formulaire de commande. La date y est demandée parce qu'elle
-     seule détermine s'il faut recueillir le renoncement au délai de
-     rétractation — un consentement demandé après le paiement ne vaudrait
-     rien. */
-  const [commande, setCommande] = useState<PlanId | null>(null);
-  const { plans, extras, extrasNote, pro, agency, faqs } = data[lang];
+  const { lang } = useLanguage();
+  const T = TEXTES[lang];
+  const formules = FORMULES[lang];
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
 
       <main className="flex-1 pt-[72px]">
-        {/* Titre */}
         <section className="pb-[clamp(28px,3.5vw,44px)] pt-[clamp(48px,6vw,84px)]">
           <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)] text-center">
-            <p className="eyebrow">{t("pricing.eyebrow")}</p>
-            <h1 className="mx-auto mt-3 max-w-[18ch] text-[clamp(38px,6vw,72px)]">
-              {t("pricing.title")}
-            </h1>
-            <p className="mx-auto mt-5 max-w-[52ch] leading-relaxed text-foreground">
-              {t("pricing.subtitle")}
-            </p>
+            <p className="eyebrow">{T.eyebrow}</p>
+            <h1 className="mx-auto mt-3 max-w-[18ch] text-[clamp(38px,6vw,72px)]">{T.titre}</h1>
+            <p className="mx-auto mt-5 max-w-[58ch] leading-relaxed text-foreground">{T.chapo}</p>
           </div>
         </section>
 
-        {/* Bascule particuliers / professionnels */}
-        <section className="pb-[clamp(30px,4vw,48px)]">
-          <div className="mx-auto flex max-w-[1180px] justify-center gap-8 px-[clamp(20px,5vw,48px)]">
-            {(["particuliers", "professionnels"] as const).map((key) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setTab(key)}
-                aria-pressed={tab === key}
-                className={`label-mono min-h-[44px] border-b pb-2 transition-colors ${
-                  tab === key
-                    ? "border-foreground text-foreground opacity-100"
-                    : "border-transparent hover:text-foreground"
-                }`}
-              >
-                {key === "particuliers" ? t("pricing.tabIndiv") : t("pricing.tabPro")}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Les paliers */}
-        <section className="pb-[clamp(46px,6vw,80px)]">
+        {/* Les trois formules, avec le détail de chaque ligne */}
+        <section className="pb-[clamp(46px,6vw,80px)] pt-[clamp(18px,2.5vw,32px)]">
           <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
-            {tab === "particuliers" ? (
-              <>
-                <div className="grid gap-[clamp(14px,1.8vw,22px)] lg:grid-cols-3">
-                  {plans.map((plan) => {
-                    const dark = plan.highlighted;
-                    return (
-                      <CarteLueur key={plan.name} className="h-full">
-                      <article
-                        className={`flex h-full flex-col border p-[clamp(24px,2.6vw,34px)] ${
-                          dark
-                            ? "border-night bg-night text-night-foreground"
-                            : "border-border bg-card text-foreground"
+            <div className="grid items-start gap-[clamp(14px,1.8vw,22px)] lg:grid-cols-3">
+              {formules.map((f) => {
+                const sombre = f.vedette;
+                return (
+                  <CarteLueur key={f.id} className="h-full">
+                    <article
+                      className={`flex h-full flex-col rounded-2xl border p-[clamp(24px,2.6vw,34px)] ${
+                        sombre
+                          ? "border-night bg-night text-night-foreground"
+                          : "border-border bg-card text-foreground"
+                      }`}
+                    >
+                      <div className="flex min-h-[26px] items-start justify-between gap-3">
+                        <h2 className="text-[clamp(26px,2.6vw,34px)] leading-none">{f.nom}</h2>
+                        {f.badge && (
+                          <span
+                            className={`label-mono shrink-0 rounded-full border px-2.5 py-1 opacity-100 ${
+                              sombre
+                                ? "border-night-border text-night-foreground"
+                                : "border-border text-foreground"
+                            }`}
+                          >
+                            {f.badge}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-5 flex items-baseline gap-2">
+                        <span className="font-display text-[clamp(42px,4.6vw,58px)] leading-none">
+                          {f.prix}
+                        </span>
+                        <span className="text-[13px]">{f.periode}</span>
+                      </div>
+
+                      <p className="mt-4 text-[15px] leading-relaxed">{f.pitch}</p>
+
+                      <div
+                        className={`mt-6 flex-1 border-t pt-6 ${
+                          sombre ? "border-night-border" : "border-border"
                         }`}
                       >
-                        <div className="flex min-h-[26px] items-start justify-between gap-3">
-                          <h2 className="text-[clamp(26px,2.6vw,34px)] leading-none">{plan.name}</h2>
-                          {plan.badge && (
-                            <span
-                              className={`label-mono shrink-0 border px-2 py-1 opacity-100 ${
-                                dark ? "border-night-border text-night-foreground" : "border-border text-foreground"
-                              }`}
-                            >
-                              {plan.badge}
-                            </span>
-                          )}
-                        </div>
+                        {f.herite && (
+                          <p className="mb-4 text-[14px] font-semibold">{f.herite}</p>
+                        )}
+                        <ul className="space-y-4">
+                          {f.points.map((p) => (
+                            <li key={p.titre} className="flex gap-3">
+                              <Puce />
+                              <div>
+                                <strong className="block text-[14.5px] font-semibold leading-snug">
+                                  {p.titre}
+                                </strong>
+                                <span className="mt-1 block text-[13.5px] leading-relaxed opacity-80">
+                                  {p.detail}
+                                </span>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
 
-                        <div className="mt-5 flex items-baseline gap-2">
-                          <span className="font-display text-[clamp(42px,4.6vw,58px)] leading-none">
-                            {plan.price}
-                          </span>
-                          <span className="text-[13px]">
-                            {plan.period}
-                          </span>
-                        </div>
-
-                        <p className="mt-4 text-[15px] leading-relaxed">
-                          {plan.pitch}
-                        </p>
-
-                        <div className={`mt-6 flex-1 border-t pt-6 ${dark ? "border-night-border" : "border-border"}`}>
-                          {plan.inherits && (
-                            <p className="mb-4 text-[14px] font-semibold">{plan.inherits}</p>
-                          )}
-                          <ul className="space-y-3">
-                            {plan.features.map((f) => (
-                              <li key={f} className="flex gap-3 text-[14.5px] leading-relaxed">
-                                <Check />
-                                <span>{f}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => setCommande(plan.id)}
-                          className={`mt-8 inline-flex min-h-[48px] items-center justify-center border px-6 py-4 text-xs font-semibold uppercase tracking-[0.1em] transition-colors disabled:opacity-60 ${
-                            dark
-                              ? "border-night-foreground bg-night-foreground text-night hover:bg-transparent hover:text-night-foreground"
-                              : "border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary"
-                          }`}
-                        >
-                          {plan.ctaLabel}
-                        </button>
-                      </article>
-                      </CarteLueur>
-                    );
-                  })}
-                </div>
-
-              </>
-            ) : (
-              <div className="grid gap-[clamp(14px,1.8vw,22px)] lg:grid-cols-[1.55fr_1fr]">
-                <article className="flex flex-col rounded-xl border border-night bg-night p-[clamp(24px,2.6vw,34px)] text-night-foreground">
-                  <h2 className="text-[clamp(26px,2.6vw,34px)] leading-none">{pro.name}</h2>
-                  <div className="mt-5 flex items-baseline gap-2">
-                    <span className="font-display text-[clamp(42px,4.6vw,58px)] leading-none">{pro.price}</span>
-                    <span className="text-[13px]">{pro.period}</span>
-                  </div>
-                  <p className="mt-4 max-w-[46ch] text-[15px] leading-relaxed">{pro.pitch}</p>
-                  <ul className="mt-6 grid gap-3 border-t border-night-border pt-6 sm:grid-cols-2">
-                    {pro.features.map((f) => (
-                      <li key={f} className="flex gap-3 text-[14.5px] leading-relaxed">
-                        <Check />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    to="/contact"
-                    className="mt-8 inline-flex min-h-[48px] items-center justify-center border border-night-foreground bg-night-foreground px-6 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-night transition-colors hover:bg-transparent hover:text-night-foreground"
-                  >
-                    {pro.ctaLabel}
-                  </Link>
-                </article>
-
-                <article className="flex flex-col rounded-xl border border-border bg-card p-[clamp(24px,2.6vw,34px)]">
-                  <div className="flex items-start justify-between gap-3">
-                    <h2 className="text-[clamp(24px,2.3vw,30px)] leading-none">{agency.name}</h2>
-                    <span className="label-mono shrink-0 rounded-xl border border-border px-2 py-1 text-foreground opacity-100">
-                      {t("pricing.soon")}
-                    </span>
-                  </div>
-                  <p className="mt-5 font-display text-[clamp(30px,3vw,38px)] leading-none">{agency.price}</p>
-                  <ul className="mt-6 space-y-3 border-t border-border pt-6">
-                    {agency.features.map((f) => (
-                      <li key={f} className="flex gap-3 text-[14.5px] leading-relaxed">
-                        <Check />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    to="/contact"
-                    className="mt-auto inline-flex min-h-[48px] items-center justify-center rounded-xl border border-border px-6 py-4 pt-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary"
-                    style={{ marginTop: "2rem" }}
-                  >
-                    {agency.ctaLabel}
-                  </Link>
-                </article>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Les objets, à commander après */}
-        <section className="border-t border-border bg-card py-[clamp(58px,7.5vw,100px)]">
-          <div className="mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
-            <div className="mx-auto mb-[clamp(30px,4vw,48px)] max-w-2xl text-center">
-              <p className="eyebrow">{t("pricing.extrasEyebrow")}</p>
-              <h2 className="mt-3 text-[clamp(32px,4.6vw,54px)]">{t("pricing.extrasTitle")}</h2>
-              <p className="mx-auto mt-4 max-w-[52ch] leading-relaxed text-foreground">
-                {extrasNote}
-              </p>
+                      <Link
+                        to={`/creer?formule=${f.id}`}
+                        className={`mt-8 inline-flex min-h-[48px] items-center justify-center rounded-full border px-6 py-4 text-xs font-semibold uppercase tracking-[0.1em] transition-colors ${
+                          sombre
+                            ? "border-night-foreground bg-night-foreground text-night hover:bg-transparent hover:text-night-foreground"
+                            : "border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary"
+                        }`}
+                      >
+                        {f.cta}
+                      </Link>
+                    </article>
+                  </CarteLueur>
+                );
+              })}
             </div>
 
-            <div className="grid border-t border-border sm:grid-cols-2 lg:grid-cols-3">
-              {extras.map((opt) => (
-                <div
-                  key={opt.title}
-                  className="border-b border-border px-6 pb-8 pt-7 sm:border-r sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:[&:nth-child(3n)]:border-r-0"
-                >
-                  <div className="flex items-baseline justify-between gap-4">
-                    <h3 className="text-[clamp(20px,1.9vw,25px)] leading-tight">{opt.title}</h3>
-                    <span className="shrink-0 font-display text-[clamp(21px,2vw,26px)] leading-none">
-                      {opt.price}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-[14.5px] leading-relaxed text-foreground">
-                    {opt.description}
-                  </p>
-                </div>
-              ))}
+            <div className="mt-[clamp(28px,3.5vw,44px)] flex flex-col items-center gap-3 rounded-2xl border border-border bg-card px-6 py-7 text-center">
+              <p className="max-w-[56ch] text-[15px] leading-relaxed text-foreground">
+                {T.versObjets}
+              </p>
+              <Link
+                to="/albums"
+                className="label-mono border-b border-foreground pb-0.5 text-foreground opacity-100 transition-opacity hover:opacity-60"
+              >
+                {T.versObjetsLien}
+              </Link>
             </div>
           </div>
         </section>
 
         {/* Questions — ancre visée par le lien FAQ du pied de page */}
-        <section id="faq" className="scroll-mt-[80px] py-[clamp(58px,7.5vw,100px)]">
+        <section
+          id="faq"
+          className="scroll-mt-[80px] border-t border-border bg-card py-[clamp(58px,7.5vw,100px)]"
+        >
           <div className="mx-auto max-w-[820px] px-[clamp(20px,5vw,48px)]">
             <h2 className="mb-[clamp(28px,3.5vw,44px)] text-center text-[clamp(30px,4.2vw,48px)]">
-              {t("pricing.faqTitle")}
+              {T.faqTitre}
             </h2>
             <div className="border-t border-border">
-              {faqs.map((f) => (
+              {T.faqs.map((f) => (
                 <div key={f.q} className="border-b border-border py-7">
                   <h3 className="text-[clamp(19px,1.8vw,23px)] leading-snug">{f.q}</h3>
                   <p className="mt-3 text-[15px] leading-relaxed text-foreground">{f.a}</p>
@@ -546,8 +245,6 @@ const Pricing = () => {
       </main>
 
       <Footer />
-
-      <CommandeDialog plan={commande} onClose={() => setCommande(null)} />
     </div>
   );
 };

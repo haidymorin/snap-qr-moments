@@ -17,6 +17,7 @@ const Header = () => {
     { name: t("nav.home"), path: "/" },
     { name: t("nav.how"), path: "/how-it-works" },
     { name: t("nav.pricing"), path: "/pricing" },
+    { name: t("nav.albums"), path: "/albums" },
     { name: t("nav.contact"), path: "/contact" },
   ];
 
@@ -28,7 +29,7 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  const ctaTarget = user ? "/dashboard" : "/auth";
+  const ctaTarget = user ? "/dashboard" : "/creer";
   const ctaLabel = user ? t("nav.dashboard") : t("nav.cta");
 
   return (

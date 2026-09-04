@@ -32,6 +32,11 @@ const Footer = () => {
                   {t("nav.pricing")}
                 </Link>
               </li>
+              <li>
+                <Link to="/albums" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  {t("nav.albums")}
+                </Link>
+              </li>
             </ul>
           </div>
 
