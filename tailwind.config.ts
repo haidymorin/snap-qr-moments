@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
-        sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['"Bricolage Grotesque"', '"Instrument Sans"', 'ui-sans-serif', 'sans-serif'],
+        sans: ['"Instrument Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       colors: {
@@ -71,15 +71,17 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      /* Les angles vifs donnaient l'air imprimé — c'est ce qui faisait
+         « vieux journal ». Ils sont désormais arrondis, sobrement. */
       borderRadius: {
         none: "0",
-        sm: "0",
-        DEFAULT: "0",
-        md: "0",
-        lg: "0",
-        xl: "0",
-        "2xl": "0",
-        "3xl": "0",
+        sm: "6px",
+        DEFAULT: "10px",
+        md: "10px",
+        lg: "14px",
+        xl: "18px",
+        "2xl": "22px",
+        "3xl": "28px",
         full: "9999px",
       },
       keyframes: {
