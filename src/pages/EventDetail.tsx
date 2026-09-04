@@ -56,6 +56,12 @@ const TEXTES = {
     echecTexte: "Réessayez dans un instant.",
     archiveTitre: "Archive incomplète",
     archiveTexte: (n: number) => `${n} fichier(s) n'ont pas pu être récupérés.`,
+    voirEcartees: (n: number) => `Voir les ${n} photos écartées`,
+    retourGalerie: "Revenir à la galerie",
+    ecarteesTitre: "Doublons et photos floues",
+    ecarteesTexte:
+      "Elles ne sont pas supprimées : elles sont simplement rangées à part. Vous les téléchargez comme les autres.",
+    videEcartees: "Rien n'a été écarté.",
   },
   en: {
     retour: "Back to dashboard",
@@ -75,6 +81,12 @@ const TEXTES = {
     echecTexte: "Try again in a moment.",
     archiveTitre: "Incomplete archive",
     archiveTexte: (n: number) => `${n} file(s) could not be retrieved.`,
+    voirEcartees: (n: number) => `See the ${n} set-aside photos`,
+    retourGalerie: "Back to the gallery",
+    ecarteesTitre: "Duplicates and blurry photos",
+    ecarteesTexte:
+      "They are not deleted, only kept aside. You can download them like the others.",
+    videEcartees: "Nothing was set aside.",
   },
 };
 
@@ -105,6 +117,10 @@ const EventDetail = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [zipping, setZipping] = useState(false);
+  /* Les doublons et les photos floues sont rangés à part, jamais supprimés.
+     Ce booléen fait basculer la galerie de l'un à l'autre. */
+  const [ecartees, setEcartees] = useState(false);
+  const [nbEcartees, setNbEcartees] = useState(0);
   const [avancement, setAvancement] = useState<Avancement | null>(null);
   const [copied, setCopied] = useState(false);
   const [lightbox, setLightbox] = useState<MediaRow | null>(null);
@@ -165,6 +181,7 @@ const EventDetail = () => {
         .from("photos")
         .select("id, url, thumbnail_url, file_name, media_type")
         .eq("event_id", id);
+      query = ecartees ? query.not("ecarte", "is", null) : query.is("ecarte", null);
       if (activeFilter !== "all") query = query.eq("media_type", activeFilter);
       const { data } = await query
         .order("uploaded_at", { ascending: false })
@@ -173,7 +190,7 @@ const EventDetail = () => {
       setHasMore(rows.length === PAGE_SIZE);
       return rows;
     },
-    [id]
+    [id, ecartees]
   );
 
   useEffect(() => {
@@ -191,18 +208,42 @@ const EventDetail = () => {
         return;
       }
       setEvent(ev);
-      const [photoRes, videoRes] = await Promise.all([
-        supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "photo"),
-        supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "video"),
+      const [photoRes, videoRes, ecarteRes] = await Promise.all([
+        supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "photo").is("ecarte", null),
+        supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "video").is("ecarte", null),
+        supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).not("ecarte", "is", null),
       ]);
       const photo = photoRes.count ?? 0;
       const video = videoRes.count ?? 0;
       setCounts({ photo, video, all: photo + video });
+      setNbEcartees(ecarteRes.count ?? 0);
       setMedia(await fetchPage(0, "all"));
       setFetching(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, id, navigate, toast, fetchPage]);
+
+  /* Basculer entre la galerie et ce qui en a été écarté. Le rechargement
+     passe par fetchPage, qui lit `ecartees` — d'où l'attente d'un tour de
+     rendu avant de redemander la première page. */
+  const basculerEcartees = () => {
+    setMedia([]);
+    setHasMore(true);
+    setEcartees((v) => !v);
+  };
+
+  useEffect(() => {
+    if (fetching) return;
+    let vivant = true;
+    (async () => {
+      setLoadingMore(true);
+      const rows = await fetchPage(0, filter);
+      if (vivant) setMedia(rows);
+      setLoadingMore(false);
+    })();
+    return () => { vivant = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ecartees]);
 
   // Changement d'onglet : filtrage côté serveur, pagination remise à zéro
   const changeFilter = async (next: MediaFilter) => {
@@ -366,10 +407,32 @@ const EventDetail = () => {
             </div>
           </div>
 
+          {/* Le tri se voit, et se défait. Un doublon n'en est peut-être pas
+              un, une photo jugée floue peut être la seule où figure quelqu'un :
+              rien n'est supprimé, tout se réaffiche d'un bouton. */}
+          {(nbEcartees > 0 || ecartees) && (
+            <div className="mb-6 border border-border bg-card px-4 py-3">
+              <button
+                type="button"
+                onClick={basculerEcartees}
+                className="label-mono border-b border-foreground pb-1 text-foreground"
+              >
+                {ecartees ? T.retourGalerie : T.voirEcartees(nbEcartees)}
+              </button>
+              {ecartees && (
+                <p className="mt-3 max-w-[60ch] text-sm text-muted-foreground">
+                  {T.ecarteesTexte}
+                </p>
+              )}
+            </div>
+          )}
+
           {media.length === 0 && !loadingMore ? (
             <div className="text-center py-16 bg-card rounded-2xl border border-border">
               <p className="text-muted-foreground">
-                {filter === "video" ? T.videVideos : filter === "photo" ? T.videPhotos : T.videTout}
+                {ecartees
+                  ? T.videEcartees
+                  : filter === "video" ? T.videVideos : filter === "photo" ? T.videPhotos : T.videTout}
               </p>
             </div>
           ) : (

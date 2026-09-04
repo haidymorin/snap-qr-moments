@@ -371,6 +371,9 @@ export type Database = {
       }
       photos: {
         Row: {
+          ecarte: string | null
+          empreinte: string | null
+          nettete: number | null
           event_id: string
           faces_indexed_at: string | null
           file_name: string
@@ -382,6 +385,9 @@ export type Database = {
           url: string
         }
         Insert: {
+          ecarte?: string | null
+          empreinte?: string | null
+          nettete?: number | null
           event_id: string
           faces_indexed_at?: string | null
           file_name: string
@@ -393,6 +399,9 @@ export type Database = {
           url: string
         }
         Update: {
+          ecarte?: string | null
+          empreinte?: string | null
+          nettete?: number | null
           event_id?: string
           faces_indexed_at?: string | null
           file_name?: string

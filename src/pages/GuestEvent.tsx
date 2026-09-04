@@ -10,6 +10,7 @@ import {
 import { envoyerSurR2, extensionDe, typeDeclare } from "@/lib/r2";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
+import { mesurerPhoto } from "@/lib/triPhotos";
 import { generateVideoPoster } from "@/lib/videoPoster";
 import MediaTabs, { MediaFilter, PlayOverlay } from "@/components/MediaTabs";
 import {
@@ -408,6 +409,13 @@ const GuestEvent = () => {
 
   const uploadImage = async (file: File) => {
     const { full, thumb, fallback } = await compressImage(file);
+
+    /* Empreinte et netteté, mesurées ici sur le téléphone de l'invité : c'est
+       ce qui permet d'écarter ensuite les doublons et les flous sans qu'aucun
+       serveur ne retélécharge la moindre image. Un échec de mesure rend deux
+       valeurs nulles, et la photo est alors conservée sans jugement. */
+    const { empreinte, nettete } = await mesurerPhoto(full);
+
     const uuid = crypto.randomUUID();
     const contentType = fallback ? file.type || "image/jpeg" : "image/jpeg";
     const path = `${id}/${uuid}.${extensionDe(contentType)}`;
@@ -427,6 +435,8 @@ const GuestEvent = () => {
       file_name: file.name,
       storage_path: path,
       media_type: "photo",
+      empreinte,
+      nettete,
     }).select("id").single();
     if (dbErr) throw dbErr;
     if (ligne?.id) noterEnvoi(id!, ligne.id);
