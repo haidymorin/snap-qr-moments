@@ -58,7 +58,7 @@ const ActionsEvenement = ({ event, onFait }: Props) => {
   const [mois, setMois] = useState("12");
   const [confirmeSuppression, setConfirmeSuppression] = useState("");
 
-  const lancer = async (cle: string, appel: () => Promise<{ error: unknown }>, message: string) => {
+  const lancer = async (cle: string, appel: () => PromiseLike<{ error: unknown }>, message: string) => {
     setOccupe(cle);
     setPanne(null);
     setFait(null);

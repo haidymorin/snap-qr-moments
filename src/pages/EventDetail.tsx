@@ -13,7 +13,7 @@ import ReglagesEvenement, { type Reglages } from "@/components/ReglagesEvenement
 import LivreDorHote from "@/components/LivreDorHote";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import MediaTabs, { MediaFilter, PlayOverlay } from "@/components/MediaTabs";
+import { FiltreType, MediaFilter, PlayOverlay } from "@/components/MediaTabs";
 import { Calendar, Download, ArrowLeft, Copy, Check, ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
 
 interface EventRow {
@@ -407,7 +407,7 @@ const EventDetail = () => {
               {T.galerie} <span className="text-muted-foreground text-lg font-normal">({counts.all})</span>
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              <MediaTabs value={filter} onChange={changeFilter} counts={counts} />
+              <FiltreType type={filter} onType={changeFilter} counts={counts} />
               <Button variant="outline" onClick={downloadZip} disabled={zipping || counts.all === 0}>
                 <Download className="w-4 h-4" /> {avancement ? `${T.preparation} ${avancement.faits}/${avancement.total}` : zipping ? `${T.preparation}…` : T.toutTelecharger}
               </Button>
