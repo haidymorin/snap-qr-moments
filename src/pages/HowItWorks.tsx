@@ -10,7 +10,19 @@ import { photoBg } from "@/lib/photos";
 /* --- Les quatre visuels. Aucune icône étirée : des formes qui disent
        vraiment ce que fait l'étape. --- */
 
-/** Un QR code dessiné en CSS, avec ses trois carrés d'angle. */
+/** Le chevalet posé sur la table : un QR code et le nom de l'événement.
+ *
+ * Il était dessiné en noir sur blanc, au milieu d'une page déjà blanche : la
+ * première étape, celle que tout le monde regarde, n'avait pas une seule
+ * couleur. Le carton est maintenant posé sur un halo prune et cuivre, et le
+ * code lui-même est aubergine.
+ *
+ * Les modules restent sombres sur fond clair, et ce n'est pas une coquetterie
+ * de graphiste : un lecteur de QR code cherche un contraste franc. Un code
+ * imprimé en cuivre pâle sur ivoire ne se scanne pas, et un invité qui essaie
+ * trois fois devant la table repose son téléphone. Ce sont donc le carton et
+ * son décor qui portent les couleurs, jamais le code.
+ */
 function QrVisual() {
   const N = 11;
   const inEye = (r: number, c: number) =>
@@ -18,36 +30,63 @@ function QrVisual() {
   const filled = (r: number, c: number) => ((r * 5 + c * 3 + ((r * c) % 7)) % 11) < 5;
 
   return (
-    <div className="relative aspect-square w-full max-w-[380px] rounded-xl border border-border bg-card p-[9%]">
-      <div className="relative grid h-full w-full grid-cols-11 gap-[2px]">
-        {Array.from({ length: N * N }, (_, i) => {
-          const r = Math.floor(i / N);
-          const c = i % N;
-          if (inEye(r, c)) return <span key={i} />;
-          return (
-            <span
-              key={i}
-              className="bg-foreground"
-              style={{ opacity: filled(r, c) ? 1 : 0 }}
-            />
-          );
-        })}
+    <div className="relative mx-auto w-full max-w-[400px]">
+      {/* Le halo : deux taches de couleur très floues, derrière le carton. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-8 -z-10 rounded-[40px] opacity-90 blur-2xl"
+        style={{
+          background:
+            "radial-gradient(58% 55% at 26% 22%, hsl(var(--lueur-2)/0.55), transparent 70%)," +
+            "radial-gradient(52% 50% at 78% 76%, hsl(var(--lueur-3)/0.55), transparent 70%)," +
+            "radial-gradient(70% 70% at 50% 50%, hsl(var(--lueur-1)/0.30), transparent 75%)",
+        }}
+      />
 
-        {/* Les trois yeux du QR : c'est eux qu'on reconnaît de loin */}
-        {[
-          { top: 0, left: 0 },
-          { top: 0, right: 0 },
-          { bottom: 0, left: 0 },
-        ].map((pos, i) => (
-          <span
-            key={i}
-            aria-hidden
-            className="absolute grid place-items-center border-[3px] border-foreground"
-            style={{ ...pos, width: "30%", height: "30%" }}
-          >
-            <span className="block h-1/2 w-1/2 bg-foreground" />
-          </span>
-        ))}
+      <div className="rounded-2xl border border-border bg-card p-[clamp(18px,3vw,26px)] shadow-lg">
+        <p className="label-mono text-center text-accent">Table 3</p>
+        <p className="mt-2 text-center font-display text-[clamp(19px,2.4vw,25px)] leading-tight">
+          Camille &amp; Sacha
+        </p>
+
+        <div className="relative mx-auto mt-5 aspect-square w-full max-w-[240px]">
+          <div className="relative grid h-full w-full grid-cols-11 gap-[2px]">
+            {Array.from({ length: N * N }, (_, i) => {
+              const r = Math.floor(i / N);
+              const c = i % N;
+              if (inEye(r, c)) return <span key={i} />;
+              return (
+                <span
+                  key={i}
+                  className="rounded-[1px] bg-primary"
+                  style={{ opacity: filled(r, c) ? 1 : 0 }}
+                />
+              );
+            })}
+
+            {/* Les trois yeux : c'est eux qu'on reconnaît de loin. En cuivre,
+                parce qu'ils sont assez épais pour supporter la couleur sans
+                perdre le contraste. */}
+            {[
+              { top: 0, left: 0 },
+              { top: 0, right: 0 },
+              { bottom: 0, left: 0 },
+            ].map((pos, i) => (
+              <span
+                key={i}
+                aria-hidden
+                className="absolute grid place-items-center rounded-[4px] border-[3px] border-accent"
+                style={{ ...pos, width: "30%", height: "30%" }}
+              >
+                <span className="block h-1/2 w-1/2 rounded-[2px] bg-accent" />
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <p className="mt-5 text-center text-[13.5px] leading-relaxed text-muted-foreground">
+          Photographiez ce code et envoyez-nous vos photos de la soirée.
+        </p>
       </div>
     </div>
   );

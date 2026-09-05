@@ -14,9 +14,11 @@ import { useRef, type ReactNode } from "react";
 interface Props {
   children: ReactNode;
   className?: string;
+  /** Pour être visée par une ancre — /pricing#souvenir, par exemple. */
+  id?: string;
 }
 
-const CarteLueur = ({ children, className = "" }: Props) => {
+const CarteLueur = ({ children, className = "", id }: Props) => {
   const boite = useRef<HTMLDivElement>(null);
 
   /* On écrit la position du pointeur dans deux variables CSS et c'est la
@@ -39,6 +41,7 @@ const CarteLueur = ({ children, className = "" }: Props) => {
 
   return (
     <div
+      id={id}
       ref={boite}
       onPointerMove={suivre}
       onPointerLeave={oublier}

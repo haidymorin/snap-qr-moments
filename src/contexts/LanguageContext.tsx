@@ -30,11 +30,13 @@ const translations: Record<Lang, Dict> = {
       retry: "Réessayer les fichiers en échec",
       dismiss: "Fermer",
       album: "Album partagé",
-      tabAll: "Tout",
+      tabAll: "Toutes les photos",
       tabPhotos: "Photos",
       tabVideos: "Vidéos",
       tabMine: "Photos de moi",
       tabEnvois: "Mes envois",
+      tabJeu: "Le jeu",
+      typeTout: "Tout",
       selChoisir: "Sélectionner",
       selAnnuler: "Annuler",
       selChoisies: "sélectionnées",
@@ -64,7 +66,8 @@ const translations: Record<Lang, Dict> = {
       pricing: "Tarifs",
       albums: "Albums",
       contact: "Contact",
-      dashboard: "Mon dashboard",
+      dashboard: "Mon espace",
+      signIn: "Se connecter",
       cta: "Créer mon événement",
       signOut: "Déconnexion",
     },
@@ -103,11 +106,11 @@ const translations: Record<Lang, Dict> = {
       step1Num: "01 · AVANT",
       step1Title: "Vous posez le QR",
       step1Desc:
-        "Un panneau à l'entrée et un petit carton sur chaque table. Nous fournissons les fichiers à imprimer, aux couleurs de votre événement.",
+        "Un panneau à l'entrée et un petit carton sur chaque table. Nous fournissons les fichiers à imprimer, à vos couleurs et à votre nom.",
       step2Num: "02 · PENDANT",
       step2Title: "Ils déposent, ça s'affiche",
       step2Desc:
-        "Vos invités scannent et envoient. Aucune application, aucun compte à créer. Le diaporama projette les photos en direct sur grand écran.",
+        "Vos invités scannent et envoient leurs photos et leurs vidéos. Aucune application, aucun compte à créer, et aucune limite de nombre.",
       step3Num: "03 · APRÈS",
       step3Title: "Le tri se fait tout seul",
       step3Desc:
@@ -137,7 +140,7 @@ const translations: Record<Lang, Dict> = {
       guestbookP1:
         "Sur la même page, vos invités laissent un mot. Écrit, en voix, ou en vidéo. Chaque message est relié à son auteur, et dans l'album leurs mots se posent en face de leur photo.",
       guestbookP2:
-        "Un message vocal ne s'imprime pas. Alors un petit QR s'imprime à sa place. Dix ans plus tard, vous scannez la page et vous entendez sa voix.",
+        "Les messages vocaux et les vidéos sont imprimés dans l'album sous forme de QR code. Vous scannez la page, et vous réentendez la voix de votre grand-mère.",
       quoteText:
         "Ma chérie, je n'ai pas trouvé les mots hier soir. Alors je te les écris ici, pendant que tu danses.",
       quoteAuthor: "Jeanne, sa grand-mère",
@@ -146,7 +149,7 @@ const translations: Record<Lang, Dict> = {
       plansEyebrow: "Ce que ça coûte",
       plansTitle: "Un prix par événement.",
       plansDesc:
-        "Pas d'abonnement, pas de commission sur vos photos. Vous payez une seule fois, pour un seul événement, et le détail de chaque formule est écrit noir sur blanc.",
+        "Un paiement, un événement. Pas d'abonnement, pas de commission sur vos photos.",
       plan1Name: "Essentiel",
       plan1Price: "59 €",
       plan1Desc:
@@ -203,7 +206,7 @@ const translations: Record<Lang, Dict> = {
       c1Desc:
         "Le nom, la date, et c'est prêt. Votre QR code arrive tout de suite, avec les fichiers à imprimer : le panneau d'accueil et les chevalets à poser sur les tables.",
       c1B1: "Deux minutes, sans configuration",
-      c1B2: "Un QR code unique, aux couleurs de votre événement",
+      c1B2: "Le panneau et les chevalets à vos couleurs, avec votre nom et votre date",
       c1B3: "La signalétique à imprimer, incluse dans tous les paliers",
 
       c2Num: "02 · Pendant",
@@ -212,7 +215,7 @@ const translations: Record<Lang, Dict> = {
         "Ils scannent le carton posé devant eux, la page s'ouvre, ils choisissent leurs photos. Pas d'application à installer, pas de compte à créer, pas de mot de passe à retenir.",
       c2B1: "Photos et vidéos illimitées",
       c2B2: "Fonctionne sur tous les téléphones, même les vieux",
-      c2B3: "Le diaporama projeté pendant la soirée donne envie de participer",
+      c2B3: "Le diaporama projeté pendant la soirée donne envie de participer (formule Souvenir)",
 
       c3Num: "03 · La nuit même",
       c3Title: "L'IA fait le tri.",
@@ -319,11 +322,13 @@ const translations: Record<Lang, Dict> = {
       retry: "Retry the files that failed",
       dismiss: "Close",
       album: "Shared album",
-      tabAll: "All",
+      tabAll: "All the photos",
       tabPhotos: "Photos",
       tabVideos: "Videos",
       tabMine: "Photos of me",
       tabEnvois: "My uploads",
+      tabJeu: "The game",
+      typeTout: "Everything",
       selChoisir: "Select",
       selAnnuler: "Cancel",
       selChoisies: "selected",
@@ -353,7 +358,8 @@ const translations: Record<Lang, Dict> = {
       pricing: "Pricing",
       albums: "Albums",
       contact: "Contact",
-      dashboard: "My dashboard",
+      dashboard: "My space",
+      signIn: "Sign in",
       cta: "Create my event",
       signOut: "Sign out",
     },
@@ -392,11 +398,11 @@ const translations: Record<Lang, Dict> = {
       step1Num: "01 · BEFORE",
       step1Title: "You put up the QR",
       step1Desc:
-        "One sign at the entrance and a small card on every table. We give you the print files, in your event colours.",
+        "One sign at the entrance and a small card on every table. We give you the print files, in your colours and with your name.",
       step2Num: "02 · DURING",
       step2Title: "They upload, it appears",
       step2Desc:
-        "Your guests scan and send. No app, no account to create. The live slideshow puts the photos on the big screen as they arrive.",
+        "Your guests scan and send their photos and videos. No app, no account to create, and no limit on how many.",
       step3Num: "03 · AFTER",
       step3Title: "The sorting happens on its own",
       step3Desc:
@@ -426,7 +432,7 @@ const translations: Record<Lang, Dict> = {
       guestbookP1:
         "On the same page, your guests leave a message. Written, spoken, or filmed. Each one is linked to its author, and in the album their words sit next to their photo.",
       guestbookP2:
-        "A voice message cannot be printed. So a small QR is printed in its place. Ten years later, you scan the page and you hear her voice.",
+        "Voice messages and videos are printed in the album as a QR code. You scan the page, and you hear your grandmother's voice again.",
       quoteText:
         "My darling, I could not find the words last night. So I am writing them here, while you dance.",
       quoteAuthor: "Jeanne, her grandmother",
@@ -435,7 +441,7 @@ const translations: Record<Lang, Dict> = {
       plansEyebrow: "What it costs",
       plansTitle: "One price per event.",
       plansDesc:
-        "No subscription, no commission on your photos. You choose once, before the night.",
+        "One payment, one event. No subscription, no commission on your photos.",
       plan1Name: "Essential",
       plan1Price: "€59",
       plan1Desc:
@@ -492,7 +498,7 @@ const translations: Record<Lang, Dict> = {
       c1Desc:
         "The name, the date, and it's ready. Your QR code arrives straight away, along with the files to print: the welcome sign and the cards to stand on the tables.",
       c1B1: "Two minutes, no setup",
-      c1B2: "A unique QR code, in your event's colours",
+      c1B2: "Signs and table cards in your colours, with your name and your date",
       c1B3: "Printable signage, included in every plan",
 
       c2Num: "02 · During",
@@ -501,7 +507,7 @@ const translations: Record<Lang, Dict> = {
         "They scan the card in front of them, the page opens, they pick their photos. No app to install, no account to create, no password to remember.",
       c2B1: "Unlimited photos and videos",
       c2B2: "Works on every phone, even the old ones",
-      c2B3: "The slideshow running during the party makes people want to join in",
+      c2B3: "The slideshow running during the party makes people want to join in (Souvenir plan)",
 
       c3Num: "03 · That same night",
       c3Title: "The AI sorts it out.",

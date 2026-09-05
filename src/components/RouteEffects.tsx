@@ -189,15 +189,35 @@ const RouteEffects = () => {
     }
   }, [pathname, lang]);
 
+  /* Le défilement vers une ancre.
+   *
+   * Les pages sont chargées à la demande : au moment où la route change,
+   * #souvenir n'existe pas encore dans le document, et un simple
+   * querySelector échouait en silence — le lien « Le détail » de l'accueil
+   * atterrissait donc en haut de la page des tarifs, jamais sur la bonne
+   * formule. On guette l'apparition de l'élément pendant deux secondes, le
+   * temps que le morceau de page arrive. */
   useEffect(() => {
-    if (hash) {
+    if (!hash) {
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    let annule = false;
+    const debut = performance.now();
+
+    const chercher = () => {
+      if (annule) return;
       const cible = document.querySelector(hash);
       if (cible) {
         cible.scrollIntoView({ behavior: "smooth", block: "start" });
         return;
       }
-    }
-    window.scrollTo(0, 0);
+      if (performance.now() - debut < 2000) requestAnimationFrame(chercher);
+    };
+
+    requestAnimationFrame(chercher);
+    return () => { annule = true; };
   }, [pathname, hash]);
 
   return null;

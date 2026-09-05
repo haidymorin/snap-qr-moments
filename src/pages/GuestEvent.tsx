@@ -12,7 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
 import { mesurerPhoto } from "@/lib/triPhotos";
 import { generateVideoPoster } from "@/lib/videoPoster";
-import MediaTabs, { MediaFilter, PlayOverlay } from "@/components/MediaTabs";
+import GalerieOnglets, { FiltreType, type Section, type TypeMedia, type MediaFilter, PlayOverlay } from "@/components/MediaTabs";
 import {
   Camera, Check, CheckSquare, ChevronLeft, ChevronRight, Download, Images, Loader2, X,
 } from "lucide-react";
@@ -155,7 +155,11 @@ const GuestEvent = () => {
 
   const [event, setEvent] = useState<EventRow | null>(null);
   const [media, setMedia] = useState<MediaRow[]>([]);
-  const [filter, setFilter] = useState<MediaFilter>("all");
+  /* Deux axes séparés : quelles photos on regarde, et de quel type. Ils
+     étaient mélangés dans une seule liste de cinq onglets, dont les deux
+     derniers — les plus utiles — sortaient de l'écran sur un téléphone. */
+  const [section, setSection] = useState<Section>("all");
+  const [type, setType] = useState<TypeMedia>("all");
   const [counts, setCounts] = useState({ all: 0, photo: 0, video: 0 });
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -183,11 +187,28 @@ const GuestEvent = () => {
   /* Ce que la galerie affiche : soit les photos reconnues, soit la page
      courante de l'album. Une seule source par onglet, donc pas de
      désynchronisation possible au chargement des pages suivantes. */
+  const parType = useCallback(
+    (rows: MediaRow[]) => (type === "all" ? rows : rows.filter((r) => r.media_type === type)),
+    [type],
+  );
+
   const visibles = useMemo(() => {
-    if (filter === "mine") return mesPhotos;
-    if (filter === "envois") return mesEnvois;
-    return media;
-  }, [filter, media, mesPhotos, mesEnvois]);
+    if (section === "mine") return parType(mesPhotos);
+    if (section === "envois") return parType(mesEnvois);
+    return media; // déjà filtré par le serveur
+  }, [section, media, mesPhotos, mesEnvois, parType]);
+
+  /* Les compteurs du sélecteur de type suivent la section : dans « Mes
+     envois », « Vidéos 2 » doit parler des deux vidéos que CETTE personne a
+     envoyées, pas des quarante de la soirée. */
+  const countsType = useMemo(() => {
+    const source =
+      section === "mine" ? mesPhotos : section === "envois" ? mesEnvois : null;
+    if (!source) return counts;
+    const photo = source.filter((r) => r.media_type === "photo").length;
+    const video = source.length - photo;
+    return { all: source.length, photo, video };
+  }, [section, mesPhotos, mesEnvois, counts]);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
 
@@ -348,15 +369,28 @@ const GuestEvent = () => {
     })();
   }, [id, fetchPage, loadCounts, chargerEnvois]);
 
-  const changeFilter = async (next: MediaFilter) => {
-    if (next === filter) return;
-    setFilter(next);
-    // Les photos reconnues sont déjà en mémoire : aucun aller-retour, aucune
-    // pagination, l'onglet s'affiche instantanément.
-    if (next === "mine") {
+  /* Changer d'onglet. Les photos reconnues et les envois sont déjà en
+     mémoire : aucun aller-retour, l'onglet s'affiche instantanément. */
+  const changeSection = async (next: Section) => {
+    if (next === section) return;
+    setSection(next);
+    if (next !== "all") {
       setHasMore(false);
       return;
     }
+    setHasMore(true);
+    setMedia([]);
+    setLoadingMore(true);
+    setMedia(await fetchPage(0, type));
+    setLoadingMore(false);
+  };
+
+  /* Changer de type. Sur l'album commun c'est le serveur qui filtre — il y a
+     mille photos, on ne les descend pas toutes pour en cacher la moitié. */
+  const changeType = async (next: TypeMedia) => {
+    if (next === type) return;
+    setType(next);
+    if (section !== "all") return;
     setHasMore(true);
     setMedia([]);
     setLoadingMore(true);
@@ -365,15 +399,15 @@ const GuestEvent = () => {
   };
 
   const loadMore = useCallback(async () => {
-    if (loadingMore || !hasMore || filter === "mine") return;
+    if (loadingMore || !hasMore || section !== "all") return;
     setLoadingMore(true);
-    const rows = await fetchPage(media.length, filter);
+    const rows = await fetchPage(media.length, type);
     setMedia((prev) => {
       const seen = new Set(prev.map((p) => p.id));
       return [...prev, ...rows.filter((r) => !seen.has(r.id))];
     });
     setLoadingMore(false);
-  }, [fetchPage, filter, hasMore, loadingMore, media.length]);
+  }, [fetchPage, type, section, hasMore, loadingMore, media.length]);
 
   useEffect(() => {
     const node = sentinelRef.current;
@@ -518,9 +552,9 @@ const GuestEvent = () => {
     await chargerEnvois();
     await loadCounts();
     setHasMore(true);
-    setMedia(await fetchPage(0, filter));
+    setMedia(await fetchPage(0, section === "all" ? type : "all"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchPage, filter, loadCounts, chargerEnvois, id]);
+  }, [fetchPage, type, section, loadCounts, chargerEnvois, id]);
 
   const handleSelection = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !id || !event) return;
@@ -727,7 +761,7 @@ const GuestEvent = () => {
             setMesPhotos(photos ?? []);
             // On bascule sur l'onglet quand il y a quelque chose à montrer,
             // et on revient à l'album quand l'invité efface sa reconnaissance.
-            setFilter(photos && photos.length ? "mine" : "all");
+            void changeSection(photos && photos.length ? "mine" : "all");
           }}
         />
         )}
@@ -739,13 +773,16 @@ const GuestEvent = () => {
             <span className="text-muted-foreground">({counts.all})</span>
           </h2>
           <div className="flex flex-col items-start gap-3 sm:items-end">
-            <MediaTabs
-              value={filter}
-              onChange={changeFilter}
-              counts={counts}
-              mineCount={mesPhotos.length}
-              envoisCount={mesEnvois.length}
+            <GalerieOnglets
+              section={section}
+              onSection={changeSection}
+              counts={{
+                all: counts.all,
+                envois: mesEnvois.length,
+                mine: mesPhotos.length,
+              }}
             />
+            <FiltreType type={type} onType={changeType} counts={countsType} />
             {visibles.length > 0 && (
               <button
                 type="button"
@@ -762,9 +799,9 @@ const GuestEvent = () => {
         {visibles.length === 0 && !loadingMore ? (
           <div className="mt-6 rounded-xl border border-border px-6 py-16 text-center">
             <p className="text-muted-foreground">
-              {filter === "video"
+              {type === "video"
                 ? t("guest.emptyVideos")
-                : filter === "photo"
+                : type === "photo"
                   ? t("guest.emptyPhotos")
                   : t("guest.emptyAll")}
             </p>

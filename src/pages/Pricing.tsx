@@ -136,7 +136,7 @@ const Pricing = () => {
               {formules.map((f) => {
                 const sombre = f.vedette;
                 return (
-                  <CarteLueur key={f.id} className="h-full">
+                  <CarteLueur key={f.id} className="h-full scroll-mt-[100px]" id={f.id}>
                     <article
                       className={`flex h-full flex-col rounded-2xl border p-[clamp(24px,2.6vw,34px)] ${
                         sombre

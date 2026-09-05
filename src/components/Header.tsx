@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, UserRound } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -65,9 +65,23 @@ const Header = () => {
                 </Button>
               </>
             ) : (
-              <Button asChild variant="hero" size="sm">
-                <Link to={ctaTarget}>{ctaLabel}</Link>
-              </Button>
+              <>
+                {/* Depuis que « Créer mon événement » mène au parcours d'achat,
+                    plus rien ne conduisait à la page de connexion : quelqu'un
+                    qui a déjà un compte n'avait aucun moyen d'y revenir. */}
+                <Link
+                  to="/auth?mode=signin"
+                  aria-label={t("nav.signIn")}
+                  title={t("nav.signIn")}
+                  className="flex min-h-[38px] items-center gap-2 rounded-full border border-border px-3 text-[12.5px] font-medium uppercase tracking-[0.09em] text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
+                >
+                  <UserRound className="h-4 w-4" />
+                  <span className="hidden lg:inline">{t("nav.signIn")}</span>
+                </Link>
+                <Button asChild variant="hero" size="sm">
+                  <Link to={ctaTarget}>{ctaLabel}</Link>
+                </Button>
+              </>
             )}
           </nav>
 
@@ -106,9 +120,16 @@ const Header = () => {
                 </Button>
               </>
             ) : (
-              <Button asChild variant="hero" size="sm" className="w-full mt-4">
-                <Link to={ctaTarget} onClick={() => setIsMenuOpen(false)}>{ctaLabel}</Link>
-              </Button>
+              <>
+                <Button asChild variant="hero" size="sm" className="w-full mt-4">
+                  <Link to={ctaTarget} onClick={() => setIsMenuOpen(false)}>{ctaLabel}</Link>
+                </Button>
+                <Button asChild variant="outline" size="sm" className="w-full mt-2">
+                  <Link to="/auth?mode=signin" onClick={() => setIsMenuOpen(false)}>
+                    <UserRound className="w-4 h-4" /> {t("nav.signIn")}
+                  </Link>
+                </Button>
+              </>
             )}
           </nav>
         )}

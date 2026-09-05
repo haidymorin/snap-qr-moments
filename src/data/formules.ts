@@ -73,7 +73,7 @@ export const FORMULES: Record<Lang, Formule[]> = {
         "Le livre d'or numérique : messages écrits, vocaux et vidéo",
         "La reconnaissance faciale : chaque invité retrouve ses photos avec un selfie",
         "Le diaporama en direct, projeté sur un écran pendant la soirée",
-        "Votre page, votre QR code et vos affiches à vos couleurs et à votre nom",
+        "Votre page de dépôt et vos affiches à vos couleurs, au nom de votre événement",
       ],
     },
     {
@@ -136,7 +136,7 @@ export const FORMULES: Record<Lang, Formule[]> = {
         "The digital guest book: written, voice and video messages",
         "Face recognition: every guest finds their photos from a selfie",
         "The live slideshow, projected on a screen during the party",
-        "Your page, your QR code and your signs in your colours and name",
+        "Your upload page and your signs in your colours, with your event name",
       ],
     },
     {
