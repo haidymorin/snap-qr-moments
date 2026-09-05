@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Loader2 } from "lucide-react";
 import FichierClients from "@/components/FichierClients";
+import ActionsEvenement from "@/components/ActionsEvenement";
 
 /* L'espace d'administration.
  *
@@ -121,10 +122,10 @@ const Admin = () => {
             </dl>
 
             <div className="mt-10 overflow-x-auto">
-              <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+              <table className="w-full min-w-[980px] border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-border">
-                    {["Événement", "Client", "Formule", "Date", "Payé", "Médias", "Mots", "Échéance"].map((c) => (
+                    {["Événement", "Client", "Formule", "Date", "Payé", "Médias", "Mots", "Échéance", ""].map((c) => (
                       <th key={c} className="label-mono py-3 pr-4 font-normal">{c}</th>
                     ))}
                   </tr>
@@ -148,6 +149,15 @@ const Admin = () => {
                       <td className="py-3 pr-4 font-mono tabular-nums">{l.medias}</td>
                       <td className="py-3 pr-4 font-mono tabular-nums">{l.messages}</td>
                       <td className="py-3 pr-4 font-mono tabular-nums">{jour(l.expire_le)}</td>
+                      <td className="py-3">
+                        <ActionsEvenement
+                          event={{
+                            id: l.id, name: l.name, event_date: l.event_date,
+                            plan: l.plan, expire_le: l.expire_le,
+                          }}
+                          onFait={charger}
+                        />
+                      </td>
                     </tr>
                   ))}
                 </tbody>
