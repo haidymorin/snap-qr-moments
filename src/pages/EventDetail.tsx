@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import ReglagesEvenement, { type Reglages } from "@/components/ReglagesEvenement";
 import LivreDorHote from "@/components/LivreDorHote";
+import CarteDiaporama from "@/components/CarteDiaporama";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { FiltreType, MediaFilter, PlayOverlay } from "@/components/MediaTabs";
@@ -29,6 +30,9 @@ interface EventRow {
   livre_dor_actif: boolean;
   livre_dor_vocal: boolean;
   livre_dor_public: boolean;
+  diaporama_jeton: string;
+  diaporama_mode: string;
+  diaporama_delai_min: number;
 }
 
 /* Le livre d'or fait partie du Souvenir, pas de l'Essentiel : sans lui, ni ses
@@ -474,6 +478,17 @@ const EventDetail = () => {
           <div ref={sentinelRef} className="h-10 flex items-center justify-center">
             {loadingMore && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
           </div>
+
+          {/* Le diaporama et le livre d'or arrivent ensemble : ce sont les
+              deux choses que la formule Souvenir ajoute pendant la soirée. */}
+          {PLANS_AVEC_LIVRE_DOR.includes(event.plan) && (
+            <CarteDiaporama
+              eventId={event.id}
+              jeton={event.diaporama_jeton}
+              mode={event.diaporama_mode ?? "photos"}
+              delai={event.diaporama_delai_min ?? 0}
+            />
+          )}
 
           {PLANS_AVEC_LIVRE_DOR.includes(event.plan) && (
             <LivreDorHote eventId={event.id} lang={lang} />

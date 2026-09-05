@@ -67,6 +67,10 @@ const META: Record<string, { fr: Meta; en: Meta }> = {
       noindex: true,
     },
   },
+  "/diaporama": {
+    fr: { title: "Diaporama · QR Memories", desc: "L'écran de votre soirée.", noindex: true },
+    en: { title: "Slideshow · QR Memories", desc: "Your party's screen.", noindex: true },
+  },
   "/contact": {
     fr: {
       title: "Nous écrire · QR Memories",
