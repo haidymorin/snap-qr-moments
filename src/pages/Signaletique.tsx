@@ -35,6 +35,7 @@ import { Loader2, Printer, ArrowLeft } from "lucide-react";
  */
 
 type Format = "panneau" | "chevalet" | "carton";
+type Modele = "epure" | "bloc" | "nuit";
 
 const TEXTES: Record<Lang, Record<string, string>> = {
   fr: {
@@ -60,6 +61,16 @@ const TEXTES: Record<Lang, Record<string, string>> = {
     sousTitre: "Photographiez ce code avec votre téléphone",
     mentionApp: "Aucune application à installer",
     introuvable: "Événement introuvable.",
+    modele: "Le modèle",
+    modeleEpure: "Épuré",
+    modeleEpureAide: "Fond clair, filet fin. Passe partout, et le moins gourmand en encre.",
+    modeleBloc: "Bandeau",
+    modeleBlocAide: "Un aplat de votre couleur en haut, le reste sur fond clair.",
+    modeleNuit: "Nuit",
+    modeleNuitAide: "Fond plein dans votre couleur, texte clair. Le plus visible de loin.",
+    verrouTitre: "Modèles et couleurs : formule Souvenir",
+    verrouTexte: "Votre formule Essentiel comprend les affiches et les chevalets prêts à imprimer, avec le nom et la date de votre événement. Le choix du modèle, de la couleur et du mot d'accueil arrive avec la formule Souvenir.",
+    verrouLien: "Voir ce que contient le Souvenir",
   },
   en: {
     titre: "Your signs to print",
@@ -84,22 +95,38 @@ const TEXTES: Record<Lang, Record<string, string>> = {
     sousTitre: "Point your phone camera at this code",
     mentionApp: "No app to install",
     introuvable: "Event not found.",
+    modele: "The template",
+    modeleEpure: "Plain",
+    modeleEpureAide: "Light background, thin rule. Goes with anything, and uses the least ink.",
+    modeleBloc: "Banner",
+    modeleBlocAide: "A band of your colour at the top, the rest on a light background.",
+    modeleNuit: "Night",
+    modeleNuitAide: "Full background in your colour, light text. The most visible from a distance.",
+    verrouTitre: "Templates and colours: Souvenir plan",
+    verrouTexte: "Your Essential plan includes the signs and table cards ready to print, with your event name and date. Choosing the template, the colour and the welcome line comes with the Souvenir plan.",
+    verrouLien: "See what Souvenir includes",
   },
 };
 
-interface Ev { id: string; name: string; event_date: string; user_id: string }
+interface Ev { id: string; name: string; event_date: string; user_id: string; plan: string }
 
 /* Une pièce imprimée : le carré blanc du QR, le titre, le mot d'accueil.
    Les tailles sont en millimètres pour que ce qui sort de l'imprimante
    corresponde à ce qui est annoncé. */
 function Piece({
-  ev, url, fond, encre, titre, message, sousTitre, mention,
-  largeur, qr, echelle,
+  ev, url, teinte, encre, message, sousTitre, mention,
+  largeur, qr, echelle, modele,
 }: {
-  ev: Ev; url: string; fond: string; encre: string; titre: string;
+  ev: Ev; url: string; teinte: string; encre: string;
   message: string; sousTitre: string; mention: string;
-  largeur: number; qr: number; echelle: number;
+  largeur: number; qr: number; echelle: number; modele: Modele;
 }) {
+  /* Trois mises en page, pas trente : chacune répond à une contrainte réelle.
+     « Épuré » économise l'encre d'une imprimante domestique, « Nuit » se voit
+     de l'autre bout d'une salle, « Bandeau » est le compromis. */
+  const nuit = modele === "nuit";
+  const fond = nuit ? teinte : "#FFFFFF";
+  const texte = nuit ? encre : teinte;
   const date = new Date(`${ev.event_date}T12:00:00`).toLocaleDateString("fr-FR", {
     day: "numeric", month: "long", year: "numeric",
   });
@@ -110,11 +137,24 @@ function Piece({
       style={{
         width: `${largeur}mm`,
         background: fond,
-        color: encre,
-        padding: `${6 * echelle}mm ${5 * echelle}mm`,
+        color: texte,
+        border: nuit ? "none" : `0.4mm solid ${teinte}22`,
+        borderRadius: `${2 * echelle}mm`,
+        padding: `${(modele === "bloc" ? 0 : 6) * echelle}mm ${5 * echelle}mm ${6 * echelle}mm`,
         gap: `${3 * echelle}mm`,
+        overflow: "hidden",
       }}
     >
+      {modele === "bloc" && (
+        <div
+          aria-hidden
+          style={{
+            background: teinte, height: `${4 * echelle}mm`,
+            width: `calc(100% + ${10 * echelle}mm)`,
+            marginBottom: `${3 * echelle}mm`,
+          }}
+        />
+      )}
       <p style={{ fontSize: `${3.2 * echelle}mm`, letterSpacing: "0.14em", opacity: 0.75, textTransform: "uppercase", margin: 0 }}>
         {message}
       </p>
@@ -143,7 +183,7 @@ function Piece({
       <span style={{ fontSize: `${2.2 * echelle}mm`, opacity: 0.4, marginTop: `${1 * echelle}mm` }}>
         QR Memories
       </span>
-      <span aria-hidden style={{ display: "block", width: `${10 * echelle}mm`, height: "0.4mm", background: encre, opacity: 0.35 }} />
+      <span aria-hidden style={{ display: "block", width: `${10 * echelle}mm`, height: "0.4mm", background: texte, opacity: 0.35 }} />
     </div>
   );
 }
@@ -157,6 +197,7 @@ const Signaletique = () => {
   const [ev, setEv] = useState<Ev | null>(null);
   const [chargement, setChargement] = useState(true);
   const [format, setFormat] = useState<Format>("chevalet");
+  const [modele, setModele] = useState<Modele>("epure");
   const [couleur, setCouleur] = useState("#3F203A");
   const [message, setMessage] = useState("");
 
@@ -164,14 +205,14 @@ const Signaletique = () => {
     if (!id || !user) return;
     (async () => {
       const { data } = await supabase
-        .from("events").select("id,name,event_date,user_id").eq("id", id).maybeSingle();
+        .from("events").select("id,name,event_date,user_id,plan").eq("id", id).maybeSingle();
       setEv((data as Ev) ?? null);
       setChargement(false);
     })();
   }, [id, user]);
 
   const url = id ? `${window.location.origin}/event/${id}` : "";
-  const teinte = hexValide(couleur) ? couleur : "#3F203A";
+  const teinte = ev && ev.plan === "essentiel" ? "#3F203A" : hexValide(couleur) ? couleur : "#3F203A";
 
   /* Le fond garde la couleur choisie ; le texte passe à une version assombrie
      quand elle ne se lit pas. On prévient, on ne corrige pas en silence. */
@@ -190,7 +231,12 @@ const Signaletique = () => {
     return <div className="p-10 text-center text-muted-foreground">{T.introuvable}</div>;
   }
 
-  const mot = message.trim() || T.defautMessage;
+  /* La personnalisation est ce que la formule Souvenir vend depuis le premier
+     jour : « votre page et vos affiches à vos couleurs ». L'Essentiel garde
+     des affiches complètes, avec son nom et sa date — ce qui a été promis —
+     mais dans le modèle sobre et la couleur de la marque. */
+  const personnalisable = ev.plan !== "essentiel";
+  const mot = personnalisable ? message.trim() || T.defautMessage : T.defautMessage;
 
   /* Trois dispositions, trois pages. Les nombres par planche sont calés sur
      une A4 avec 10 mm de marge : six chevalets de 90 mm, dix cartons de
@@ -241,8 +287,61 @@ const Signaletique = () => {
             ))}
           </div>
 
+          {!personnalisable && (
+            <div className="mt-6 rounded-2xl border border-accent bg-card p-4">
+              <p className="text-[14px] font-semibold text-foreground">{T.verrouTitre}</p>
+              <p className="mt-1 max-w-[68ch] text-[13px] leading-relaxed text-muted-foreground">
+                {T.verrouTexte}
+              </p>
+              <Link
+                to="/pricing#souvenir"
+                className="label-mono mt-3 inline-block border-b border-foreground pb-0.5 text-foreground opacity-100 transition-opacity hover:opacity-60"
+              >
+                {T.verrouLien}
+              </Link>
+            </div>
+          )}
+
+          {personnalisable && (
+            <div className="mt-7">
+              <p className="text-[13.5px] font-semibold text-foreground">{T.modele}</p>
+              <div className="mt-3 grid gap-4 md:grid-cols-3">
+                {(["epure", "bloc", "nuit"] as const).map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setModele(m)}
+                    className={`rounded-2xl border p-4 text-left transition-colors ${
+                      modele === m ? "border-primary bg-secondary" : "border-border hover:border-primary"
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <span
+                        aria-hidden
+                        className="block h-8 w-8 shrink-0 rounded-lg border border-border"
+                        style={
+                          m === "nuit"
+                            ? { background: teinte }
+                            : m === "bloc"
+                              ? { background: `linear-gradient(${teinte} 34%, #fff 34%)` }
+                              : { background: "#fff" }
+                        }
+                      />
+                      <span className="text-[15px] font-semibold text-foreground">
+                        {T[`modele${m === "epure" ? "Epure" : m === "bloc" ? "Bloc" : "Nuit"}`]}
+                      </span>
+                    </span>
+                    <span className="mt-2 block text-[13px] leading-relaxed text-muted-foreground">
+                      {T[`modele${m === "epure" ? "Epure" : m === "bloc" ? "Bloc" : "Nuit"}Aide`]}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mt-6 flex flex-wrap items-end gap-6">
-            <div>
+            <div hidden={!personnalisable}>
               <label htmlFor="couleur" className="block text-[13.5px] font-semibold text-foreground">
                 {T.couleur}
               </label>
@@ -260,7 +359,7 @@ const Signaletique = () => {
               </div>
             </div>
 
-            <div className="min-w-[240px] flex-1">
+            <div className="min-w-[240px] flex-1" hidden={!personnalisable}>
               <label htmlFor="mot" className="block text-[13.5px] font-semibold text-foreground">
                 {T.message}
               </label>
@@ -306,8 +405,8 @@ const Signaletique = () => {
           {Array.from({ length: d.nombre }, (_, i) => (
             <Piece
               key={i} ev={ev} url={url}
-              fond={teinte} encre={tropClair ? encreTexte : encre}
-              titre={ev.name} message={mot}
+              teinte={teinte} encre={tropClair ? encreTexte : encre}
+              message={mot} modele={personnalisable ? modele : "epure"}
               sousTitre={T.sousTitre} mention={T.mentionApp}
               largeur={d.largeur} qr={d.qr} echelle={d.echelle}
             />
