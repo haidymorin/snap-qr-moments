@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import { telechargerEnLots, type Avancement } from "@/lib/telechargerLot";
 import { supabase } from "@/integrations/supabase/client";
@@ -44,6 +44,7 @@ const TEXTES = {
     copier: "Copier", copie: "Copié",
     qr: "Votre QR code",
     telechargerQR: "Télécharger le QR (PNG)",
+    signaletique: "Mes affiches à imprimer",
     galerie: "Galerie",
     toutTelecharger: "Tout télécharger (ZIP)",
     preparation: "Préparation",
@@ -69,6 +70,7 @@ const TEXTES = {
     copier: "Copy", copie: "Copied",
     qr: "Your QR code",
     telechargerQR: "Download QR (PNG)",
+    signaletique: "My signs to print",
     galerie: "Gallery",
     toutTelecharger: "Download all (ZIP)",
     preparation: "Preparing",
@@ -391,6 +393,11 @@ const EventDetail = () => {
               </div>
               <Button variant="hero" className="w-full" onClick={downloadQR}>
                 <Download className="w-4 h-4" /> {T.telechargerQR}
+              </Button>
+              {/* Le PNG seul ne suffit pas : personne ne sait mettre en page un
+                  panneau d'accueil dans un traitement de texte. */}
+              <Button asChild variant="outline" className="mt-2 w-full">
+                <Link to={`/dashboard/event/${id}/signaletique`}>{T.signaletique}</Link>
               </Button>
             </div>
           </div>
