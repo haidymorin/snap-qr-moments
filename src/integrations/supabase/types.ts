@@ -296,6 +296,33 @@ export type Database = {
           },
         ]
       }
+      journal_admin: {
+        Row: {
+          action: string
+          detail: Json
+          event_id: string | null
+          fait_le: string
+          fait_par: string | null
+          id: string
+        }
+        Insert: {
+          action: string
+          detail?: Json
+          event_id?: string | null
+          fait_le?: string
+          fait_par?: string | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          detail?: Json
+          event_id?: string | null
+          fait_le?: string
+          fait_par?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       livre_dor: {
         Row: {
           audio_secondes: number | null
@@ -526,6 +553,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_changer_formule: {
+        Args: {
+          p_complement_centimes?: number
+          p_event: string
+          p_plan: string
+        }
+        Returns: undefined
+      }
       admin_evenements: {
         Args: never
         Returns: {
@@ -542,6 +577,22 @@ export type Database = {
           plan: string
           statut: string
         }[]
+      }
+      admin_prolonger: {
+        Args: { p_event: string; p_mois: number }
+        Returns: undefined
+      }
+      admin_reporter: {
+        Args: { p_date: string; p_event: string }
+        Returns: undefined
+      }
+      admin_retirer_media: {
+        Args: { p_motif?: string; p_photo: string }
+        Returns: undefined
+      }
+      admin_supprimer_evenement: {
+        Args: { p_event: string }
+        Returns: undefined
       }
       collecte_ouverte: { Args: { p_event_id: string }; Returns: boolean }
       desinscrire_client: { Args: { p_email: string }; Returns: undefined }
@@ -654,6 +705,10 @@ export type Database = {
         }[]
       }
       livre_dor_ouvert: { Args: { p_event_id: string }; Returns: boolean }
+      noter_action: {
+        Args: { p_action: string; p_detail?: Json; p_event: string }
+        Returns: undefined
+      }
       purge_expired_face_consents: {
         Args: never
         Returns: {
