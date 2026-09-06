@@ -111,6 +111,9 @@ export type Database = {
         Row: {
           collecte_fin: string | null
           created_at: string
+          diaporama_delai_min: number
+          diaporama_jeton: string
+          diaporama_mode: string
           event_date: string
           event_type: string
           expire_le: string | null
@@ -131,6 +134,9 @@ export type Database = {
         Insert: {
           collecte_fin?: string | null
           created_at?: string
+          diaporama_delai_min?: number
+          diaporama_jeton?: string
+          diaporama_mode?: string
           event_date: string
           event_type: string
           expire_le?: string | null
@@ -151,6 +157,9 @@ export type Database = {
         Update: {
           collecte_fin?: string | null
           created_at?: string
+          diaporama_delai_min?: number
+          diaporama_jeton?: string
+          diaporama_mode?: string
           event_date?: string
           event_type?: string
           expire_le?: string | null
@@ -463,6 +472,7 @@ export type Database = {
           event_id: string
           faces_indexed_at: string | null
           file_name: string
+          hors_diaporama: boolean
           id: string
           media_type: string
           nettete: number | null
@@ -477,6 +487,7 @@ export type Database = {
           event_id: string
           faces_indexed_at?: string | null
           file_name: string
+          hors_diaporama?: boolean
           id?: string
           media_type?: string
           nettete?: number | null
@@ -491,6 +502,7 @@ export type Database = {
           event_id?: string
           faces_indexed_at?: string | null
           file_name?: string
+          hors_diaporama?: boolean
           id?: string
           media_type?: string
           nettete?: number | null
@@ -596,6 +608,19 @@ export type Database = {
       }
       collecte_ouverte: { Args: { p_event_id: string }; Returns: boolean }
       desinscrire_client: { Args: { p_email: string }; Returns: undefined }
+      diaporama_flux: {
+        Args: { p_event: string; p_jeton: string; p_limite?: number }
+        Returns: {
+          apercu: string
+          auteur: string
+          cree_le: string
+          genre: string
+          id: string
+          media_type: string
+          texte: string
+          url: string
+        }[]
+      }
       distance_empreintes: { Args: { a: string; b: string }; Returns: number }
       enregistrer_client: {
         Args: {
@@ -637,6 +662,7 @@ export type Database = {
           event_id: string
           faces_indexed_at: string | null
           file_name: string
+          hors_diaporama: boolean
           id: string
           media_type: string
           nettete: number | null
@@ -716,6 +742,11 @@ export type Database = {
           event_id: string
           rekognition_face_id: string
         }[]
+      }
+      regenerer_jeton_diaporama: { Args: { p_event: string }; Returns: string }
+      regler_diaporama: {
+        Args: { p_delai: number; p_event: string; p_mode: string }
+        Returns: undefined
       }
     }
     Enums: {
