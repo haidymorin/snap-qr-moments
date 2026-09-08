@@ -98,7 +98,32 @@ const Privacy = () => {
 
             <section>
               <h2 className="text-2xl font-semibold text-foreground mb-3">Hébergement</h2>
-              <p>Supabase, Union Européenne.</p>
+              <p className="mb-3">
+                Base de données et comptes : Supabase, Union européenne. Photos, vidéos et
+                messages : Cloudflare R2, juridiction européenne. Le site lui-même est servi par
+                Cloudflare Pages.
+              </p>
+              <p>
+                Les paiements sont traités par Stripe. Les e-mails que nous vous envoyons partent
+                de Resend.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold text-foreground mb-3">Mesure d'audience</h2>
+              <p className="mb-3">
+                Nous utilisons Cloudflare Web Analytics pour savoir combien de personnes visitent
+                le site et quelles pages elles consultent. Cet outil ne dépose <b>aucun cookie</b>,
+                ne crée pas d'empreinte de votre navigateur et ne permet pas de vous identifier ni
+                de vous suivre d'un site à l'autre.
+              </p>
+              <p>
+                Les données recueillies se limitent à des statistiques agrégées : nombre de pages
+                vues, pays, type d'appareil, page d'origine. Aucune adresse IP n'est conservée.
+                C'est à ce titre que cette mesure relève de l'exemption de consentement prévue par
+                la CNIL pour la mesure d'audience strictement nécessaire au fonctionnement du site,
+                et qu'aucun bandeau ne vous est imposé.
+              </p>
             </section>
           </div>
         </div>
