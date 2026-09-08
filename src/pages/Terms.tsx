@@ -26,7 +26,7 @@ const SECTIONS: Section[] = [
       {
         p: [
           `Le service QR Memories est édité par Haïdy Morin, entrepreneur individuel, immatriculée sous le numéro SIRET ${A_COMPLETER}, dont le siège est situé ${A_COMPLETER}.`,
-          `Contact : ${A_COMPLETER}. C'est l'adresse à laquelle toute question, réclamation ou demande d'annulation doit être adressée.`,
+          "Contact : contact@qr-memories.fr. C'est l'adresse à laquelle toute question, réclamation ou demande d'annulation doit être adressée.",
           "Les présentes conditions régissent toute commande passée sur le site par un particulier agissant en dehors de son activité professionnelle. Elles sont acceptées au moment du paiement et prévalent sur tout autre document.",
         ],
       },

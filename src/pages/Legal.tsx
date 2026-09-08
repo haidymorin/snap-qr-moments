@@ -25,7 +25,7 @@ const BLOCS: { t: string; p: string[] }[] = [
   {
     t: "Nous joindre",
     p: [
-      `Courriel : ${A_COMPLETER}.`,
+      "Courriel : contact@qr-memories.fr.",
       "C'est l'adresse à laquelle adresser toute question, réclamation, demande de retrait d'une photo ou exercice d'un droit sur vos données. Réponse sous 5 jours ouvrés.",
     ],
   },
