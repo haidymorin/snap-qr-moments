@@ -146,12 +146,12 @@ const translations: Record<Lang, Dict> = {
       quoteText:
         "Ma chérie, je n'ai pas trouvé les mots hier soir. Alors je te les écris ici, pendant que tu danses.",
       quoteAuthor: "Jeanne, sa grand-mère",
-      quoteMeta: "Exemple · 22 h 14 · Table 3",
+      quoteMeta: "Exemple · 22 h 14",
 
-      plansEyebrow: "Ce que ça coûte",
+      plansEyebrow: "Ce qui est compris",
       plansTitle: "Un prix par événement.",
       plansDesc:
-        "Un paiement, un événement. Pas d'abonnement, pas de commission sur vos photos.",
+        "Un paiement, un événement. Pas d'abonnement.",
       plan1Name: "Essentiel",
       plan1Price: "59 €",
       plan1Desc:
@@ -160,14 +160,14 @@ const translations: Record<Lang, Dict> = {
       plan2Price: "179 €",
       plan2Badge: "Le plus choisi",
       plan2Desc:
-        "Tout l'Essentiel, plus le livre d'or, le tri par visage et le diaporama projeté pendant la fête. Photos gardées six mois.",
+        "Tout l'Essentiel, plus le livre d'or, le tri par visage et le diaporama. Photos gardées six mois.",
       plan3Name: "Héritage",
       plan3Price: "390 €",
       plan3Desc:
         "Tout le Souvenir, plus l'album grand format et la gazette en cinquante exemplaires. Photos gardées six mois.",
       planDetail: "Le détail",
       plansAncrage:
-        "Pour situer : un photographe de mariage coûte entre 1 500 et 2 500 €, la location d'une borne photo pour la soirée entre 500 et 900 €. QR Memories ne remplace ni l'un ni l'autre — il récupère tout ce qu'ils ne voient pas, et c'est la ligne la moins chère de votre budget photo.",
+        "Pour situer : un photographe coûte entre 1 500 et 2 500 €, une borne photo entre 500 et 900 € pour la soirée.",
 
       objEyebrow: "Ce qu'il en reste",
       objTitle: "Un souvenir qui se touche.",
@@ -203,7 +203,7 @@ const translations: Record<Lang, Dict> = {
       title1: "Quatre moments,",
       title2: "et c'est tout.",
       subtitle:
-        "Vous préparez le QR code avant la fête. Le reste se passe pendant la soirée, puis tout seul, pendant que vous dormez.",
+        "Vous préparez le QR code avant la fête. Le reste se passe pendant la soirée, puis tout seul.",
 
       c1Num: "01 · Avant",
       c1Title: "Vous créez l'événement.",
@@ -219,22 +219,22 @@ const translations: Record<Lang, Dict> = {
         "Ils scannent le carton posé devant eux, la page s'ouvre, ils choisissent leurs photos. Pas d'application à installer, pas de compte à créer, pas de mot de passe à retenir.",
       c2B1: "Photos et vidéos illimitées",
       c2B2: "Fonctionne sur tous les téléphones, même les vieux",
-      c2B3: "Le diaporama projeté pendant la soirée donne envie de participer (formule Souvenir)",
+      c2B3: "Le diaporama, si vous choisissez de le projeter, donne envie de participer (formule Souvenir)",
 
-      c3Num: "03 · La nuit même",
+      c3Num: "03 · Au fil des dépôts",
       c3Title: "L'IA fait le tri.",
       c3Desc:
-        "Les doublons partent, les photos floues aussi, celles où personne ne regarde l'objectif également. Puis chaque invité prend un selfie et retrouve les photos où il apparaît.",
-      c3B1: "Doublons, flous et ratés retirés automatiquement",
-      c3B2: "Un selfie suffit pour retrouver ses propres photos",
+        "Les doublons partent au moment du dépôt, les photos floues aussi. Rien n'est supprimé : tout est mis de côté, et un bouton le réaffiche. La recherche par visage, elle, se lance quand vous le décidez.",
+      c3B1: "Doublons et flous mis de côté automatiquement — toutes les formules",
+      c3B2: "Un selfie suffit pour retrouver ses propres photos — à partir de la formule Souvenir",
       c3B3: "Les invités qui ne veulent pas être identifiés ne le sont pas",
       c3Caption: "Six photos retenues sur vingt-quatre, pour un invité donné.",
 
       c4Num: "04 · Après",
       c4Title: "Il en reste quelque chose.",
       c4Desc:
-        "Une galerie s'oublie au bout de six mois. Un album posé sur une table, non. Vous commandez quand vous voulez, une fois les photos triées, et rien ne vous oblige à décider maintenant.",
-      c4Link: "Voir ce que ça coûte",
+        "Une galerie s'oublie au bout de six mois. Un album posé sur une table, non. Vous commandez quand vous voulez, une fois les photos triées.",
+      c4Link: "Voir les formules",
       objA: "L'album",
       objB: "La gazette",
       objC: "Le PDF",
@@ -442,12 +442,12 @@ const translations: Record<Lang, Dict> = {
       quoteText:
         "My darling, I could not find the words last night. So I am writing them here, while you dance.",
       quoteAuthor: "Jeanne, her grandmother",
-      quoteMeta: "Example · 10:14 PM · Table 3",
+      quoteMeta: "Example · 10:14 PM",
 
-      plansEyebrow: "What it costs",
+      plansEyebrow: "What is included",
       plansTitle: "One price per event.",
       plansDesc:
-        "One payment, one event. No subscription, no commission on your photos.",
+        "One payment, one event. No subscription.",
       plan1Name: "Essential",
       plan1Price: "€59",
       plan1Desc:
@@ -456,14 +456,14 @@ const translations: Record<Lang, Dict> = {
       plan2Price: "€179",
       plan2Badge: "Most chosen",
       plan2Desc:
-        "Everything in Essential, plus the guest book, face sorting and the slideshow projected during the party. Photos kept six months.",
+        "Everything in Essential, plus the guest book, face sorting and the slideshow. Photos kept six months.",
       plan3Name: "Heritage",
       plan3Price: "€390",
       plan3Desc:
         "Everything in Souvenir, plus the large-format album and fifty copies of the newspaper. Photos kept six months.",
       planDetail: "The detail",
       plansAncrage:
-        "For scale: a wedding photographer costs between €1,500 and €2,500, and renting a photo booth for the night between €500 and €900. QR Memories replaces neither — it collects everything they do not see, and it is the cheapest line in your photo budget.",
+        "For scale: a wedding photographer costs between €1,500 and €2,500, a photo booth between €500 and €900 for the night.",
 
       objEyebrow: "What is left of it",
       objTitle: "A memory you can hold.",
@@ -499,7 +499,7 @@ const translations: Record<Lang, Dict> = {
       title1: "Four moments,",
       title2: "and that's it.",
       subtitle:
-        "You set the QR code up before the party. The rest happens during the night, then on its own, while you sleep.",
+        "You set the QR code up before the party. The rest happens during the night, then on its own.",
 
       c1Num: "01 · Before",
       c1Title: "You create the event.",
@@ -515,22 +515,22 @@ const translations: Record<Lang, Dict> = {
         "They scan the card in front of them, the page opens, they pick their photos. No app to install, no account to create, no password to remember.",
       c2B1: "Unlimited photos and videos",
       c2B2: "Works on every phone, even the old ones",
-      c2B3: "The slideshow running during the party makes people want to join in (Souvenir plan)",
+      c2B3: "The slideshow, if you choose to project it, makes people want to join in (Souvenir plan)",
 
-      c3Num: "03 · That same night",
+      c3Num: "03 · As they arrive",
       c3Title: "The AI sorts it out.",
       c3Desc:
-        "Duplicates go, so do the blurry shots and the ones where nobody is looking at the lens. Then each guest takes a selfie and finds the photos they appear in.",
-      c3B1: "Duplicates, blur and misfires removed automatically",
-      c3B2: "One selfie is enough to find your own photos",
+        "Duplicates go as photos arrive, and so do the blurry ones. Nothing is deleted: it is set aside, and one button brings it back. Face search runs whenever you decide to.",
+      c3B1: "Duplicates and blur set aside automatically — every plan",
+      c3B2: "One selfie is enough to find your own photos — from the Souvenir plan",
       c3B3: "Guests who would rather not be identified simply aren't",
       c3Caption: "Six photos kept out of twenty-four, for one given guest.",
 
       c4Num: "04 · After",
       c4Title: "Something is left of it.",
       c4Desc:
-        "A gallery is forgotten within six months. An album sitting on a table is not. You order whenever you like, once the photos are sorted, and nothing forces you to decide now.",
-      c4Link: "See what it costs",
+        "A gallery is forgotten within six months. An album sitting on a table is not. You order whenever you like, once the photos are sorted.",
+      c4Link: "See the plans",
       objA: "The album",
       objB: "The newspaper",
       objC: "The PDF",

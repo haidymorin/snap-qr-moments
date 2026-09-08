@@ -64,15 +64,6 @@ export const OBJETS: Record<Lang, { objets: Objet[]; note: string }> = {
           "Aux parents, aux témoins, à ceux qui ont porté la journée. Souvent commandé en trois ou quatre exemplaires.",
       },
       {
-        titre: "Le kit d'affiches imprimé",
-        prix: "89 €",
-        quoi:
-          "Vos affiches déjà imprimées et livrées chez vous, pour ne pas courir chez l'imprimeur la veille.",
-        detail:
-          "Le panneau d'accueil au format A2 sur papier rigide, et douze chevalets de table. Livrés une semaine avant votre date.",
-        pourQui: "Le fichier PDF à imprimer soi-même reste compris dans toutes les formules.",
-      },
-      {
         titre: "Une année de plus en ligne",
         prix: "29 €",
         quoi: "Pour garder la galerie ouverte un an de plus que les six mois compris.",
@@ -121,14 +112,6 @@ export const OBJETS: Record<Lang, { objets: Objet[]; note: string }> = {
         detail: "20 × 20 cm, soft cover, forty pages.",
         pourQui:
           "For the parents, the witnesses, the people who carried the day. Often ordered three or four at a time.",
-      },
-      {
-        titre: "The printed sign kit",
-        prix: "€89",
-        quoi: "Your signs printed and delivered, so you are not at a print shop the night before.",
-        detail:
-          "The A2 welcome sign on rigid board, and twelve table cards. Delivered a week before your date.",
-        pourQui: "The print-it-yourself PDF stays included in every plan.",
       },
       {
         titre: "One more year online",

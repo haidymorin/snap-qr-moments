@@ -566,7 +566,7 @@ const CreerEvenement = () => {
                           <ul className="space-y-2.5">
                             {f.points.map((p) => (
                               <li key={p} className="flex gap-3 text-[14.5px] leading-relaxed text-foreground">
-                                <span aria-hidden className="mt-[9px] block h-px w-3 shrink-0 bg-current opacity-45" />
+                                <span aria-hidden className="mt-[7px] block size-[7px] shrink-0 rounded-full bg-primary" />
                                 <span>{p}</span>
                               </li>
                             ))}

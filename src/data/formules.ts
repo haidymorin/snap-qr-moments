@@ -92,7 +92,7 @@ export const FORMULES: Record<Lang, Formule[]> = {
       points: [
         "L'album photo imprimé grand format 30 × 30 (249 € s'il est pris seul)",
         "La gazette de votre événement, 50 exemplaires (149 € si elle est prise seule)",
-        "La mise en page faite par nos soins, que vous validez avant impression",
+        "L'album mis en page pour vous — nous choisissons l'ordre, les formats et les pleines pages ; vous relisez et vous validez avant impression",
       ],
     },
   ],

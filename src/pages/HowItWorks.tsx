@@ -34,16 +34,17 @@ function QrVisual() {
       {/* Le halo : deux taches de couleur très floues, derrière le carton. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -inset-8 -z-10 rounded-[40px] opacity-90 blur-2xl"
+        className="pointer-events-none absolute -inset-16 -z-10 rounded-[56px] blur-3xl"
         style={{
           background:
-            "radial-gradient(58% 55% at 26% 22%, hsl(var(--lueur-2)/0.55), transparent 70%)," +
-            "radial-gradient(52% 50% at 78% 76%, hsl(var(--lueur-3)/0.55), transparent 70%)," +
-            "radial-gradient(70% 70% at 50% 50%, hsl(var(--lueur-1)/0.30), transparent 75%)",
+            "radial-gradient(58% 55% at 24% 20%, hsl(var(--lueur-2)/0.92), transparent 68%)," +
+            "radial-gradient(54% 52% at 80% 78%, hsl(var(--lueur-3)/0.92), transparent 68%)," +
+            "radial-gradient(46% 44% at 68% 18%, hsl(var(--accent)/0.45), transparent 70%)," +
+            "radial-gradient(78% 78% at 50% 50%, hsl(var(--lueur-1)/0.55), transparent 74%)",
         }}
       />
 
-      <div className="rounded-2xl border border-border bg-card p-[clamp(18px,3vw,26px)] shadow-lg">
+      <div className="rounded-2xl border border-accent/25 bg-card p-[clamp(18px,3vw,26px)] shadow-[0_24px_70px_-28px_hsl(var(--accent)/0.55)]">
         <p className="label-mono text-center text-accent">Table 3</p>
         <p className="mt-2 text-center font-display text-[clamp(19px,2.4vw,25px)] leading-tight">
           Camille &amp; Sacha

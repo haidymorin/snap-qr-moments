@@ -30,7 +30,7 @@ const TEXTES: Record<Lang, {
       "Vous payez une seule fois, pour un seul événement. Aucun abonnement, aucune commission sur vos photos. Les albums et les objets imprimés se commandent après, une fois que vous avez vu les photos.",
     detailTitre: "Ce que contient chaque formule",
     ancrage:
-      "Pour situer ces prix : un photographe de mariage coûte entre 1 500 et 2 500 €, la location d'une borne photo pour la soirée entre 500 et 900 €. QR Memories ne remplace ni l'un ni l'autre — il récupère les huit cents photos qu'ils ne voient pas, celles prises depuis les tables, dans la voiture, sur la piste à deux heures du matin.",
+      "Un photographe de mariage coûte entre 1 500 et 2 500 €, une borne photo entre 500 et 900 € pour la soirée. QR Memories ne remplace ni l'un ni l'autre.",
     versObjets:
       "Les albums, la gazette et les objets imprimés se commandent séparément, après l'événement.",
     versObjetsLien: "Voir les albums et objets",
@@ -38,7 +38,7 @@ const TEXTES: Record<Lang, {
     faqs: [
       {
         q: "Concrètement, il se passe quoi le jour J ?",
-        a: "Vous avez imprimé le panneau d'accueil et les petits chevalets que nous vous fournissons ; ils portent votre QR code. Vos invités dirigent l'appareil photo de leur téléphone dessus, une page s'ouvre, ils envoient leurs photos. Aucune application, aucun compte. Vous, vous ne faites rien : vous regardez la galerie se remplir.",
+        a: "Vous avez imprimé le panneau d'accueil et les petits chevalets de table, imprimés depuis les fichiers fournis avec votre formule ; ils portent votre QR code. Vos invités dirigent l'appareil photo de leur téléphone dessus, une page s'ouvre, ils envoient leurs photos. Aucune application, aucun compte. Vous, vous ne faites rien : vous regardez la galerie se remplir.",
       },
       {
         q: "Combien de temps mes photos restent-elles en ligne ?",
@@ -73,7 +73,7 @@ const TEXTES: Record<Lang, {
       "You pay once, for one event. No subscription, no commission on your photos. Albums and printed objects are ordered afterwards, once you have seen the photos.",
     detailTitre: "What each plan includes",
     ancrage:
-      "For scale: a wedding photographer costs between €1,500 and €2,500, and renting a photo booth for the night between €500 and €900. QR Memories replaces neither — it collects the eight hundred photos they never see, taken from the tables, in the car, on the dance floor at two in the morning.",
+      "A wedding photographer costs between €1,500 and €2,500, a photo booth between €500 and €900 for the night. QR Memories replaces neither.",
     versObjets:
       "Albums, the newspaper and printed objects are ordered separately, after the event.",
     versObjetsLien: "See albums and objects",
@@ -112,7 +112,7 @@ const TEXTES: Record<Lang, {
 };
 
 const Puce = () => (
-  <span aria-hidden className="mt-[9px] block h-px w-3 shrink-0 bg-current opacity-45" />
+  <span aria-hidden className="mt-[7px] block size-[7px] shrink-0 rounded-full bg-primary" />
 );
 
 const Pricing = () => {
