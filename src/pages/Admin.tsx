@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { Loader2 } from "lucide-react";
 import FichierClients from "@/components/FichierClients";
 import ActionsEvenement from "@/components/ActionsEvenement";
+import EquipeAdmin from "@/components/EquipeAdmin";
 
 /* L'espace d'administration.
  *
@@ -165,6 +166,8 @@ const Admin = () => {
             </div>
           </>
         )}
+
+        {!refuse && <EquipeAdmin />}
 
         {!refuse && <FichierClients />}
       </main>
