@@ -71,6 +71,87 @@ export type Database = {
         }
         Relationships: []
       }
+      defis: {
+        Row: {
+          event_id: string
+          id: string
+          ordre: number
+          texte: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          ordre?: number
+          texte: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          ordre?: number
+          texte?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "defis_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      defis_releves: {
+        Row: {
+          cree_le: string
+          defi_id: string
+          event_id: string
+          id: string
+          invite_cle: string
+          photo_id: string | null
+          prenom: string | null
+        }
+        Insert: {
+          cree_le?: string
+          defi_id: string
+          event_id: string
+          id?: string
+          invite_cle: string
+          photo_id?: string | null
+          prenom?: string | null
+        }
+        Update: {
+          cree_le?: string
+          defi_id?: string
+          event_id?: string
+          id?: string
+          invite_cle?: string
+          photo_id?: string | null
+          prenom?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "defis_releves_defi_id_fkey"
+            columns: ["defi_id"]
+            isOneToOne: false
+            referencedRelation: "defis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "defis_releves_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "defis_releves_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "photos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       demandes_contact: {
         Row: {
           cree_le: string
@@ -118,6 +199,9 @@ export type Database = {
           event_type: string
           expire_le: string | null
           id: string
+          jeu_actif: boolean
+          jeu_lot: string | null
+          jeu_modele: string
           livre_dor_actif: boolean
           livre_dor_public: boolean
           livre_dor_vocal: boolean
@@ -141,6 +225,9 @@ export type Database = {
           event_type: string
           expire_le?: string | null
           id?: string
+          jeu_actif?: boolean
+          jeu_lot?: string | null
+          jeu_modele?: string
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
@@ -164,6 +251,9 @@ export type Database = {
           event_type?: string
           expire_le?: string | null
           id?: string
+          jeu_actif?: boolean
+          jeu_lot?: string | null
+          jeu_modele?: string
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
@@ -654,6 +744,19 @@ export type Database = {
           plan: string
         }[]
       }
+      guest_jeu: {
+        Args: { p_event: string; p_invite: string }
+        Returns: {
+          actif: boolean
+          defi_id: string
+          lot: string
+          modele: string
+          ordre: number
+          releve: boolean
+          releves_total: number
+          texte: string
+        }[]
+      }
       guest_list_by_ids: {
         Args: { p_event_id: string; p_ids: string[] }
         Returns: {
@@ -730,6 +833,22 @@ export type Database = {
           first_name: string
         }[]
       }
+      hote_defis: {
+        Args: { p_event: string }
+        Returns: {
+          id: string
+          ordre: number
+          releves: number
+          texte: string
+        }[]
+      }
+      jeu_classement: {
+        Args: { p_event: string; p_limite?: number }
+        Returns: {
+          points: number
+          prenom: string
+        }[]
+      }
       livre_dor_ouvert: { Args: { p_event_id: string }; Returns: boolean }
       noter_action: {
         Args: { p_action: string; p_detail?: Json; p_event: string }
@@ -746,6 +865,26 @@ export type Database = {
       regenerer_jeton_diaporama: { Args: { p_event: string }; Returns: string }
       regler_diaporama: {
         Args: { p_delai: number; p_event: string; p_mode: string }
+        Returns: undefined
+      }
+      regler_jeu: {
+        Args: {
+          p_actif: boolean
+          p_defis: string[]
+          p_event: string
+          p_lot: string
+          p_modele: string
+        }
+        Returns: undefined
+      }
+      relever_defi: {
+        Args: {
+          p_defi: string
+          p_event: string
+          p_invite: string
+          p_photo: string
+          p_prenom?: string
+        }
         Returns: undefined
       }
     }
