@@ -14,6 +14,7 @@ import LivreDorHote from "@/components/LivreDorHote";
 import CarteDiaporama from "@/components/CarteDiaporama";
 import CarteJeu from "@/components/CarteJeu";
 import FaceSearch from "@/components/FaceSearch";
+import CarteAnnonce from "@/components/CarteAnnonce";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { FiltreType, MediaFilter, PlayOverlay } from "@/components/MediaTabs";
@@ -38,6 +39,8 @@ interface EventRow {
   jeu_actif: boolean;
   jeu_modele: string;
   jeu_lot: string | null;
+  annonce_texte: string | null;
+  annonce_depuis: string | null;
 }
 
 /* Le livre d'or fait partie du Souvenir, pas de l'Essentiel : sans lui, ni ses
@@ -561,6 +564,12 @@ const EventDetail = () => {
           {PLANS_AVEC_LIVRE_DOR.includes(event.plan) && (
             <LivreDorHote eventId={event.id} lang={lang} />
           )}
+
+          <CarteAnnonce
+            eventId={event.id}
+            texte={event.annonce_texte}
+            onChange={(v) => setEvent((prev) => (prev ? { ...prev, ...v } : prev))}
+          />
 
           <ReglagesEvenement
             eventId={event.id}

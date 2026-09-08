@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import FaceSearch from "@/components/FaceSearch";
+import BandeauAnnonce from "@/components/BandeauAnnonce";
 import LivreDor from "@/components/LivreDor";
 import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
 import {
@@ -640,6 +641,9 @@ const GuestEvent = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Le mot des mariés, s'il y en a un. Collant en haut, fermable. */}
+      <BandeauAnnonce eventId={event.id} />
+
       <header className="border-b border-border">
         <div className="mx-auto max-w-4xl px-5 py-10 text-center sm:py-14">
           <p className="label-mono">{event.event_type}</p>
