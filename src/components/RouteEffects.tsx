@@ -55,6 +55,16 @@ const META: Record<string, { fr: Meta; en: Meta }> = {
       desc: "The 30×30 large photo album, your event newspaper, the mini album to give away: what remains of your night once the gallery has closed.",
     },
   },
+  "/demo": {
+    fr: {
+      title: "Voir une galerie · QR Memories",
+      desc: "La galerie telle que la voient vos invités : les photos, la recherche par visage, le jeu et le livre d'or. Démonstration, photos libres de droits.",
+    },
+    en: {
+      title: "See a gallery · QR Memories",
+      desc: "The gallery as your guests see it: the photos, face search, the game and the guest book. A demonstration, with royalty-free photos.",
+    },
+  },
   "/creer": {
     fr: {
       title: "Créer mon événement · QR Memories",

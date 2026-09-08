@@ -212,10 +212,10 @@ function PhotoWall() {
               {t("home.ctaCreate")}
             </Link>
             <Link
-              to="/how-it-works"
-              className="inline-flex min-h-[48px] items-center rounded-xl border border-border px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary"
+              to="/demo"
+              className="inline-flex min-h-[48px] items-center rounded-full border border-border px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary"
             >
-              {t("home.ctaDiscover")}
+              {t("home.ctaDemo")}
             </Link>
           </div>
         </div>

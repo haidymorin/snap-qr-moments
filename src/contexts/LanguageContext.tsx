@@ -65,6 +65,7 @@ const translations: Record<Lang, Dict> = {
       how: "Fonctionnement",
       pricing: "Tarifs",
       albums: "Albums",
+      demo: "Démo",
       contact: "Contact",
       dashboard: "Mon espace",
       signIn: "Se connecter",
@@ -99,6 +100,7 @@ const translations: Record<Lang, Dict> = {
         "Un QR code sur les tables. Vos invités déposent leurs photos sans rien installer, le tri se fait tout seul, et il en reste un objet que vous gardez.",
       ctaCreate: "Créer mon événement",
       ctaDiscover: "Voir comment ça marche",
+      ctaDemo: "Voir une galerie",
 
       stepsEyebrow: "Sans application, sans compte",
       stepsTitle1: "Rien à installer,",
@@ -359,6 +361,7 @@ const translations: Record<Lang, Dict> = {
       how: "How it works",
       pricing: "Pricing",
       albums: "Albums",
+      demo: "Démo",
       contact: "Contact",
       dashboard: "My space",
       signIn: "Sign in",
@@ -393,6 +396,7 @@ const translations: Record<Lang, Dict> = {
         "A QR code on the tables. Your guests upload their photos without installing anything, the sorting happens on its own, and you keep something real at the end.",
       ctaCreate: "Create my event",
       ctaDiscover: "See how it works",
+      ctaDemo: "See a gallery",
 
       stepsEyebrow: "No app, no account",
       stepsTitle1: "Nothing to install,",

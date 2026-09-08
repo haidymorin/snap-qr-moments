@@ -20,6 +20,7 @@ import Index from "./pages/Index";
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const Albums = lazy(() => import("./pages/Albums"));
+const Demo = lazy(() => import("./pages/Demo"));
 const CreerEvenement = lazy(() => import("./pages/CreerEvenement"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -53,6 +54,7 @@ const App = () => (
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/albums" element={<Albums />} />
+              <Route path="/demo" element={<Demo />} />
               <Route path="/creer" element={<CreerEvenement />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/auth" element={<Auth />} />

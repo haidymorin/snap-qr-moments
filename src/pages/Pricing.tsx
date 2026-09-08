@@ -215,6 +215,12 @@ const Pricing = () => {
                 {T.versObjets}
               </p>
               <Link
+                to="/demo"
+                className="label-mono border-b border-foreground pb-0.5 text-foreground opacity-100 transition-opacity hover:opacity-60"
+              >
+                {lang === "fr" ? "Voir une galerie de démonstration" : "See a demo gallery"}
+              </Link>
+              <Link
                 to="/albums"
                 className="label-mono border-b border-foreground pb-0.5 text-foreground opacity-100 transition-opacity hover:opacity-60"
               >
