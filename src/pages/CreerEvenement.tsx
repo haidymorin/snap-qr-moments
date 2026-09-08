@@ -54,7 +54,7 @@ const TEXTES: Record<Lang, {
   renoncementTitre: (j: number) => string;
   renoncement: string; renoncementPourquoi: string;
   payer: string; envoi: string; securite: string;
-  apres: string;
+  apres: string; gages: string[];
   erreurs: Record<string, string>;
 }> = {
   fr: {
@@ -120,6 +120,12 @@ const TEXTES: Record<Lang, {
       "Paiement par carte, traité par Stripe. Votre numéro de carte ne passe jamais par nos serveurs.",
     apres:
       "Juste après le paiement, votre tableau de bord s'ouvre : votre QR code y est déjà, ainsi que les affiches à imprimer.",
+    gages: [
+      "Votre QR code et vos affiches sont disponibles immédiatement après le paiement.",
+      "Votre galerie n'ouvre qu'à la date de votre événement — vous avez le temps de tout préparer.",
+      "Un seul paiement. Pas d'abonnement, pas de commission sur vos photos.",
+      "Une question, un souci : écrivez à contact@qr-memories.fr, c'est une personne qui répond.",
+    ],
     erreurs: {
       prenom: "Indiquez votre prénom.",
       nom: "Indiquez votre nom.",
@@ -194,6 +200,12 @@ const TEXTES: Record<Lang, {
     securite: "Card payment handled by Stripe. Your card number never passes through our servers.",
     apres:
       "Right after payment your dashboard opens: your QR code is already there, along with the signs to print.",
+    gages: [
+      "Your QR code and your signs are available immediately after payment.",
+      "Your gallery only opens on your event date — you have time to get everything ready.",
+      "One payment. No subscription, no commission on your photos.",
+      "A question or a problem: write to contact@qr-memories.fr, a person answers.",
+    ],
     erreurs: {
       prenom: "Please give your first name.",
       nom: "Please give your last name.",
@@ -696,6 +708,17 @@ const CreerEvenement = () => {
                     )}
                   </div>
                 )}
+
+                {/* Le moment où l'on hésite le plus était le plus nu de tout
+                    le site : un récapitulatif et un bouton. */}
+                <ul className="space-y-2.5 rounded-2xl border border-border bg-card p-[clamp(18px,2.2vw,26px)]">
+                  {T.gages.map((g) => (
+                    <li key={g} className="flex gap-3 text-[13.5px] leading-relaxed text-foreground">
+                      <span aria-hidden className="mt-[8px] block h-px w-3 shrink-0 bg-accent" />
+                      <span>{g}</span>
+                    </li>
+                  ))}
+                </ul>
 
                 {panne && (
                   <p className="rounded-xl border border-destructive px-4 py-3 text-[14px] text-destructive">

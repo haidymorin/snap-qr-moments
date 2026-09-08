@@ -9,6 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
 import { RubanPhotos, CarrouselInertie } from "@/components/GaleriesAnimees";
 import CarteLueur from "@/components/CarteLueur";
+import Rassurance from "@/components/Rassurance";
 import { FORMULES } from "@/data/formules";
 
 /* Les photos libres de droits sont désormais partagées avec la page
@@ -502,8 +503,14 @@ const Index = () => {
               </CarteLueur>
             ))}
           </div>
+
+          <p className="mx-auto mt-[clamp(22px,2.6vw,32px)] max-w-[62ch] text-center text-[14px] leading-relaxed text-muted-foreground">
+            {t("home.plansAncrage")}
+          </p>
         </div>
       </section>
+
+      <Rassurance />
 
       {/* Les objets imprimés, avec le mot posé en très grand */}
       <section className="relative overflow-hidden bg-card py-[clamp(58px,7.5vw,100px)]">

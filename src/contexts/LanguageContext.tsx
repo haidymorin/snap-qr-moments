@@ -164,6 +164,8 @@ const translations: Record<Lang, Dict> = {
       plan3Desc:
         "Tout le Souvenir, plus l'album grand format et la gazette en cinquante exemplaires. Photos gardées six mois.",
       planDetail: "Le détail",
+      plansAncrage:
+        "Pour situer : un photographe de mariage coûte entre 1 500 et 2 500 €, la location d'une borne photo pour la soirée entre 500 et 900 €. QR Memories ne remplace ni l'un ni l'autre — il récupère tout ce qu'ils ne voient pas, et c'est la ligne la moins chère de votre budget photo.",
 
       objEyebrow: "Ce qu'il en reste",
       objTitle: "Un souvenir qui se touche.",
@@ -191,7 +193,7 @@ const translations: Record<Lang, Dict> = {
       finalEyebrow: "Votre date approche",
       finalTitle: "Vos invités prendront des photos. Autant les garder.",
       finalDesc:
-        "Créez votre événement en deux minutes et recevez votre QR code tout de suite. Vous ne payez qu'au moment de l'ouvrir à vos invités.",
+        "Votre QR code et vos affiches sont prêts dès le paiement. Votre galerie, elle, n'ouvre qu'à la date de votre événement : vous avez tout le temps de la préparer.",
       finalCta: "Créer mon événement",
     },
     how: {
@@ -238,7 +240,7 @@ const translations: Record<Lang, Dict> = {
       ctaEyebrow: "Votre date approche",
       ctaTitle: "Vos invités prendront des photos. Autant les garder.",
       ctaDesc:
-        "Créez votre événement et recevez votre QR code tout de suite. Vous ne payez qu'au moment de l'ouvrir aux invités.",
+        "Votre QR code et vos affiches à imprimer arrivent tout de suite. La galerie n'ouvre qu'à votre date.",
       ctaButton: "Créer mon événement",
     },
     pricing: {
@@ -456,6 +458,8 @@ const translations: Record<Lang, Dict> = {
       plan3Desc:
         "Everything in Souvenir, plus the large-format album and fifty copies of the newspaper. Photos kept six months.",
       planDetail: "The detail",
+      plansAncrage:
+        "For scale: a wedding photographer costs between €1,500 and €2,500, and renting a photo booth for the night between €500 and €900. QR Memories replaces neither — it collects everything they do not see, and it is the cheapest line in your photo budget.",
 
       objEyebrow: "What is left of it",
       objTitle: "A memory you can hold.",
@@ -483,7 +487,7 @@ const translations: Record<Lang, Dict> = {
       finalEyebrow: "Your date is coming",
       finalTitle: "Your guests will take photos. You may as well keep them.",
       finalDesc:
-        "Create your event in two minutes and get your QR code straight away. You only pay when you open it to your guests.",
+        "Your QR code and your signs are ready the moment you pay. Your gallery only opens on your event date: you have all the time you need to get ready.",
       finalCta: "Create my event",
     },
     how: {
@@ -530,7 +534,7 @@ const translations: Record<Lang, Dict> = {
       ctaEyebrow: "Your date is coming up",
       ctaTitle: "Your guests will take photos. You may as well keep them.",
       ctaDesc:
-        "Create your event and get your QR code right away. You only pay when you open it to your guests.",
+        "Your QR code and your printable signs arrive right away. The gallery only opens on your date.",
       ctaButton: "Create my event",
     },
     pricing: {

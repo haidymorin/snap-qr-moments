@@ -19,7 +19,7 @@ import { FORMULES } from "@/data/formules";
 const TEXTES: Record<Lang, {
   eyebrow: string; titre: string; chapo: string;
   detailTitre: string;
-  versObjets: string; versObjetsLien: string;
+  versObjets: string; versObjetsLien: string; ancrage: string;
   faqTitre: string;
   faqs: { q: string; a: string }[];
 }> = {
@@ -29,6 +29,8 @@ const TEXTES: Record<Lang, {
     chapo:
       "Vous payez une seule fois, pour un seul événement. Aucun abonnement, aucune commission sur vos photos. Les albums et les objets imprimés se commandent après, une fois que vous avez vu les photos.",
     detailTitre: "Ce que contient chaque formule",
+    ancrage:
+      "Pour situer ces prix : un photographe de mariage coûte entre 1 500 et 2 500 €, la location d'une borne photo pour la soirée entre 500 et 900 €. QR Memories ne remplace ni l'un ni l'autre — il récupère les huit cents photos qu'ils ne voient pas, celles prises depuis les tables, dans la voiture, sur la piste à deux heures du matin.",
     versObjets:
       "Les albums, la gazette et les objets imprimés se commandent séparément, après l'événement.",
     versObjetsLien: "Voir les albums et objets",
@@ -70,6 +72,8 @@ const TEXTES: Record<Lang, {
     chapo:
       "You pay once, for one event. No subscription, no commission on your photos. Albums and printed objects are ordered afterwards, once you have seen the photos.",
     detailTitre: "What each plan includes",
+    ancrage:
+      "For scale: a wedding photographer costs between €1,500 and €2,500, and renting a photo booth for the night between €500 and €900. QR Memories replaces neither — it collects the eight hundred photos they never see, taken from the tables, in the car, on the dance floor at two in the morning.",
     versObjets:
       "Albums, the newspaper and printed objects are ordered separately, after the event.",
     versObjetsLien: "See albums and objects",
@@ -202,7 +206,11 @@ const Pricing = () => {
               })}
             </div>
 
-            <div className="mt-[clamp(28px,3.5vw,44px)] flex flex-col items-center gap-3 rounded-2xl border border-border bg-card px-6 py-7 text-center">
+            <p className="mx-auto mt-[clamp(28px,3.5vw,44px)] max-w-[66ch] text-center text-[14.5px] leading-relaxed text-muted-foreground">
+              {T.ancrage}
+            </p>
+
+            <div className="mt-[clamp(20px,2.6vw,32px)] flex flex-col items-center gap-3 rounded-2xl border border-border bg-card px-6 py-7 text-center">
               <p className="max-w-[56ch] text-[15px] leading-relaxed text-foreground">
                 {T.versObjets}
               </p>
