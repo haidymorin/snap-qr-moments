@@ -13,6 +13,8 @@ import { compressImage } from "@/lib/imageCompression";
 import { mesurerPhoto } from "@/lib/triPhotos";
 import { generateVideoPoster } from "@/lib/videoPoster";
 import GalerieOnglets, { FiltreType, type Section, type TypeMedia, type MediaFilter, PlayOverlay } from "@/components/MediaTabs";
+import JeuInvite from "@/components/JeuInvite";
+import { cleInvite } from "@/lib/invite";
 import {
   Camera, Check, CheckSquare, ChevronLeft, ChevronRight, Download, Images, Loader2, X,
 } from "lucide-react";
@@ -160,6 +162,10 @@ const GuestEvent = () => {
      derniers — les plus utiles — sortaient de l'écran sur un téléphone. */
   const [section, setSection] = useState<Section>("all");
   const [type, setType] = useState<TypeMedia>("all");
+  /* Le jeu n'existe que sur les formules qui l'incluent et seulement si les
+     mariés l'ont allumé. On ne le devine pas côté page : le serveur répond, ou
+     ne répond rien, et l'onglet suit. */
+  const [nbDefis, setNbDefis] = useState(0);
   const [counts, setCounts] = useState({ all: 0, photo: 0, video: 0 });
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -364,6 +370,9 @@ const GuestEvent = () => {
       });
       await chargerEnvois();
       await loadCounts();
+      supabase
+        .rpc("guest_jeu", { p_event: id, p_invite: cleInvite(id) })
+        .then(({ data }) => setNbDefis(Array.isArray(data) ? data.length : 0));
       setMedia(await fetchPage(0, "all"));
       setLoading(false);
     })();
@@ -474,6 +483,7 @@ const GuestEvent = () => {
     }).select("id").single();
     if (dbErr) throw dbErr;
     if (ligne?.id) noterEnvoi(id!, ligne.id);
+    return ligne?.id ?? null;
   };
 
   const uploadVideo = async (file: File, onProgress?: (ratio: number) => void) => {
@@ -780,9 +790,12 @@ const GuestEvent = () => {
                 all: counts.all,
                 envois: mesEnvois.length,
                 mine: mesPhotos.length,
+                jeu: nbDefis,
               }}
             />
-            <FiltreType type={type} onType={changeType} counts={countsType} />
+            {section !== "jeu" && (
+              <FiltreType type={type} onType={changeType} counts={countsType} />
+            )}
             {visibles.length > 0 && (
               <button
                 type="button"
@@ -796,7 +809,13 @@ const GuestEvent = () => {
           </div>
         </div>
 
-        {visibles.length === 0 && !loadingMore ? (
+        {section === "jeu" ? (
+          <JeuInvite
+            eventId={id!}
+            envoyer={uploadImage}
+            onPhotoEnvoyee={() => { void loadCounts(); void chargerEnvois(); }}
+          />
+        ) : visibles.length === 0 && !loadingMore ? (
           <div className="mt-6 rounded-xl border border-border px-6 py-16 text-center">
             <p className="text-muted-foreground">
               {type === "video"

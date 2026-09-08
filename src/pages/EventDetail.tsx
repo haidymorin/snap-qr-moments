@@ -12,6 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import ReglagesEvenement, { type Reglages } from "@/components/ReglagesEvenement";
 import LivreDorHote from "@/components/LivreDorHote";
 import CarteDiaporama from "@/components/CarteDiaporama";
+import CarteJeu from "@/components/CarteJeu";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { FiltreType, MediaFilter, PlayOverlay } from "@/components/MediaTabs";
@@ -33,6 +34,9 @@ interface EventRow {
   diaporama_jeton: string;
   diaporama_mode: string;
   diaporama_delai_min: number;
+  jeu_actif: boolean;
+  jeu_modele: string;
+  jeu_lot: string | null;
 }
 
 /* Le livre d'or fait partie du Souvenir, pas de l'Essentiel : sans lui, ni ses
@@ -487,6 +491,17 @@ const EventDetail = () => {
               jeton={event.diaporama_jeton}
               mode={event.diaporama_mode ?? "photos"}
               delai={event.diaporama_delai_min ?? 0}
+            />
+          )}
+
+          {PLANS_AVEC_LIVRE_DOR.includes(event.plan) && (
+            <CarteJeu
+              eventId={event.id}
+              eventType={event.event_type}
+              actif={event.jeu_actif ?? false}
+              modele={event.jeu_modele ?? "chasse"}
+              lot={event.jeu_lot ?? null}
+              onChange={(v) => setEvent((prev) => (prev ? { ...prev, ...v } : prev))}
             />
           )}
 
