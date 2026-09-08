@@ -13,10 +13,11 @@ import ReglagesEvenement, { type Reglages } from "@/components/ReglagesEvenement
 import LivreDorHote from "@/components/LivreDorHote";
 import CarteDiaporama from "@/components/CarteDiaporama";
 import CarteJeu from "@/components/CarteJeu";
+import FaceSearch from "@/components/FaceSearch";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { FiltreType, MediaFilter, PlayOverlay } from "@/components/MediaTabs";
-import { Calendar, Download, ArrowLeft, Copy, Check, ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
+import { Calendar, Download, ArrowLeft, Copy, Check, ChevronLeft, ChevronRight, Loader2, X, MonitorPlay } from "lucide-react";
 
 interface EventRow {
   id: string;
@@ -42,6 +43,7 @@ interface EventRow {
 /* Le livre d'or fait partie du Souvenir, pas de l'Essentiel : sans lui, ni ses
    réglages ni les messages n'ont de raison d'apparaître. */
 const PLANS_AVEC_LIVRE_DOR = ["souvenir", "heritage", "admin"];
+const PLANS_AVEC_VISAGE = ["souvenir", "heritage", "admin"];
 /* Cette page était écrite entièrement en français dans le code. C'est celle
    où atterrit un client juste après avoir payé — donc la première qu'il ouvre
    en anglais si c'est sa langue. */
@@ -52,6 +54,10 @@ const TEXTES = {
     copier: "Copier", copie: "Copié",
     qr: "Votre QR code",
     telechargerQR: "Télécharger le QR (PNG)",
+    diaporamaBouton: "Lancer le diaporama",
+    mesPhotos: "Les photos où vous apparaissez",
+    mesPhotosRetour: "Revenir à toute la galerie",
+    mesPhotosVide: "Aucune photo ne correspond pour l'instant.",
     signaletique: "Mes affiches à imprimer",
     galerie: "Galerie",
     toutTelecharger: "Tout télécharger (ZIP)",
@@ -78,6 +84,10 @@ const TEXTES = {
     copier: "Copy", copie: "Copied",
     qr: "Your QR code",
     telechargerQR: "Download QR (PNG)",
+    diaporamaBouton: "Start the slideshow",
+    mesPhotos: "Photos you appear in",
+    mesPhotosRetour: "Back to the whole gallery",
+    mesPhotosVide: "No photo matches yet.",
     signaletique: "My signs to print",
     galerie: "Gallery",
     toutTelecharger: "Download all (ZIP)",
@@ -135,6 +145,9 @@ const EventDetail = () => {
   const [copied, setCopied] = useState(false);
   const [lightbox, setLightbox] = useState<MediaRow | null>(null);
   const [saving, setSaving] = useState(false);
+  /* La reconnaissance de visage côté mariés : le même composant que
+     pour les invités, avec le résultat qui filtre la grille. */
+  const [visages, setVisages] = useState<MediaRow[] | null>(null);
 
   const saveCurrent = async () => {
     if (!lightbox || saving) return;
@@ -410,6 +423,46 @@ const EventDetail = () => {
             </div>
           </div>
 
+          {/* Le diaporama se lance depuis le haut de la page : c'est une action
+              du soir même, pas un réglage. Les réglages restent plus bas. */}
+          {PLANS_AVEC_LIVRE_DOR.includes(event.plan) && (
+            <div className="mb-6">
+              <Button asChild variant="hero" size="lg">
+                <a
+                  href={`/diaporama/${event.diaporama_jeton}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <MonitorPlay className="h-4 w-4" /> {T.diaporamaBouton}
+                </a>
+              </Button>
+            </div>
+          )}
+
+          {/* La reconnaissance de visage, côté mariés : même écran que pour un
+              invité, mêmes consentements, mais le résultat filtre leur galerie. */}
+          {PLANS_AVEC_VISAGE.includes(event.plan) && (
+            <FaceSearch
+              eventId={event.id}
+              onResultats={(photos) => setVisages(photos ?? null)}
+            />
+          )}
+
+          {visages && (
+            <div className="mb-6 rounded-xl border border-border bg-card px-4 py-3">
+              <p className="text-sm text-foreground">
+                {T.mesPhotos} ({visages.length})
+              </p>
+              <button
+                type="button"
+                onClick={() => setVisages(null)}
+                className="label-mono mt-2 border-b border-foreground pb-1 text-foreground"
+              >
+                {T.mesPhotosRetour}
+              </button>
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
             <h2 className="text-2xl font-bold">
               {T.galerie} <span className="text-muted-foreground text-lg font-normal">({counts.all})</span>
@@ -451,8 +504,8 @@ const EventDetail = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {media.map((p) => (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+              {(visages ?? media).map((p) => (
                 <button
                   key={p.id}
                   type="button"

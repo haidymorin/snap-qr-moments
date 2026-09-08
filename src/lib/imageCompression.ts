@@ -1,7 +1,7 @@
 export interface CompressedImage {
   /** Version "full" : plus grand côté max 2560px, JPEG q0.82 */
   full: Blob;
-  /** Miniature : plus grand côté max 800px, JPEG q0.76 (null si non décodable).
+  /** Miniature : plus grand côté max 1080px, JPEG q0.8 (null si non décodable).
    *  800 px et non 400 : une vignette de 400 px affichée dans une grille sur
    *  écran Retina est étirée du double et paraît floue. */
   thumb: Blob | null;
@@ -11,8 +11,8 @@ export interface CompressedImage {
 
 const FULL_MAX = 2560;
 const FULL_QUALITY = 0.82;
-const THUMB_MAX = 800;
-const THUMB_QUALITY = 0.76;
+const THUMB_MAX = 1080;
+const THUMB_QUALITY = 0.8;
 
 async function decode(file: File): Promise<ImageBitmap | HTMLImageElement> {
   if (typeof createImageBitmap === "function") {

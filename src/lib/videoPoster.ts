@@ -1,15 +1,15 @@
 /**
  * Génère une vignette (poster) JPEG à partir d'une vidéo, côté client.
  * Charge la vidéo dans un élément caché, se place à 0.5s, dessine la frame
- * sur un canvas redimensionné (400px max) et exporte en JPEG q0.7.
+ * sur un canvas redimensionné (1080px max) et exporte en JPEG q0.78.
  */
 export interface VideoPoster {
   thumb: Blob | null;
   duration: number | null;
 }
 
-const THUMB_MAX = 400;
-const THUMB_QUALITY = 0.7;
+const THUMB_MAX = 1080;
+const THUMB_QUALITY = 0.78;
 
 export async function generateVideoPoster(file: File): Promise<VideoPoster> {
   const url = URL.createObjectURL(file);
