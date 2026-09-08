@@ -20,10 +20,10 @@ import { Loader2, Plus, X } from "lucide-react";
 const T: Record<Lang, Record<string, string>> = {
   fr: {
     titre: "Le jeu photo",
-    chapo: "Une liste de défis à relever pendant la soirée. C'est ce qui fait passer un mariage de deux cents photos à neuf cents : un invité qui a une liste photographie des choses auxquelles il n'aurait jamais pensé.",
+    chapo: "Une liste de défis à relever pendant la soirée. Elle sert surtout à donner des idées : un invité qui ne sait pas quoi photographier fait la pièce montée et le selfie de table. Avec une liste, il photographie des choses auxquelles personne n'aurait pensé.",
     choisir: "Choisissez un modèle",
     lot: "Ce qu'il y a à gagner",
-    lotAide: "Facultatif, et ça n'a pas à être cher. « La première part de gâteau » fonctionne mieux qu'un bon d'achat.",
+    lotAide: "Facultatif, et la plupart des mariés n'en mettent pas. Si vous y tenez, « la première part de gâteau » suffit.",
     lotExemple: "La première part de gâteau",
     defis: "Les défis",
     defisAide: "Relisez-les, modifiez ce qui ne vous ressemble pas, supprimez ce qui ne va pas. Ils s'afficheront tels quels sur le téléphone de vos invités.",
@@ -40,10 +40,10 @@ const T: Record<Lang, Record<string, string>> = {
   },
   en: {
     titre: "The photo game",
-    chapo: "A list of challenges to take on during the night. This is what takes a wedding from two hundred photos to nine hundred: a guest with a list photographs things they would never have thought of.",
+    chapo: "A list of challenges to take on during the night. It is mostly there to give people ideas: a guest who does not know what to photograph shoots the cake and a table selfie. With a list, they photograph things nobody would have thought of.",
     choisir: "Pick a template",
     lot: "What there is to win",
-    lotAide: "Optional, and it does not have to be expensive. “The first slice of cake” works better than a gift card.",
+    lotAide: "Optional, and most couples do not set one. If you want one, “the first slice of cake” is enough.",
     lotExemple: "The first slice of cake",
     defis: "The challenges",
     defisAide: "Read them through, change what does not sound like you, delete what does not fit. They will appear exactly like this on your guests' phones.",
