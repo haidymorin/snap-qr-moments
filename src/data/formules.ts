@@ -92,7 +92,7 @@ export const FORMULES: Record<Lang, Formule[]> = {
       points: [
         "L'album photo imprimé grand format 30 × 30 (249 € s'il est pris seul)",
         "La gazette de votre événement, 50 exemplaires (149 € si elle est prise seule)",
-        "L'album mis en page pour vous — nous choisissons l'ordre, les formats et les pleines pages ; vous relisez et vous validez avant impression",
+        "L'outil de composition de l'album : le site vous propose une première sélection, vous ajoutez, retirez et réordonnez comme vous voulez",
       ],
     },
   ],
@@ -155,7 +155,7 @@ export const FORMULES: Record<Lang, Formule[]> = {
       points: [
         "The large-format 30 × 30 printed photo album (€249 on its own)",
         "Your event newspaper, 50 copies (€149 on its own)",
-        "Layout done by us, approved by you before printing",
+        "The album builder: the site suggests a first selection, you add, remove and reorder it as you like",
       ],
     },
   ],

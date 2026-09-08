@@ -33,7 +33,7 @@ export const OBJETS: Record<Lang, { objets: Objet[]; note: string }> = {
         detail:
           "30 × 30 cm, environ 80 pages, papier épais, couverture toilée. Il s'ouvre bien à plat, donc une photo peut occuper les deux pages sans se casser au milieu.",
         pourQui:
-          "Vos photos et les mots de vos invités en vis-à-vis. Nous faisons la mise en page, vous relisez et vous validez avant impression.",
+          "Vos photos et les mots de vos invités en vis-à-vis. Vous composez l'album depuis votre espace, à partir d'une sélection déjà faite pour vous.",
         inclus: "Compris dans la formule Héritage",
       },
       {
@@ -86,7 +86,7 @@ export const OBJETS: Record<Lang, { objets: Objet[]; note: string }> = {
         detail:
           "30 × 30 cm, around 80 pages, heavy paper, cloth cover. It lies flat when open, so a photo can spread across both pages without breaking in the middle.",
         pourQui:
-          "Your photos facing your guests' words. We do the layout, you read it and approve before printing.",
+          "Your photos facing your guests' words. You build the album from your dashboard, starting from a selection already made for you.",
         inclus: "Included in the Heritage plan",
       },
       {

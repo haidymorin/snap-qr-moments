@@ -37,8 +37,8 @@ const TEXTES: Record<Lang, {
       },
       {
         n: "03",
-        t: "Nous mettons en page, vous validez",
-        d: "Nous vous envoyons la maquette complète. Vous demandez les changements que vous voulez. Rien ne part à l'impression sans votre accord.",
+        t: "Vous composez votre album",
+        d: "Le site vous propose une première sélection à partir de vos photos les plus nettes. Vous la gardez, vous la relancez, ou vous choisissez vous-même. Rien ne part à l'impression sans votre accord.",
       },
       {
         n: "04",
@@ -71,8 +71,8 @@ const TEXTES: Record<Lang, {
       },
       {
         n: "03",
-        t: "We lay it out, you approve",
-        d: "We send you the full mock-up. You ask for any changes. Nothing goes to print without your approval.",
+        t: "You build your album",
+        d: "The site suggests a first selection from your sharpest photos. Keep it, regenerate it, or pick your own. Nothing goes to print without your approval.",
       },
       {
         n: "04",
