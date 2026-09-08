@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { photo } from "@/lib/photos";
+import { photo, MARIAGE_REEL } from "@/lib/photos";
 
 /* Deux galeries en mouvement pour la page d'accueil.
  *
@@ -32,10 +32,16 @@ export function RubanPhotos({ depart = 40 }: RubanProps) {
   /* Chaque rangée est écrite deux fois bout à bout : quand la première moitié
      a fini de défiler, la seconde est exactement à sa place et la boucle ne se
      voit pas. */
+  /* Deux photos du mariage de juin par rangée, à des places fixes et
+     espacées. Elles ne sont pas signalées : une bande légendée « vraies
+     photos » laisserait entendre que les autres sont fausses. */
   const rangees = useMemo(
     () =>
       [0, 1].map((r) => {
-        const base = Array.from({ length: 10 }, (_, i) => depart + r * 10 + i);
+        const base = Array.from({ length: 10 }, (_, i) => {
+          const reelle = i === 2 ? MARIAGE_REEL[r * 2] : i === 7 ? MARIAGE_REEL[r * 2 + 1] : null;
+          return reelle ? { src: reelle.src } : { src: photo(depart + r * 10 + i, 420) };
+        });
         return [...base, ...base];
       }),
     [depart],
@@ -45,7 +51,7 @@ export function RubanPhotos({ depart = 40 }: RubanProps) {
     <section aria-hidden className="overflow-hidden border-y border-border bg-paper py-3">
       {rangees.map((ids, r) => (
         <div key={r} className="flex w-max gap-2 py-1.5" data-ruban={r}>
-          {ids.map((n, i) => (
+          {ids.map((image, i) => (
             <figure
               key={`${r}-${i}`}
               className="m-0 h-[clamp(88px,13vw,164px)] w-[clamp(120px,18vw,232px)] shrink-0 overflow-hidden bg-secondary"
@@ -58,7 +64,7 @@ export function RubanPhotos({ depart = 40 }: RubanProps) {
               }
             >
               <img
-                src={photo(n, 420)}
+                src={image.src}
                 alt=""
                 loading="lazy"
                 decoding="async"
