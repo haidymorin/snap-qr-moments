@@ -47,6 +47,7 @@ interface EventRow {
    réglages ni les messages n'ont de raison d'apparaître. */
 const PLANS_AVEC_LIVRE_DOR = ["souvenir", "heritage", "admin"];
 const PLANS_AVEC_VISAGE = ["souvenir", "heritage", "admin"];
+const PLANS_AVEC_ALBUM = ["heritage", "admin"];
 /* Cette page était écrite entièrement en français dans le code. C'est celle
    où atterrit un client juste après avoir payé — donc la première qu'il ouvre
    en anglais si c'est sa langue. */
@@ -62,6 +63,7 @@ const TEXTES = {
     mesPhotosRetour: "Revenir à toute la galerie",
     mesPhotosVide: "Aucune photo ne correspond pour l'instant.",
     signaletique: "Mes affiches à imprimer",
+    album: "Composer mon album",
     galerie: "Galerie",
     toutTelecharger: "Tout télécharger (ZIP)",
     preparation: "Préparation",
@@ -92,6 +94,7 @@ const TEXTES = {
     mesPhotosRetour: "Back to the whole gallery",
     mesPhotosVide: "No photo matches yet.",
     signaletique: "My signs to print",
+    album: "Build my album",
     galerie: "Gallery",
     toutTelecharger: "Download all (ZIP)",
     preparation: "Preparing",
@@ -423,6 +426,11 @@ const EventDetail = () => {
               <Button asChild variant="outline" className="mt-2 w-full">
                 <Link to={`/dashboard/event/${id}/signaletique`}>{T.signaletique}</Link>
               </Button>
+              {PLANS_AVEC_ALBUM.includes(event.plan) && (
+                <Button asChild variant="outline" className="mt-2 w-full">
+                  <Link to={`/dashboard/event/${id}/album`}>{T.album}</Link>
+                </Button>
+              )}
             </div>
           </div>
 

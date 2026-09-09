@@ -29,6 +29,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Admin = lazy(() => import("./pages/Admin"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const Signaletique = lazy(() => import("./pages/Signaletique"));
+const Album = lazy(() => import("./pages/Album"));
 const Diaporama = lazy(() => import("./pages/Diaporama"));
 const GuestEvent = lazy(() => import("./pages/GuestEvent"));
 const PaiementReussi = lazy(() => import("./pages/PaiementReussi"));
@@ -63,6 +64,7 @@ const App = () => (
               <Route path="/admin" element={<Admin />} />
               <Route path="/dashboard/event/:id" element={<EventDetail />} />
               <Route path="/dashboard/event/:id/signaletique" element={<Signaletique />} />
+              <Route path="/dashboard/event/:id/album" element={<Album />} />
               <Route path="/event/:id" element={<GuestEvent />} />
               <Route path="/diaporama/:id" element={<Diaporama />} />
               <Route path="/paiement-reussi" element={<PaiementReussi />} />
