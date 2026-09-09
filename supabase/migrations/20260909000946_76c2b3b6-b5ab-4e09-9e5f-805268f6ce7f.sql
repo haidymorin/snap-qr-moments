@@ -1,0 +1,1 @@
+alter function public.email_fondatrice() set search_path = public, pg_temp;
