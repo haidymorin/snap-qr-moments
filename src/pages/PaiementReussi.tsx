@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2 } from "lucide-react";
+import { lienInvite } from "@/lib/siteUrl";
 
 /* La page d'arrivée après un paiement accepté.
  *
@@ -154,7 +155,7 @@ const PaiementReussi = () => {
     naviguer("/dashboard");
   };
 
-  const lienInvites = evenement ? `${window.location.origin}/event/${evenement.id}` : "";
+  const lienInvites = evenement ? lienInvite(evenement.id) : "";
   const dateLisible = (iso: string) =>
     new Date(`${iso}T12:00:00Z`).toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR", {
       day: "numeric", month: "long", year: "numeric",

@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Check, Copy, ExternalLink, Loader2, RefreshCw } from "lucide-react";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
+import { siteOrigin } from "@/lib/siteUrl";
 
 /* Le diaporama, côté mariés.
  *
@@ -74,7 +75,7 @@ const CarteDiaporama = ({ eventId, jeton: jetonInitial, mode: modeInitial, delai
   const [occupe, setOccupe] = useState(false);
   const [fait, setFait] = useState(false);
 
-  const lien = `${window.location.origin}/diaporama/${eventId}?jeton=${jeton}`;
+  const lien = `${siteOrigin()}/diaporama/${eventId}?jeton=${jeton}`;
 
   const enregistrer = async (nouveauMode: string, nouveauDelai: number) => {
     setMode(nouveauMode);

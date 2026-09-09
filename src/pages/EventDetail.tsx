@@ -4,6 +4,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import { telechargerEnLots, type Avancement } from "@/lib/telechargerLot";
 import { supabase } from "@/integrations/supabase/client";
 import { gridUrl, viewUrl, fallbackToOriginal } from "@/lib/imageUrl";
+import { lienInvite } from "@/lib/siteUrl";
 import { downloadMedia } from "@/lib/downloadMedia";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
@@ -197,7 +198,7 @@ const EventDetail = () => {
   }, [lightbox, goRelative]);
 
 
-  const guestUrl = id ? `${window.location.origin}/event/${id}` : "";
+  const guestUrl = id ? lienInvite(id) : "";
 
   useEffect(() => {
     if (!loading && !user) navigate("/auth?mode=signin", { replace: true });

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
 import { motsPour } from "@/data/motsAccueil";
+import { lienInvite } from "@/lib/siteUrl";
 import { assombrir, contraste, encreSur, hexValide } from "@/lib/contraste";
 import { Loader2, Printer, ArrowLeft } from "lucide-react";
 
@@ -216,7 +217,7 @@ const Signaletique = () => {
     })();
   }, [id, user]);
 
-  const url = id ? `${window.location.origin}/event/${id}` : "";
+  const url = id ? lienInvite(id) : "";
   const teinte = ev && ev.plan === "essentiel" ? "#3F203A" : hexValide(couleur) ? couleur : "#3F203A";
 
   /* Le fond garde la couleur choisie ; le texte passe à une version assombrie
