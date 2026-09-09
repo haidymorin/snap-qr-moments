@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      album_pages: {
+        Row: {
+          cree_le: string
+          event_id: string
+          externe_thumb: string | null
+          externe_url: string | null
+          genre: string
+          id: string
+          legende: string | null
+          message_id: string | null
+          photo_id: string | null
+          photo2_id: string | null
+          position: number
+        }
+        Insert: {
+          cree_le?: string
+          event_id: string
+          externe_thumb?: string | null
+          externe_url?: string | null
+          genre: string
+          id?: string
+          legende?: string | null
+          message_id?: string | null
+          photo_id?: string | null
+          photo2_id?: string | null
+          position?: number
+        }
+        Update: {
+          cree_le?: string
+          event_id?: string
+          externe_thumb?: string | null
+          externe_url?: string | null
+          genre?: string
+          id?: string
+          legende?: string | null
+          message_id?: string | null
+          photo_id?: string | null
+          photo2_id?: string | null
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "album_pages_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "album_pages_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "livre_dor"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "album_pages_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "photos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "album_pages_photo2_id_fkey"
+            columns: ["photo2_id"]
+            isOneToOne: false
+            referencedRelation: "photos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           a_achete: boolean
@@ -772,6 +843,31 @@ export type Database = {
       admin_supprimer_evenement: {
         Args: { p_event: string }
         Returns: undefined
+      }
+      album_composer: {
+        Args: {
+          p_cible?: number
+          p_event: string
+          p_graine?: number
+          p_prioritaires?: string[]
+        }
+        Returns: number
+      }
+      album_reordonner: {
+        Args: { p_event: string; p_ordre: string[] }
+        Returns: undefined
+      }
+      album_suggerer: {
+        Args: {
+          p_cible?: number
+          p_event: string
+          p_graine?: number
+          p_prioritaires?: string[]
+        }
+        Returns: {
+          photo_id: string
+          rang: number
+        }[]
       }
       collecte_ouverte: { Args: { p_event_id: string }; Returns: boolean }
       creer_evenement_offert: {
