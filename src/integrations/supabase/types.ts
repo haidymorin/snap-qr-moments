@@ -190,6 +190,8 @@ export type Database = {
       }
       events: {
         Row: {
+          annonce_depuis: string | null
+          annonce_texte: string | null
           collecte_fin: string | null
           created_at: string
           diaporama_delai_min: number
@@ -216,6 +218,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          annonce_depuis?: string | null
+          annonce_texte?: string | null
           collecte_fin?: string | null
           created_at?: string
           diaporama_delai_min?: number
@@ -242,6 +246,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          annonce_depuis?: string | null
+          annonce_texte?: string | null
           collecte_fin?: string | null
           created_at?: string
           diaporama_delai_min?: number
@@ -729,6 +735,13 @@ export type Database = {
       est_admin: { Args: { p_user?: string }; Returns: boolean }
       evenement_actif: { Args: { p_event_id: string }; Returns: boolean }
       event_exists: { Args: { p_event_id: string }; Returns: boolean }
+      guest_annonce: {
+        Args: { p_event_id: string }
+        Returns: {
+          depuis: string
+          texte: string
+        }[]
+      }
       guest_count_livre_dor: { Args: { p_event_id: string }; Returns: number }
       guest_count_media: {
         Args: { p_event_id: string; p_media?: string }
