@@ -190,6 +190,7 @@ export type Database = {
       }
       events: {
         Row: {
+          albums_offerts: boolean
           annonce_depuis: string | null
           annonce_texte: string | null
           collecte_fin: string | null
@@ -209,6 +210,7 @@ export type Database = {
           livre_dor_vocal: boolean
           message_accueil: string | null
           name: string
+          offert_par: string | null
           paye_le: string | null
           plan: string
           rappel_envoye_le: string | null
@@ -218,6 +220,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          albums_offerts?: boolean
           annonce_depuis?: string | null
           annonce_texte?: string | null
           collecte_fin?: string | null
@@ -237,6 +240,7 @@ export type Database = {
           livre_dor_vocal?: boolean
           message_accueil?: string | null
           name: string
+          offert_par?: string | null
           paye_le?: string | null
           plan?: string
           rappel_envoye_le?: string | null
@@ -246,6 +250,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          albums_offerts?: boolean
           annonce_depuis?: string | null
           annonce_texte?: string | null
           collecte_fin?: string | null
@@ -265,6 +270,7 @@ export type Database = {
           livre_dor_vocal?: boolean
           message_accueil?: string | null
           name?: string
+          offert_par?: string | null
           paye_le?: string | null
           plan?: string
           rappel_envoye_le?: string | null
@@ -400,6 +406,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      invitations: {
+        Row: {
+          albums_offerts: boolean
+          consomme_le: string | null
+          cree_le: string
+          email: string
+          event_date: string | null
+          event_nom: string | null
+          event_type: string | null
+          genre: string
+          id: string
+          invite_par: string | null
+          plan: string | null
+        }
+        Insert: {
+          albums_offerts?: boolean
+          consomme_le?: string | null
+          cree_le?: string
+          email: string
+          event_date?: string | null
+          event_nom?: string | null
+          event_type?: string | null
+          genre: string
+          id?: string
+          invite_par?: string | null
+          plan?: string | null
+        }
+        Update: {
+          albums_offerts?: boolean
+          consomme_le?: string | null
+          cree_le?: string
+          email?: string
+          event_date?: string | null
+          event_nom?: string | null
+          event_type?: string | null
+          genre?: string
+          id?: string
+          invite_par?: string | null
+          plan?: string | null
+        }
+        Relationships: []
       }
       journal_admin: {
         Row: {
@@ -661,6 +709,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_ajouter_admin: { Args: { p_email: string }; Returns: string }
       admin_changer_formule: {
         Args: {
           p_complement_centimes?: number
@@ -686,6 +735,27 @@ export type Database = {
           statut: string
         }[]
       }
+      admin_lister_equipe: {
+        Args: never
+        Returns: {
+          depuis: string
+          email: string
+          en_attente: boolean
+          fondatrice: boolean
+          user_id: string
+        }[]
+      }
+      admin_offrir_evenement: {
+        Args: {
+          p_albums_offerts?: boolean
+          p_date: string
+          p_email: string
+          p_nom: string
+          p_plan?: string
+          p_type?: string
+        }
+        Returns: string
+      }
       admin_prolonger: {
         Args: { p_event: string; p_mois: number }
         Returns: undefined
@@ -694,6 +764,7 @@ export type Database = {
         Args: { p_date: string; p_event: string }
         Returns: undefined
       }
+      admin_retirer_admin: { Args: { p_email: string }; Returns: undefined }
       admin_retirer_media: {
         Args: { p_motif?: string; p_photo: string }
         Returns: undefined
@@ -703,6 +774,18 @@ export type Database = {
         Returns: undefined
       }
       collecte_ouverte: { Args: { p_event_id: string }; Returns: boolean }
+      creer_evenement_offert: {
+        Args: {
+          p_albums_offerts: boolean
+          p_date: string
+          p_nom: string
+          p_par: string
+          p_plan: string
+          p_type: string
+          p_user: string
+        }
+        Returns: string
+      }
       desinscrire_client: { Args: { p_email: string }; Returns: undefined }
       diaporama_flux: {
         Args: { p_event: string; p_jeton: string; p_limite?: number }
@@ -718,6 +801,7 @@ export type Database = {
         }[]
       }
       distance_empreintes: { Args: { a: string; b: string }; Returns: number }
+      email_fondatrice: { Args: never; Returns: string }
       enregistrer_client: {
         Args: {
           p_email: string
@@ -733,6 +817,7 @@ export type Database = {
         Returns: undefined
       }
       est_admin: { Args: { p_user?: string }; Returns: boolean }
+      est_fondatrice: { Args: { p_user?: string }; Returns: boolean }
       evenement_actif: { Args: { p_event_id: string }; Returns: boolean }
       event_exists: { Args: { p_event_id: string }; Returns: boolean }
       guest_annonce: {
