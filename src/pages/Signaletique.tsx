@@ -4,6 +4,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
+import { motsPour } from "@/data/motsAccueil";
 import { assombrir, contraste, encreSur, hexValide } from "@/lib/contraste";
 import { Loader2, Printer, ArrowLeft } from "lucide-react";
 
@@ -51,6 +52,8 @@ const TEXTES: Record<Lang, Record<string, string>> = {
     couleur: "Votre couleur",
     couleurAide: "Elle habille le fond, le titre et le filet. Jamais le QR code.",
     message: "Le mot d'accueil",
+    suggestions: "Ou choisissez une phrase :",
+    effacer: "Effacer",
     imprimer: "Imprimer",
     conseil: "Conseil d'impression",
     conseilTexte: "Papier de 250 g minimum pour les chevalets, sinon ils ne tiennent pas debout. Cochez « Graphiques d'arrière-plan » dans les options d'impression, sans quoi les aplats de couleur ne sortent pas.",
@@ -85,6 +88,8 @@ const TEXTES: Record<Lang, Record<string, string>> = {
     couleur: "Your colour",
     couleurAide: "It dresses the background, the title and the rule. Never the QR code.",
     message: "The welcome line",
+    suggestions: "Or pick a line:",
+    effacer: "Clear",
     imprimer: "Print",
     conseil: "Printing tips",
     conseilTexte: "At least 250 gsm for the table cards, or they will not stand up. Tick “Background graphics” in the print options, otherwise the colour areas will not come out.",
@@ -368,6 +373,44 @@ const Signaletique = () => {
                 onChange={(e) => setMessage(e.target.value)}
                 className="mt-2 min-h-[42px] w-full rounded-xl border border-border bg-background px-3 text-[14px] outline-none focus:border-primary"
               />
+
+              {/* Devant une case vide, on ne trouve rien à écrire. Les
+                  propositions changent selon le support affiché : « avant de
+                  partir » n'a aucun sens sur le panneau de l'entrée. */}
+              <p className="mt-4 text-[13px] text-muted-foreground">{T.suggestions}</p>
+              {motsPour(lang, format).map((groupe) => (
+                <div key={groupe.titre} className="mt-3">
+                  <p className="label-mono">{groupe.titre}</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {groupe.mots.map((m) => (
+                      <button
+                        key={m.texte}
+                        type="button"
+                        onClick={() => setMessage(m.texte)}
+                        aria-pressed={message === m.texte}
+                        className={
+                          "rounded-full border px-3 py-1.5 text-[13px] transition-colors " +
+                          (message === m.texte
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border hover:border-primary/60")
+                        }
+                      >
+                        {m.texte}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {message && (
+                <button
+                  type="button"
+                  onClick={() => setMessage("")}
+                  className="label-mono mt-4 border-b border-foreground pb-1"
+                >
+                  {T.effacer}
+                </button>
+              )}
             </div>
 
             <button
