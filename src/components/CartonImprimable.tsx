@@ -27,6 +27,15 @@ export interface Textes {
   date: string;
   legende: string;
   marque: string;
+  /* Le menu du repas. Facultatif : seuls les modèles qui en portent un
+     lisent ces champs, et un champ laissé vide ne dessine rien. */
+  menuTitre?: string;
+  service1?: string;
+  plat1?: string;
+  service2?: string;
+  plat2?: string;
+  service3?: string;
+  plat3?: string;
 }
 
 interface Props {
@@ -127,6 +136,39 @@ const CartonImprimable = ({
       );
     }
 
+    if (el.genre === "cadre") {
+      return (
+        <div
+          key={i}
+          aria-hidden
+          style={{
+            ...base,
+            width: `${mm(el.l)}mm`,
+            height: `${mm(el.h)}mm`,
+            border: `0.25mm solid ${couleurs.accent}`,
+            opacity: 0.55,
+            boxSizing: "border-box",
+          }}
+        />
+      );
+    }
+
+    if (el.genre === "filet") {
+      return (
+        <div
+          key={i}
+          aria-hidden
+          style={{
+            ...base,
+            width: `${mm(el.l)}mm`,
+            height: `${Math.max(mm(el.h), 0.25)}mm`,
+            background: couleurs.accent,
+            opacity: 0.6,
+          }}
+        />
+      );
+    }
+
     if (el.genre === "coeur") {
       return (
         <div key={i} style={{ ...base, width: `${mm(el.cote)}mm`, height: `${mm(el.cote * 22 / 24)}mm` }}>
@@ -136,6 +178,9 @@ const CartonImprimable = ({
     }
 
     if (el.champ === "marque" && sansMarque) return null;
+
+    const contenu = textes[el.champ] ?? "";
+    if (!contenu.trim()) return null;
 
     return (
       <div
@@ -151,7 +196,7 @@ const CartonImprimable = ({
           textAlign: "center",
         }}
       >
-        {textes[el.champ]}
+        {contenu}
       </div>
     );
   };

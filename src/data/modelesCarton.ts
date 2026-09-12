@@ -24,7 +24,14 @@ interface Base {
 export interface ElementTexte extends Base {
   genre: "texte";
   /** Quelle chaîne afficher : les noms, la phrase, la date, la légende, la marque. */
-  champ: "noms" | "phrase" | "date" | "legende" | "marque";
+  champ:
+    | "noms" | "phrase" | "date" | "legende" | "marque"
+    /* Le menu du repas, sur les modèles qui en portent un. Les trois
+       services et leurs plats sont saisis par les mariés. */
+    | "menuTitre"
+    | "service1" | "plat1"
+    | "service2" | "plat2"
+    | "service3" | "plat3";
   l: number;
   taille: number;
   police: RolePolice;
@@ -50,7 +57,24 @@ export interface ElementCoeur extends Base {
   cote: number;
 }
 
-export type ElementCarton = ElementTexte | ElementQr | ElementPhoto | ElementCoeur;
+/** Un filet fin en retrait des bords. Zéro encre en plus, un caractère
+ *  différent : c'est ce qui distingue le modèle « Filet » du chevalet nu. */
+export interface ElementCadre extends Base {
+  genre: "cadre";
+  l: number;
+  h: number;
+}
+
+/** Un trait de séparation, horizontal. */
+export interface ElementFilet extends Base {
+  genre: "filet";
+  l: number;
+  h: number;
+}
+
+export type ElementCarton =
+  | ElementTexte | ElementQr | ElementPhoto | ElementCoeur
+  | ElementCadre | ElementFilet;
 
 export interface ModeleCarton {
   id: string;
@@ -162,6 +186,52 @@ export const MODELES: ModeleCarton[] = [
       { genre: "texte", champ: "legende", x: 91,  y: 660, l: 150, taille: 9,   police: "texte",  couleur: "texte", ecart: 0.16 },
       { genre: "coeur",                   x: 162, y: 700, cote: 15 },
       { genre: "texte", champ: "marque",  x: 26,  y: 740, l: 288, taille: 8,   police: "texte",  couleur: "accent", ecart: 0.16 },
+    ],
+  },
+
+  {
+    id: "chevalet-filet",
+    nom: "Chevalet au filet",
+    nomEn: "Framed table card",
+    mm: { l: 90, h: 55 },
+    px: { l: 340, h: 208 },
+    plie: true,
+    parPage: 4,
+    elements: [
+      { genre: "cadre",                   x: 15,  y: 15,  l: 310, h: 178 },
+      { genre: "texte", champ: "noms",    x: 21,  y: 52,  l: 178, taille: 27,  police: "titre",  couleur: "titre", ecart: 0.02 },
+      { genre: "texte", champ: "phrase",  x: 17,  y: 71,  l: 178, taille: 30,  police: "script", couleur: "titre", hauteurLigne: 1.05 },
+      { genre: "texte", champ: "date",    x: 56,  y: 112, l: 114, taille: 8,   police: "texte",  couleur: "texte", ecart: 0.28 },
+      { genre: "coeur",                   x: 107, y: 135, cote: 9 },
+      { genre: "qr",                      x: 220, y: 56,  cote: 80 },
+      { genre: "texte", champ: "legende", x: 210, y: 148, l: 100, taille: 7,   police: "texte",  couleur: "texte", ecart: 0.10 },
+      { genre: "texte", champ: "marque",  x: 125, y: 182, l: 90,  taille: 6,   police: "texte",  couleur: "accent", ecart: 0.14 },
+    ],
+  },
+  {
+    id: "marque-page-menu",
+    nom: "Marque-page menu",
+    nomEn: "Menu card",
+    mm: { l: 90, h: 210 },
+    px: { l: 340, h: 794 },
+    plie: false,
+    parPage: 2,
+    elements: [
+      { genre: "texte", champ: "noms",      x: 26,  y: 46,  l: 288, taille: 42, police: "titre",  couleur: "titre", ecart: 0.02 },
+      { genre: "texte", champ: "date",      x: 30,  y: 103, l: 288, taille: 12, police: "texte",  couleur: "texte", ecart: 0.30 },
+      { genre: "texte", champ: "menuTitre", x: 27,  y: 144, l: 288, taille: 46, police: "script", couleur: "titre", hauteurLigne: 1.05 },
+      { genre: "texte", champ: "service1",  x: 28,  y: 215, l: 288, taille: 9,  police: "texte",  couleur: "accent", ecart: 0.26, hauteurLigne: 1.35 },
+      { genre: "texte", champ: "plat1",     x: 25,  y: 237, l: 288, taille: 11, police: "texte",  couleur: "texte",  ecart: 0.02, hauteurLigne: 1.35 },
+      { genre: "texte", champ: "service2",  x: 27,  y: 276, l: 288, taille: 9,  police: "texte",  couleur: "accent", ecart: 0.26, hauteurLigne: 1.35 },
+      { genre: "texte", champ: "plat2",     x: 25,  y: 300, l: 288, taille: 11, police: "texte",  couleur: "texte",  ecart: 0.02, hauteurLigne: 1.35 },
+      { genre: "texte", champ: "service3",  x: 26,  y: 339, l: 288, taille: 9,  police: "texte",  couleur: "accent", ecart: 0.26, hauteurLigne: 1.35 },
+      { genre: "texte", champ: "plat3",     x: 25,  y: 356, l: 288, taille: 11, police: "texte",  couleur: "texte",  ecart: 0.02, hauteurLigne: 1.35 },
+      { genre: "filet",                     x: 140, y: 393, l: 60,  h: 1 },
+      { genre: "texte", champ: "phrase",    x: 23,  y: 427, l: 288, taille: 46, police: "script", couleur: "titre", hauteurLigne: 1.05 },
+      { genre: "qr",                        x: 100, y: 508, cote: 141 },
+      { genre: "texte", champ: "legende",   x: 97,  y: 659, l: 150, taille: 9,  police: "texte",  couleur: "texte", ecart: 0.16 },
+      { genre: "coeur",                     x: 162, y: 700, cote: 15 },
+      { genre: "texte", champ: "marque",    x: 26,  y: 740, l: 288, taille: 8,  police: "texte",  couleur: "accent", ecart: 0.16 },
     ],
   },
 ];

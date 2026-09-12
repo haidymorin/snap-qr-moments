@@ -48,6 +48,14 @@ interface Reglages {
   phrase?: string;
   photo?: string | null;
   sansMarque?: boolean;
+  /* Le menu du repas, sur les modèles qui en portent un. */
+  menuTitre?: string;
+  service1?: string;
+  plat1?: string;
+  service2?: string;
+  plat2?: string;
+  service3?: string;
+  plat3?: string;
 }
 
 interface Ev {
@@ -95,6 +103,16 @@ const TEXTES: Record<Lang, Record<string, string>> = {
     verrouLien: "Voir ce que contient le Souvenir",
     legende: "SCANNEZ LE QR CODE",
     echec: "L'envoi a échoué.",
+    leMenu: "Le menu du repas",
+    menuAide:
+      "Le carton reste sur la table pendant tout le dîner au lieu d'être poussé de côté : c'est ce qui fait scanner. Un champ laissé vide ne s'imprime pas.",
+    menuTitre: "Menu",
+    service1: "ENTRÉE",
+    plat1: "Velouté de courge, noisettes torréfiées",
+    service2: "PLAT",
+    plat2: "Filet de bœuf, jus corsé, gratin dauphinois",
+    service3: "DESSERT",
+    plat3: "Pièce montée & fruits rouges",
   },
   en: {
     titre: "Your signs to print",
@@ -130,6 +148,16 @@ const TEXTES: Record<Lang, Record<string, string>> = {
     verrouLien: "See what Souvenir includes",
     legende: "SCAN THE QR CODE",
     echec: "The upload failed.",
+    leMenu: "The dinner menu",
+    menuAide:
+      "The card stays on the table all through dinner instead of being pushed aside: that is what makes people scan. A field left empty is not printed.",
+    menuTitre: "Menu",
+    service1: "STARTER",
+    plat1: "Squash velouté, roasted hazelnuts",
+    service2: "MAIN",
+    plat2: "Beef fillet, rich jus, potato gratin",
+    service3: "DESSERT",
+    plat3: "Croquembouche & red berries",
   },
 };
 
@@ -169,7 +197,9 @@ const Signaletique = () => {
         .select("id,name,event_date,user_id,plan,message_accueil,signaletique")
         .eq("id", id)
         .maybeSingle();
-      const e = (data as Ev | null) ?? null;
+      /* `signaletique` n'existe pas encore dans les types régénérés par
+         Lovable : le passage par `unknown` évite l'erreur en attendant. */
+      const e = (data as unknown as Ev | null) ?? null;
       setEv(e);
       if (e?.signaletique && Object.keys(e.signaletique).length > 0) {
         setR((prec) => ({ ...prec, ...e.signaletique }));
@@ -253,9 +283,34 @@ const Signaletique = () => {
     date,
     legende: T.legende,
     marque: "qr-memories.fr",
+    /* Le menu : ce que les mariés ont saisi, sinon l'exemple, qui sert aussi
+       de repère de longueur à l'écran. */
+    menuTitre: libre ? r.menuTitre ?? T.menuTitre : T.menuTitre,
+    service1: libre ? r.service1 ?? T.service1 : T.service1,
+    plat1: libre ? r.plat1 ?? T.plat1 : T.plat1,
+    service2: libre ? r.service2 ?? T.service2 : T.service2,
+    plat2: libre ? r.plat2 ?? T.plat2 : T.plat2,
+    service3: libre ? r.service3 ?? T.service3 : T.service3,
+    plat3: libre ? r.plat3 ?? T.plat3 : T.plat3,
   };
 
   const aPhoto = m.elements.some((el) => el.genre === "photo");
+  const aMenu = m.elements.some(
+    (el) => el.genre === "texte"
+      && (el.champ.startsWith("menu") || el.champ.startsWith("service")),
+  );
+  /* Les six lignes du menu, dans l'ordre où elles s'impriment. */
+  type ChampMenu =
+    | "menuTitre" | "service1" | "plat1" | "service2" | "plat2" | "service3" | "plat3";
+  const lignesMenu: { champ: ChampMenu; exemple: string; max: number }[] = [
+    { champ: "menuTitre", exemple: T.menuTitre, max: 20 },
+    { champ: "service1", exemple: T.service1, max: 24 },
+    { champ: "plat1", exemple: T.plat1, max: 80 },
+    { champ: "service2", exemple: T.service2, max: 24 },
+    { champ: "plat2", exemple: T.plat2, max: 80 },
+    { champ: "service3", exemple: T.service3, max: 24 },
+    { champ: "plat3", exemple: T.plat3, max: 80 },
+  ];
 
   const bouton = (actif: boolean) =>
     "rounded-xl border px-3 py-2 text-[13.5px] transition-colors "
@@ -370,6 +425,25 @@ const Signaletique = () => {
                   </div>
                 </div>
               ))}
+
+              {aMenu && (
+                <>
+                  <p className="label-mono mt-8">{T.leMenu}</p>
+                  <p className="mt-1 max-w-[62ch] text-[13px] text-muted-foreground">{T.menuAide}</p>
+                  <div className="mt-3 grid max-w-[46ch] gap-2">
+                    {lignesMenu.map((ligne) => (
+                      <input
+                        key={ligne.champ}
+                        value={r[ligne.champ] ?? ""}
+                        maxLength={ligne.max}
+                        placeholder={ligne.exemple}
+                        onChange={(e) => changer({ [ligne.champ]: e.target.value } as Reglages)}
+                        className="min-h-[42px] w-full rounded-xl border border-border bg-background px-3 text-[14px] outline-none focus:border-primary"
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
 
               {aPhoto && (
                 <>
