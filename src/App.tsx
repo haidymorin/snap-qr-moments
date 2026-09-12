@@ -5,6 +5,8 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { lazyWithRetry as lazy } from "@/lib/lazyWithRetry";
 import RouteEffects from "./components/RouteEffects";
+import RedirigerVersReservation from "./components/RedirigerVersReservation";
+import { VENTE_OUVERTE } from "@/lib/vente";
 
 
 /* L'accueil est chargé d'emblée : c'est la page d'entrée la plus fréquente et
@@ -22,6 +24,7 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const Albums = lazy(() => import("./pages/Albums"));
 const Demo = lazy(() => import("./pages/Demo"));
 const CreerEvenement = lazy(() => import("./pages/CreerEvenement"));
+const Reserver = lazy(() => import("./pages/Reserver"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Auth = lazy(() => import("./pages/Auth"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
@@ -56,7 +59,13 @@ const App = () => (
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/albums" element={<Albums />} />
               <Route path="/demo" element={<Demo />} />
-              <Route path="/creer" element={<CreerEvenement />} />
+              {/* Le parcours d'achat n'existe que si la vente est ouverte.
+                  Voir src/lib/vente.ts : une ligne à basculer. */}
+              <Route
+                path="/creer"
+                element={VENTE_OUVERTE ? <CreerEvenement /> : <RedirigerVersReservation />}
+              />
+              <Route path="/reserver" element={<Reserver />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/auth/callback" element={<AuthCallback />} />

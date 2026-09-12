@@ -6,6 +6,7 @@ import etape1 from "@/assets/steps/etape-1-qr.jpg";
 import etape2 from "@/assets/steps/etape-2-invites.jpg";
 import etape3 from "@/assets/steps/etape-3-galerie.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { lienAchat, cleAchat } from "@/lib/vente";
 import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
 import { RubanPhotos, CarrouselInertie } from "@/components/GaleriesAnimees";
 import CarteLueur from "@/components/CarteLueur";
@@ -206,10 +207,10 @@ function PhotoWall() {
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
-              to="/creer"
+              to={lienAchat()}
               className="inline-flex min-h-[48px] items-center rounded-full border border-primary bg-primary px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
             >
-              {t("home.ctaCreate")}
+              {t(cleAchat)}
             </Link>
             <Link
               to="/demo"
@@ -362,7 +363,7 @@ const Index = () => {
               </div>
 
               <Link
-                to="/creer"
+                to={lienAchat()}
                 className="mt-7 inline-flex min-h-[48px] items-center border border-night-foreground bg-night-foreground px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-night transition-colors hover:bg-transparent hover:text-night-foreground"
               >
                 {t("home.aiCta")}
@@ -559,10 +560,10 @@ const Index = () => {
             <h2 className="mx-auto mt-3 max-w-[22ch] text-[clamp(28px,4.3vw,50px)] text-wrap balance">{t("home.finalTitle")}</h2>
             <p className="mx-auto mt-5 max-w-[48ch] leading-relaxed">{t("home.finalDesc")}</p>
             <Link
-              to="/creer"
+              to={lienAchat()}
               className="mt-8 inline-flex min-h-[48px] items-center rounded-full border border-primary-foreground bg-primary-foreground px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-transparent hover:text-primary-foreground"
             >
-              {t("home.finalCta")}
+              {t(cleAchat)}
             </Link>
           </div>
         </div>

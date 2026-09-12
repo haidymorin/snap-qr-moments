@@ -99,6 +99,7 @@ const translations: Record<Lang, Dict> = {
       heroSubtitle:
         "Un QR code sur les tables. Vos invités déposent leurs photos sans rien installer, le tri se fait tout seul, et il en reste un objet que vous gardez.",
       ctaCreate: "Créer mon événement",
+      ctaReserve: "Réserver ma date",
       ctaDiscover: "Voir comment ça marche",
       ctaDemo: "Voir une galerie",
 
@@ -395,6 +396,7 @@ const translations: Record<Lang, Dict> = {
       heroSubtitle:
         "A QR code on the tables. Your guests upload their photos without installing anything, the sorting happens on its own, and you keep something real at the end.",
       ctaCreate: "Create my event",
+      ctaReserve: "Save my date",
       ctaDiscover: "See how it works",
       ctaDemo: "See a gallery",
 

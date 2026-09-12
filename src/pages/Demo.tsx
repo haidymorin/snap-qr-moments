@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
+import { lienAchat } from "@/lib/vente";
 import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
 import { X } from "lucide-react";
 
@@ -307,7 +308,7 @@ const Demo = () => {
             <p className="mx-auto mt-4 max-w-[52ch] leading-relaxed text-muted-foreground">{t.ctaTexte}</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
               <Link
-                to="/creer"
+                to={lienAchat()}
                 className="inline-flex min-h-[48px] items-center rounded-full border border-primary bg-primary px-7 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary"
               >
                 {t.ctaBouton}

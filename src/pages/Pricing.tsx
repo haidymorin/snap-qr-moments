@@ -3,6 +3,7 @@ import CarteLueur from "@/components/CarteLueur";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
+import { lienAchat, VENTE_OUVERTE } from "@/lib/vente";
 import { FORMULES } from "@/data/formules";
 
 /* La page des tarifs.
@@ -17,7 +18,7 @@ import { FORMULES } from "@/data/formules";
  */
 
 const TEXTES: Record<Lang, {
-  eyebrow: string; titre: string; chapo: string;
+  eyebrow: string; titre: string; chapo: string; avis: string;
   detailTitre: string;
   versObjets: string; versObjetsLien: string; ancrage: string;
   faqTitre: string;
@@ -28,6 +29,8 @@ const TEXTES: Record<Lang, {
     titre: "Trois façons de garder votre soirée.",
     chapo:
       "Vous payez une seule fois, pour un seul événement. Aucun abonnement, aucune commission sur vos photos. Les albums et les objets imprimés se commandent après, une fois que vous avez vu les photos.",
+    avis:
+      "Les commandes ouvrent dans quelques jours. En attendant, réservez votre date : rien à payer, et le tarif affiché ici vous reste acquis.",
     detailTitre: "Ce que contient chaque formule",
     ancrage:
       "Un photographe de mariage coûte entre 1 500 et 2 500 €, une borne photo entre 500 et 900 € pour la soirée. QR Memories ne remplace ni l'un ni l'autre.",
@@ -71,6 +74,8 @@ const TEXTES: Record<Lang, {
     titre: "Three ways to keep your night.",
     chapo:
       "You pay once, for one event. No subscription, no commission on your photos. Albums and printed objects are ordered afterwards, once you have seen the photos.",
+    avis:
+      "Orders open in a few days. In the meantime, save your date: nothing to pay, and the price shown here stays yours.",
     detailTitre: "What each plan includes",
     ancrage:
       "A wedding photographer costs between €1,500 and €2,500, a photo booth between €500 and €900 for the night. QR Memories replaces neither.",
@@ -130,6 +135,13 @@ const Pricing = () => {
             <p className="eyebrow">{T.eyebrow}</p>
             <h1 className="mx-auto mt-3 max-w-[18ch] text-[clamp(38px,6vw,72px)]">{T.titre}</h1>
             <p className="mx-auto mt-5 max-w-[58ch] leading-relaxed text-foreground">{T.chapo}</p>
+            {/* Pas de prix barré, pas de compte à rebours : l'information
+                suffit. Ce qui est promis ici est tenable sans rien faire. */}
+            {!VENTE_OUVERTE && (
+              <p className="mx-auto mt-6 max-w-[58ch] rounded-2xl border border-accent bg-card px-5 py-4 text-[14px] leading-relaxed text-muted-foreground">
+                {T.avis}
+              </p>
+            )}
           </div>
         </section>
 
@@ -191,7 +203,7 @@ const Pricing = () => {
                       </div>
 
                       <Link
-                        to={`/creer?formule=${f.id}`}
+                        to={lienAchat(f.id)}
                         className={`mt-8 inline-flex min-h-[48px] items-center justify-center rounded-full border px-6 py-4 text-xs font-semibold uppercase tracking-[0.1em] transition-colors ${
                           sombre
                             ? "border-night-foreground bg-night-foreground text-night hover:bg-transparent hover:text-night-foreground"
