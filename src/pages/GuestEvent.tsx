@@ -9,6 +9,7 @@ import {
   downloadMedia, partagerPlusieurs, partageMultipleDisponible, PARTAGE_MAX,
 } from "@/lib/downloadMedia";
 import { envoyerSurR2, extensionDe, typeDeclare } from "@/lib/r2";
+import LaisserEmail from "@/components/LaisserEmail";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { compressImage } from "@/lib/imageCompression";
 import { mesurerPhoto } from "@/lib/triPhotos";
@@ -738,6 +739,10 @@ const GuestEvent = () => {
                   </li>
                 ))}
               </ul>
+
+              {/* L'adresse se demande après le dépôt, jamais avant : c'est le
+                  seul moment où l'invité a une raison de la donner. */}
+              {finished && sent > 0 && <LaisserEmail eventId={id!} />}
 
               {finished && (
                 <div className="mt-5 flex flex-wrap items-center justify-between gap-3">

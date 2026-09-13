@@ -16,6 +16,7 @@ import CarteDiaporama from "@/components/CarteDiaporama";
 import CarteJeu from "@/components/CarteJeu";
 import FaceSearch from "@/components/FaceSearch";
 import CarteAnnonce from "@/components/CarteAnnonce";
+import CarteMerci from "@/components/CarteMerci";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { FiltreType, MediaFilter, PlayOverlay } from "@/components/MediaTabs";
@@ -42,6 +43,9 @@ interface EventRow {
   jeu_lot: string | null;
   annonce_texte: string | null;
   annonce_depuis: string | null;
+  merci_texte: string | null;
+  merci_envoi_le: string | null;
+  merci_envoye_le: string | null;
 }
 
 /* Le livre d'or fait partie du Souvenir, pas de l'Essentiel : sans lui, ni ses
@@ -237,7 +241,10 @@ const EventDetail = () => {
         navigate("/dashboard");
         return;
       }
-      setEvent(ev);
+      /* Les colonnes du mot de remerciement n'existent pas encore dans les
+         types régénérés par Lovable : le passage par `unknown` évite l'erreur
+         en attendant, et disparaîtra à la prochaine régénération. */
+      setEvent(ev as unknown as EventRow);
       const [photoRes, videoRes, ecarteRes] = await Promise.all([
         supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "photo").is("ecarte", null),
         supabase.from("photos").select("id", { count: "exact", head: true }).eq("event_id", id).eq("media_type", "video").is("ecarte", null),
@@ -577,6 +584,15 @@ const EventDetail = () => {
           <CarteAnnonce
             eventId={event.id}
             texte={event.annonce_texte}
+            onChange={(v) => setEvent((prev) => (prev ? { ...prev, ...v } : prev))}
+          />
+
+          <CarteMerci
+            eventId={event.id}
+            eventDate={event.event_date}
+            texte={event.merci_texte}
+            envoiLe={event.merci_envoi_le}
+            envoyeLe={event.merci_envoye_le}
             onChange={(v) => setEvent((prev) => (prev ? { ...prev, ...v } : prev))}
           />
 

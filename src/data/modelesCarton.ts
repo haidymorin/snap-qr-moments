@@ -234,6 +234,25 @@ export const MODELES: ModeleCarton[] = [
       { genre: "texte", champ: "marque",    x: 26,  y: 740, l: 288, taille: 8,  police: "texte",  couleur: "accent", ecart: 0.16 },
     ],
   },
+
+  {
+    id: "carte-cadeau",
+    nom: "Carte à glisser dans le cadeau",
+    nomEn: "Favour card",
+    mm: { l: 90, h: 50 },
+    px: { l: 340, h: 189 },
+    plie: false,
+    parPage: 10,
+    elements: [
+      { genre: "texte", champ: "legende", x: 26,  y: 28,  l: 178, taille: 7,  police: "texte",  couleur: "accent", ecart: 0.18 },
+      { genre: "texte", champ: "noms",    x: 26,  y: 48,  l: 178, taille: 22, police: "titre",  couleur: "titre", ecart: 0.02 },
+      { genre: "texte", champ: "phrase",  x: 26,  y: 78,  l: 178, taille: 24, police: "script", couleur: "titre", hauteurLigne: 1.05 },
+      { genre: "texte", champ: "date",    x: 26,  y: 118, l: 178, taille: 7,  police: "texte",  couleur: "texte", ecart: 0.26 },
+      { genre: "coeur",                   x: 110, y: 140, cote: 8 },
+      { genre: "qr",                      x: 232, y: 46,  cote: 76 },
+      { genre: "texte", champ: "marque",  x: 26,  y: 165, l: 288, taille: 6,  police: "texte",  couleur: "accent", ecart: 0.14 },
+    ],
+  },
 ];
 
 export const modele = (id: string) => MODELES.find((m) => m.id === id) ?? MODELES[0];
