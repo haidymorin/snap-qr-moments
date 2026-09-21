@@ -13,7 +13,7 @@
  * endroit du code qui connaisse cette information.
  */
 
-export const VENTE_OUVERTE: boolean = false;
+export const VENTE_OUVERTE: boolean = true;
 
 /** Où mène un appel à l'action. La formule est conservée dans l'adresse. */
 export const lienAchat = (formule?: string) => {
