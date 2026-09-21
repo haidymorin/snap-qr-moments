@@ -68,6 +68,10 @@ const TEXTES = {
     nomCourt: "Nom trop court",
     dateRequise: "Date requise",
     typeRequis: "Type requis",
+    modeGratuit: "Gratuits",
+    modePayant: "Payants",
+    modeAideGratuit: "Vous créez vos événements sans passer par le paiement.",
+    modeAidePayant: "Vous passez par le paiement, comme une cliente.",
   },
   en: {
     chargement: "Loading…",
@@ -99,6 +103,10 @@ const TEXTES = {
     nomCourt: "Name too short",
     dateRequise: "Date required",
     typeRequis: "Type required",
+    modeGratuit: "Free",
+    modePayant: "Paid",
+    modeAideGratuit: "You create events without going through checkout.",
+    modeAidePayant: "You go through checkout, like a customer.",
   },
 };
 
@@ -147,6 +155,29 @@ const Dashboard = () => {
      monde d'autre, un événement naît d'un paiement. La règle est appliquée par
      la base, celle-ci ne fait qu'éviter d'afficher un bouton qui échouerait. */
   const [admin, setAdmin] = useState(false);
+
+  /* L'interrupteur de l'administratrice. En « gratuits », elle crée ses
+     événements à la main, sans paiement ; en « payants », le bouton la mène
+     aux tarifs et au paiement, exactement comme une cliente — utile pour
+     tester le vrai parcours. Le choix est retenu dans ce navigateur. Il ne
+     touche à aucun droit : la base continue d'autoriser l'administratrice
+     dans les deux cas, on choisit seulement le chemin affiché. */
+  const [modeGratuit, setModeGratuit] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem("qrm_admin_mode") !== "payant";
+    } catch {
+      return true;
+    }
+  });
+  const changerMode = (gratuit: boolean) => {
+    setModeGratuit(gratuit);
+    try {
+      localStorage.setItem("qrm_admin_mode", gratuit ? "gratuit" : "payant");
+    } catch {
+      /* navigation privée : le choix vaut pour la visite */
+    }
+  };
+  const creationGratuite = admin && modeGratuit;
 
   useEffect(() => {
     if (!user) return;
@@ -237,16 +268,41 @@ const Dashboard = () => {
               <h1 className="text-4xl md:text-5xl font-bold mb-2">{T.titre}</h1>
               <p className="text-muted-foreground">{T.sousTitre}</p>
             </div>
-            {!admin && (
+            <div className="flex flex-col items-start md:items-end gap-3">
+            {admin && (
+              <div className="flex flex-col items-start md:items-end gap-1">
+                <div className="inline-flex items-center divide-x divide-border border border-border">
+                  {([true, false] as const).map((g) => (
+                    <button
+                      key={String(g)}
+                      type="button"
+                      onClick={() => changerMode(g)}
+                      aria-pressed={modeGratuit === g}
+                      className={`min-h-[30px] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors ${
+                        modeGratuit === g
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {g ? T.modeGratuit : T.modePayant}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {modeGratuit ? T.modeAideGratuit : T.modeAidePayant}
+                </p>
+              </div>
+            )}
+            {!creationGratuite && (
               <Button variant="hero" size="lg" asChild>
                 <Link to="/pricing">
                   <Plus className="w-5 h-5" /> {T.creer}
                 </Link>
               </Button>
             )}
-            <Dialog open={admin && open} onOpenChange={setOpen}>
+            <Dialog open={creationGratuite && open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button variant="hero" size="lg" className={admin ? "" : "hidden"}>
+                <Button variant="hero" size="lg" className={creationGratuite ? "" : "hidden"}>
                   <Plus className="w-5 h-5" /> {T.creer}
                 </Button>
               </DialogTrigger>
@@ -292,6 +348,7 @@ const Dashboard = () => {
                 </form>
               </DialogContent>
             </Dialog>
+            </div>
           </div>
 
           {fetching ? (
@@ -301,7 +358,7 @@ const Dashboard = () => {
               <QrCode className="w-16 h-16 text-primary mx-auto mb-4 opacity-60" />
               <h2 className="text-xl font-semibold mb-2">{T.vide}</h2>
               <p className="text-muted-foreground mb-6">{T.videTexte}</p>
-              {admin ? (
+              {creationGratuite ? (
                 <Button variant="hero" size="lg" onClick={() => setOpen(true)}>
                   <Plus className="w-5 h-5" /> {T.premier}
                 </Button>
