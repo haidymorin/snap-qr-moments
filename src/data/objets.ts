@@ -6,6 +6,11 @@ import { type Lang } from "@/contexts/LanguageContext";
  * là où personne ne descend. Ce sont pourtant eux qui font la différence entre
  * un service qu'on oublie en six mois et un souvenir qu'on garde : ils
  * méritent un onglet.
+ *
+ * La gazette n'apparaît plus dans cette liste : son prix à la carte n'est pas
+ * arrêté. Elle reste comprise dans la formule Héritage, et c'est tout ce que
+ * le site en dit pour l'instant. Annoncer un tarif qu'on révisera dans trois
+ * mois coûte plus cher que de se taire.
  */
 
 export interface Objet {
@@ -27,7 +32,7 @@ export const OBJETS: Record<Lang, { objets: Objet[]; note: string }> = {
     objets: [
       {
         titre: "L'album photo grand format",
-        prix: "249 €",
+        prix: "129 €",
         quoi:
           "Un vrai livre photo, celui qu'on pose sur une table basse et qu'on rouvre dix ans plus tard.",
         detail:
@@ -37,27 +42,8 @@ export const OBJETS: Record<Lang, { objets: Objet[]; note: string }> = {
         inclus: "Compris dans la formule Héritage",
       },
       {
-        titre: "La gazette de votre événement, 50 exemplaires",
-        prix: "149 €",
-        quoi:
-          "Un petit journal de quatre pages qui raconte votre journée, imprimé en cinquante exemplaires.",
-        detail:
-          "Format journal, papier mat, quatre pages. Vos photos, les messages de vos invités et les moments de la journée mis en page comme un vrai quotidien.",
-        pourQui:
-          "À poster à ceux qui n'ont pas pu venir, ou à glisser dans les remerciements.",
-        inclus: "Compris dans la formule Héritage",
-      },
-      {
-        titre: "La gazette, 100 exemplaires",
-        prix: "219 €",
-        quoi: "La même gazette, en double.",
-        detail: "Même format, même papier, cent exemplaires au lieu de cinquante.",
-        pourQui:
-          "Pour les événements à deux cents personnes, ou les familles qui en redemandent une fois qu'elles l'ont vue.",
-      },
-      {
         titre: "Le mini-album",
-        prix: "79 €",
+        prix: "45 €",
         quoi: "Un petit album souple, à offrir.",
         detail: "20 × 20 cm, couverture souple, quarante pages.",
         pourQui:
@@ -81,7 +67,7 @@ export const OBJETS: Record<Lang, { objets: Objet[]; note: string }> = {
     objets: [
       {
         titre: "The large photo album",
-        prix: "€249",
+        prix: "€129",
         quoi: "A real photo book — the kind that sits on a coffee table and gets reopened ten years later.",
         detail:
           "30 × 30 cm, around 80 pages, heavy paper, cloth cover. It lies flat when open, so a photo can spread across both pages without breaking in the middle.",
@@ -90,24 +76,8 @@ export const OBJETS: Record<Lang, { objets: Objet[]; note: string }> = {
         inclus: "Included in the Heritage plan",
       },
       {
-        titre: "Your event newspaper, 50 copies",
-        prix: "€149",
-        quoi: "A four-page paper telling the story of your day, printed in fifty copies.",
-        detail:
-          "Newspaper format, matte paper, four pages. Your photos, your guests' messages and the moments of the day, laid out like a real daily.",
-        pourQui: "To post to those who could not come, or to slip into your thank-you notes.",
-        inclus: "Included in the Heritage plan",
-      },
-      {
-        titre: "The newspaper, 100 copies",
-        prix: "€219",
-        quoi: "The same paper, twice over.",
-        detail: "Same format, same paper, a hundred copies instead of fifty.",
-        pourQui: "For two-hundred-guest events, or families who ask for more once they have seen it.",
-      },
-      {
         titre: "The mini album",
-        prix: "€79",
+        prix: "€45",
         quoi: "A small soft-cover album, made to be given away.",
         detail: "20 × 20 cm, soft cover, forty pages.",
         pourQui:

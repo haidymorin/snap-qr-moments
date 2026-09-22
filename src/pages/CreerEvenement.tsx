@@ -29,6 +29,42 @@ type Etape = 1 | 2 | 3;
 
 const TYPES = ["mariage", "anniversaire", "bapteme", "entreprise", "autre"] as const;
 
+/* Quel module appartient à quelle formule.
+ *
+ * La correspondance n'existait nulle part : formules.ts donne le contenu de
+ * chaque formule en phrases, mais rien ne dit, module par module, à partir de
+ * quelle formule il se débloque. On l'écrit ici, déduite point par point de
+ * FORMULES — si un point change là-bas, il faut le reporter ici.
+ *
+ * Elle ne sert qu'à l'affichage. Un module non compris reste visible, grisé et
+ * non cliquable : voir qu'il existe et savoir ce qu'il coûterait vaut mieux
+ * que de le faire disparaître, et bien mieux que de le mélanger aux autres.
+ * Ni le paiement ni ce qui part au serveur n'en dépendent : seul l'identifiant
+ * de la formule voyage, comme avant.
+ */
+const MODULES: { id: string; debloque: PlanId; fr: string; en: string }[] = [
+  { id: "qr", debloque: "essentiel", fr: "Le QR code personnalisé, à imprimer et à poser sur les tables", en: "The personalised QR code, to print and put on the tables" },
+  { id: "galerie", debloque: "essentiel", fr: "La galerie en ligne privée, photos et vidéos illimitées", en: "The private online gallery, unlimited photos and videos" },
+  { id: "tri", debloque: "essentiel", fr: "Le tri automatique des doublons et des photos floues", en: "Automatic sorting of duplicates and blurry photos" },
+  { id: "telechargement", debloque: "essentiel", fr: "Le téléchargement en qualité d'origine, pour vous comme pour vos invités", en: "Original-quality downloads, for you and for your guests" },
+  { id: "signaletique", debloque: "essentiel", fr: "Les affiches et les cartons de table, en fichiers prêts à imprimer", en: "The signs and table cards, as ready-to-print files" },
+  { id: "hebergement", debloque: "essentiel", fr: "La galerie en ligne six mois, téléchargeable en un clic", en: "Six months online, downloadable in one click" },
+
+  { id: "livre-dor", debloque: "souvenir", fr: "Le livre d'or numérique : messages écrits, vocaux et vidéo", en: "The digital guest book: written, voice and video messages" },
+  { id: "visages", debloque: "souvenir", fr: "La reconnaissance faciale : chaque invité retrouve ses photos avec un selfie", en: "Face recognition: every guest finds their photos from a selfie" },
+  { id: "diaporama", debloque: "souvenir", fr: "Le diaporama en direct, à projeter pendant la soirée", en: "The live slideshow, to show on a screen during the party" },
+  { id: "jeu", debloque: "souvenir", fr: "Le jeu photo : une liste de défis à relever", en: "The photo game: a list of challenges to take on" },
+  { id: "affiches-plus", debloque: "souvenir", fr: "Les modèles d'affiches supplémentaires, à vos couleurs", en: "Extra sign templates, in your colours" },
+
+  { id: "album", debloque: "heritage", fr: "L'album photo imprimé grand format", en: "The large-format printed photo album" },
+  { id: "gazette", debloque: "heritage", fr: "La gazette de votre événement, 50 exemplaires", en: "Your event newspaper, 50 copies" },
+  { id: "composition", debloque: "heritage", fr: "L'outil de composition de l'album, à partir d'une première sélection", en: "The album builder, starting from a first selection" },
+];
+
+/* Les formules s'emboîtent : le Souvenir contient l'Essentiel, l'Héritage
+   contient le Souvenir. Un rang suffit donc à dire si un module est compris. */
+const RANG: Record<PlanId, number> = { essentiel: 0, souvenir: 1, heritage: 2 };
+
 const TEXTES: Record<Lang, {
   titre: string; chapo: string;
   pas: string[];
@@ -47,6 +83,7 @@ const TEXTES: Record<Lang, {
   /* Pas 2 */
   formuleTitre: string; formuleChapo: string;
   choisie: string; choisir: string; voirDetail: string; masquerDetail: string;
+  modulesTitre: string; modulesChapo: string; inclusDans: (nom: string) => string;
   /* Pas 3 */
   recapTitre: string; recapChapo: string;
   recapVous: string; recapEvenement: string; recapFormule: string; recapTotal: string;
@@ -101,6 +138,10 @@ const TEXTES: Record<Lang, {
     choisir: "Choisir cette formule",
     voirDetail: "Voir tout ce qui est compris",
     masquerDetail: "Masquer le détail",
+    modulesTitre: "Ce que votre formule débloque",
+    modulesChapo:
+      "Les modules grisés ne sont pas compris dans la formule choisie. Ils restent là : vous voyez ce qu'une formule supérieure ajouterait.",
+    inclusDans: (nom) => `Inclus dans ${nom}`,
     recapTitre: "On relit tout ensemble.",
     recapChapo: "Rien n'est encore payé. Vérifiez, corrigez si besoin, et validez.",
     recapVous: "Vos coordonnées",
@@ -183,6 +224,10 @@ const TEXTES: Record<Lang, {
     choisir: "Choose this plan",
     voirDetail: "See everything included",
     masquerDetail: "Hide the detail",
+    modulesTitre: "What your plan unlocks",
+    modulesChapo:
+      "Greyed-out modules are not part of the plan you chose. They stay visible: you can see what a higher plan would add.",
+    inclusDans: (nom) => `Included in ${nom}`,
     recapTitre: "Let's read it all back.",
     recapChapo: "Nothing has been paid yet. Check, correct if needed, then confirm.",
     recapVous: "Your details",
@@ -588,6 +633,49 @@ const CreerEvenement = () => {
                     </article>
                   );
                 })}
+
+                {/* Les modules, une fois la formule choisie. Ceux qu'elle ne
+                    contient pas restent affichés, grisés et inertes. */}
+                {plan && (
+                  <div className="rounded-2xl border border-border bg-card p-[clamp(22px,2.6vw,32px)]">
+                    <h3 className="text-[clamp(18px,1.8vw,22px)] leading-snug text-foreground">
+                      {T.modulesTitre}
+                    </h3>
+                    <p className="mt-2 max-w-[52ch] text-[13.5px] leading-relaxed text-muted-foreground">
+                      {T.modulesChapo}
+                    </p>
+
+                    <ul className="mt-5 space-y-3">
+                      {MODULES.map((m) => {
+                        const compris = RANG[m.debloque] <= RANG[plan];
+                        const nomDebloquant =
+                          formules.find((f) => f.id === m.debloque)?.nom ?? m.debloque;
+                        return (
+                          <li
+                            key={m.id}
+                            aria-disabled={compris ? undefined : "true"}
+                            className={`flex flex-wrap items-start gap-x-3 gap-y-2 text-[14.5px] leading-relaxed text-foreground ${
+                              compris ? "" : "pointer-events-none opacity-45"
+                            }`}
+                          >
+                            <span
+                              aria-hidden
+                              className={`mt-[7px] block size-[7px] shrink-0 rounded-full ${
+                                compris ? "bg-primary" : "bg-muted-foreground"
+                              }`}
+                            />
+                            <span className="flex-1">{m[lang]}</span>
+                            {!compris && (
+                              <span className="label-mono shrink-0 rounded-full border border-border px-2.5 py-1 text-muted-foreground opacity-100">
+                                {T.inclusDans(nomDebloquant)}
+                              </span>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
 
                 {erreurs.formule && (
                   <p className="text-[13px] text-destructive">{erreurs.formule}</p>

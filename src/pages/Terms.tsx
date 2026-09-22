@@ -52,9 +52,8 @@ const SECTIONS: Section[] = [
       {
         t: "Les objets imprimés, commandés séparément",
         li: [
-          "Album grand format — 249 €",
-          "Gazette de l'événement, 50 exemplaires — 149 € · 100 exemplaires — 219 €",
-          "Mini-album personnalisé — 79 €",
+          "Album grand format — 129 €",
+          "Mini-album personnalisé — 45 €",
           "Kit de signalétique imprimé — 89 €",
           "Année d'hébergement supplémentaire — 29 €",
         ],

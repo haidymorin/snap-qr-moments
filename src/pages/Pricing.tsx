@@ -9,18 +9,21 @@ import { FORMULES } from "@/data/formules";
 /* La page des tarifs.
  *
  * L'offre professionnelle a été retirée : elle n'existe pas encore. Afficher
- * « Pro Events, 149 € par mois » avec sept fonctionnalités qu'on ne sait pas
- * livrer, c'est promettre à un photographe un produit qu'il ne recevra pas.
- * Elle reviendra quand elle sera construite.
+ * un abonnement mensuel « Pro Events » avec sept fonctionnalités qu'on ne sait
+ * pas livrer, c'est promettre à un photographe un produit qu'il ne recevra
+ * pas. Elle reviendra quand elle sera construite.
  *
  * Les objets imprimés ont leur propre onglet : ils étaient en bas de cette
- * page, là où personne ne descend.
+ * page, là où personne ne descend. Le bas de page les rappelle, avec la
+ * démonstration — deux cartes, parce qu'une ligne de liens en dessous des
+ * formules ne se voit pas.
  */
 
 const TEXTES: Record<Lang, {
   eyebrow: string; titre: string; chapo: string; avis: string;
   detailTitre: string;
-  versObjets: string; versObjetsLien: string;
+  objetsTitre: string; objetsTexte: string; objetsLien: string;
+  demoTitre: string; demoTexte: string; demoLien: string;
   faqRenvoi: string; faqRenvoiLien: string;
 }> = {
   fr: {
@@ -31,9 +34,14 @@ const TEXTES: Record<Lang, {
     avis:
       "Les commandes ouvrent dans quelques jours. En attendant, réservez votre date : rien à payer, et le tarif affiché ici vous reste acquis.",
     detailTitre: "Ce que contient chaque formule",
-    versObjets:
-      "Les albums, la gazette et les objets imprimés se commandent séparément, après l'événement.",
-    versObjetsLien: "Voir les albums et objets",
+    objetsTitre: "Les albums et objets imprimés",
+    objetsTexte:
+      "Ils se commandent après l'événement, une fois que vous avez vu vos photos.",
+    objetsLien: "Voir les albums",
+    demoTitre: "Voir une galerie, sans rien installer",
+    demoTexte:
+      "La démonstration montre exactement ce que voient les mariés et leurs invités.",
+    demoLien: "Ouvrir la démonstration",
     faqRenvoi: "Toutes les questions fréquentes sont sur la page d'accueil.",
     faqRenvoiLien: "Les voir",
   },
@@ -45,9 +53,12 @@ const TEXTES: Record<Lang, {
     avis:
       "Orders open in a few days. In the meantime, save your date: nothing to pay, and the price shown here stays yours.",
     detailTitre: "What each plan includes",
-    versObjets:
-      "Albums, the newspaper and printed objects are ordered separately, after the event.",
-    versObjetsLien: "See albums and objects",
+    objetsTitre: "Albums and printed objects",
+    objetsTexte: "They are ordered after the event, once you have seen your photos.",
+    objetsLien: "See the albums",
+    demoTitre: "See a gallery, with nothing to install",
+    demoTexte: "The demo shows exactly what the couple and their guests see.",
+    demoLien: "Open the demo",
     faqRenvoi: "All frequently asked questions are on the home page.",
     faqRenvoiLien: "See them",
   },
@@ -156,22 +167,27 @@ const Pricing = () => {
             </div>
 
 
-            <div className="mt-[clamp(20px,2.6vw,32px)] flex flex-col items-center gap-3 rounded-2xl border border-border bg-card px-6 py-7 text-center">
-              <p className="max-w-[56ch] text-[15px] leading-relaxed text-foreground">
-                {T.versObjets}
-              </p>
-              <Link
-                to="/demo"
-                className="label-mono border-b border-foreground pb-0.5 text-foreground opacity-100 transition-opacity hover:opacity-60"
-              >
-                {lang === "fr" ? "Voir une galerie de démonstration" : "See a demo gallery"}
-              </Link>
-              <Link
-                to="/albums"
-                className="label-mono border-b border-foreground pb-0.5 text-foreground opacity-100 transition-opacity hover:opacity-60"
-              >
-                {T.versObjetsLien}
-              </Link>
+            {/* Une colonne sur téléphone, deux à partir de md : côte à côte,
+                les deux renvois pèsent le même poids. */}
+            <div className="mt-[clamp(20px,2.6vw,32px)] grid gap-[clamp(14px,1.8vw,22px)] md:grid-cols-2">
+              {[
+                { titre: T.objetsTitre, texte: T.objetsTexte, lien: T.objetsLien, vers: "/albums" },
+                { titre: T.demoTitre, texte: T.demoTexte, lien: T.demoLien, vers: "/demo" },
+              ].map((c) => (
+                <article
+                  key={c.vers}
+                  className="flex h-full flex-col rounded-2xl border border-border bg-card p-[clamp(24px,2.6vw,34px)] text-foreground"
+                >
+                  <h2 className="text-[clamp(21px,2vw,27px)] leading-tight">{c.titre}</h2>
+                  <p className="mt-4 flex-1 text-[15px] leading-relaxed">{c.texte}</p>
+                  <Link
+                    to={c.vers}
+                    className="mt-6 inline-flex min-h-[48px] items-center justify-center rounded-full border border-primary px-6 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                  >
+                    {c.lien}
+                  </Link>
+                </article>
+              ))}
             </div>
           </div>
         </section>
