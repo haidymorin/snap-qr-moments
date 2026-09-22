@@ -82,9 +82,7 @@ function PhotoWall() {
     const cols = w < 560 ? 2 : w < 900 ? 3 : 5;
     const cote = w / cols;
     const rangees = Math.ceil(h / cote) + 1;
-    /* Une vignette double occupe quatre cases : à nombre d'images égal la
-       grille se remplit moins loin, donc on compte large. */
-    const total = Math.ceil(cols * rangees * 1.4);
+    const total = cols * rangees;
     setColonnes(cols);
     setHauteurRangee(cote);
     setSize(total);
@@ -120,9 +118,9 @@ function PhotoWall() {
     timers.current.push(window.setTimeout(() => setTitle(true), 2750));
   }, [mesurer]);
 
-  /* Un onglet en arriere-plan voit ses minuteries gelees par le navigateur :
-     l'apparition progressive s'arrete en chemin et l'accueil reste vide au
-     retour. Des que la page passe en arriere-plan, on affiche tout d'un coup. */
+  /* Un onglet en arrière-plan voit ses minuteries gelées par le navigateur :
+     l'apparition progressive s'arrête en chemin et l'accueil reste vide au
+     retour. Dès que la page passe en arrière-plan, on affiche tout d'un coup. */
   const toutMontrer = useCallback(() => {
     timers.current.forEach(clearTimeout);
     timers.current = [];
@@ -166,11 +164,6 @@ function PhotoWall() {
     return m;
   }, [size]);
 
-  /* Toutes les vignettes de la même taille donnent un damier, et un damier ne
-     ressemble pas à un album. Une sur sept occupe deux colonnes et deux
-     rangées : la grille respire sans qu'on ait à la dessiner à la main. */
-  const grande = (i: number) => i % 9 === 4;
-
   return (
     <section className="relative flex min-h-[min(86vh,730px)] items-center justify-center overflow-hidden bg-[#DCD7CF]">
       <style>{`@keyframes mur-derive {
@@ -189,9 +182,7 @@ function PhotoWall() {
         {Array.from({ length: size }, (_, i) => (
           <div
             key={i}
-            className={`group relative overflow-hidden bg-secondary transition-[opacity,transform] duration-500 ease-out hover:z-10 ${
-              grande(i) ? "col-span-2 row-span-2" : ""
-            }`}
+            className="group relative overflow-hidden bg-secondary transition-[opacity,transform] duration-500 ease-out hover:z-10"
             style={{
               opacity: shown.includes(i) ? 1 : 0,
               transform: shown.includes(i) ? "scale(1)" : "scale(0.93)",
