@@ -65,23 +65,37 @@ function PhotoWall() {
   const [veil, setVeil] = useState(false);
   const [title, setTitle] = useState(false);
   const [size, setSize] = useState(48);
+  const [colonnes, setColonnes] = useState(5);
+  const [hauteurRangee, setHauteurRangee] = useState(240);
   const timers = useRef<number[]>([]);
   const wallRef = useRef<HTMLDivElement>(null);
+
+  /* La hauteur d'une rangée est calculée, jamais déduite : une grille en
+     `1fr` répartit la hauteur disponible entre toutes les rangées, et dès
+     qu'il y a plus de rangées que de place, les photos s'écrasent en bandes.
+     Ici une vignette est carrée (largeur de colonne = hauteur de rangée), on
+     en pose assez pour couvrir la zone, et ce qui dépasse est rogné. */
+  const mesurer = useCallback(() => {
+    const el = wallRef.current;
+    const w = el?.clientWidth ?? 1200;
+    const h = el?.clientHeight ?? 700;
+    const cols = w < 560 ? 2 : w < 900 ? 3 : 5;
+    const cote = w / cols;
+    const rangees = Math.ceil(h / cote) + 1;
+    /* Une vignette double occupe quatre cases : à nombre d'images égal la
+       grille se remplit moins loin, donc on compte large. */
+    const total = Math.ceil(cols * rangees * 1.4);
+    setColonnes(cols);
+    setHauteurRangee(cote);
+    setSize(total);
+    return total;
+  }, []);
 
   const play = useCallback(() => {
     timers.current.forEach(clearTimeout);
     timers.current = [];
 
-    const el = wallRef.current;
-    const cols = el && el.clientWidth < 560 ? 2 : el && el.clientWidth < 900 ? 3 : 5;
-    const w = el?.clientWidth ?? 1200;
-    const h = el?.clientHeight ?? 700;
-    /* Une vignette double occupe quatre cases : à nombre d'images égal, la
-       grille se remplit moins loin. On compte donc large — le débordement est
-       masqué, un trou en bas ne l'est pas. */
-    const rangees = Math.max(Math.ceil(h / (w / cols)) + 3, 5);
-    const total = Math.ceil(cols * rangees * 1.35);
-    setSize(total);
+    const total = mesurer();
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setShown(Array.from({ length: total }, (_, i) => i));
@@ -104,12 +118,22 @@ function PhotoWall() {
 
     timers.current.push(window.setTimeout(() => setVeil(true), 2250));
     timers.current.push(window.setTimeout(() => setTitle(true), 2750));
-  }, []);
+  }, [mesurer]);
 
   useEffect(() => {
     play();
-    return () => timers.current.forEach(clearTimeout);
-  }, [play]);
+    let attente = 0;
+    const auRedimensionnement = () => {
+      window.clearTimeout(attente);
+      attente = window.setTimeout(mesurer, 160);
+    };
+    window.addEventListener("resize", auRedimensionnement);
+    return () => {
+      window.clearTimeout(attente);
+      window.removeEventListener("resize", auRedimensionnement);
+      timers.current.forEach(clearTimeout);
+    };
+  }, [play, mesurer]);
 
   /* Les photos du mariage déjà livré ne sont plus exposées dans une bande à
      part, légendée « un vrai mariage » : la légende laissait entendre que les
@@ -125,8 +149,6 @@ function PhotoWall() {
     return m;
   }, [size]);
 
-  const cols = "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5";
-
   /* Toutes les vignettes de la même taille donnent un damier, et un damier ne
      ressemble pas à un album. Une sur sept occupe deux colonnes et deux
      rangées : la grille respire sans qu'on ait à la dessiner à la main. */
@@ -141,7 +163,11 @@ function PhotoWall() {
       <div
         ref={wallRef}
         aria-hidden
-        className={`absolute inset-[-7%] grid auto-rows-[minmax(0,1fr)] gap-1.5 p-1 ${cols} motion-safe:animate-[mur-derive_46s_ease-in-out_infinite_alternate]`}
+        className="absolute inset-[-7%] grid content-start gap-1.5 p-1 motion-safe:animate-[mur-derive_46s_ease-in-out_infinite_alternate]"
+        style={{
+          gridTemplateColumns: `repeat(${colonnes}, minmax(0, 1fr))`,
+          gridAutoRows: `${hauteurRangee}px`,
+        }}
       >
         {Array.from({ length: size }, (_, i) => (
           <div
@@ -174,7 +200,7 @@ function PhotoWall() {
         style={{
           opacity: veil ? 1 : 0,
           background:
-            "linear-gradient(180deg, hsl(var(--background)/0.34), hsl(var(--background)/0.52) 46%, hsl(var(--background)/0.66))",
+            "linear-gradient(180deg, hsl(var(--background)/0.20), hsl(var(--background)/0.36) 46%, hsl(var(--background)/0.50))",
         }}
       />
 
@@ -184,22 +210,25 @@ function PhotoWall() {
         style={{
           opacity: veil ? 1 : 0,
           background:
-            "radial-gradient(66% 58% at 50% 48%, hsl(var(--background)/0.95) 0%, hsl(var(--background)/0.86) 48%, hsl(var(--background)/0.10) 100%)",
+            "radial-gradient(64% 56% at 50% 46%, hsl(var(--background)/0.90) 0%, hsl(var(--background)/0.72) 52%, hsl(var(--background)/0.04) 100%)",
         }}
       />
 
-      <div className="relative z-10 max-w-3xl px-5 py-16 text-center">
+      <div className="relative z-10 max-w-4xl px-5 py-16 text-center">
 
         <div
           className="transition-[opacity,transform] duration-700 ease-out"
           style={{ opacity: title ? 1 : 0, transform: title ? "none" : "translateY(14px)" }}
         >
           <p className="eyebrow mt-4">{t("home.heroEyebrow")}</p>
-          <h1 className="mt-3 text-[clamp(38px,7.2vw,86px)] text-wrap balance">
+          <h1 className="mt-3 text-[clamp(32px,4.9vw,62px)] leading-[1.06] text-wrap balance">
             {t("home.heroTitle1")}
             <br />
             {t("home.heroTitle2")}
           </h1>
+          <p className="mt-4 text-[clamp(17px,2vw,22px)] font-semibold text-primary">
+            {t("home.heroSignature")}
+          </p>
           <p className="mx-auto mt-6 max-w-[50ch] text-[clamp(16px,1.7vw,18px)] text-muted-foreground leading-relaxed">
             {t("home.heroSubtitle")}
           </p>

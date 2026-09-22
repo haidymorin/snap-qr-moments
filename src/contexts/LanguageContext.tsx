@@ -94,8 +94,9 @@ const translations: Record<Lang, Dict> = {
       replay: "↻ Rejouer",
 
       heroEyebrow: "Le mariage vu par vos invités",
-      heroTitle1: "Leurs photos, leurs mots,",
-      heroTitle2: "votre album.",
+      heroTitle1: "Récupérez toutes les photos",
+      heroTitle2: "prises par vos invités.",
+      heroSignature: "Leurs photos, leurs mots, votre album.",
       heroSubtitle:
         "Un QR code sur les tables. Vos invités déposent leurs photos sans rien installer, le tri se fait tout seul, et il en reste un objet que vous gardez.",
       ctaCreate: "Créer mon événement",
@@ -395,8 +396,9 @@ const translations: Record<Lang, Dict> = {
       replay: "↻ Replay",
 
       heroEyebrow: "The wedding, seen by your guests",
-      heroTitle1: "Their photos, their words,",
-      heroTitle2: "your album.",
+      heroTitle1: "Get back every photo",
+      heroTitle2: "your guests took.",
+      heroSignature: "Their photos, their words, your album.",
       heroSubtitle:
         "A QR code on the tables. Your guests upload their photos without installing anything, the sorting happens on its own, and you keep something real at the end.",
       ctaCreate: "Create my event",
