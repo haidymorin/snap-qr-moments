@@ -11,6 +11,7 @@ import { photo, SELFIE_EXEMPLE, MARIAGE_REEL } from "@/lib/photos";
 import { RubanPhotos, CarrouselInertie } from "@/components/GaleriesAnimees";
 import CarteLueur from "@/components/CarteLueur";
 import Rassurance from "@/components/Rassurance";
+import FaqAccueil from "@/components/FaqAccueil";
 import { FORMULES } from "@/data/formules";
 
 /* Les photos libres de droits sont désormais partagées avec la page
@@ -603,6 +604,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <FaqAccueil />
 
       <Footer />
     </div>

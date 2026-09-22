@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   return (
     <footer className="bg-card border-t border-border mt-20">
       <div className="container mx-auto px-4 py-12">
@@ -49,8 +49,10 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/pricing#faq" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  {t("footer.faq")}
+                {/* Les questions fréquentes ont quitté la page des tarifs pour
+                    l'accueil : le lien suit. */}
+                <Link to="/#faq" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  {lang === "fr" ? "Questions fréquentes" : "FAQ"}
                 </Link>
               </li>
             </ul>

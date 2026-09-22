@@ -261,14 +261,18 @@ const Demo = () => {
 
             {onglet === "jeu" && (
               <div className="mt-6">
+                {/* Le jeu se lisait en gris clair sur blanc : les défis et le
+                    compteur disparaissaient. Le fond des cartes est désormais
+                    posé, et un défi relevé se voit de loin — bordure
+                    aubergine et pastille pleine, pas une nuance de gris. */}
                 <div className="flex flex-wrap items-end justify-between gap-4">
                   <div>
-                    <h2 className="text-2xl">{t.jeuTitre}</h2>
-                    <p className="mt-2 text-[14.5px] text-muted-foreground">{t.jeuTexte}</p>
+                    <h2 className="text-2xl text-foreground">{t.jeuTitre}</h2>
+                    <p className="mt-2 text-[15px] leading-relaxed text-foreground">{t.jeuTexte}</p>
                   </div>
                   <div className="text-right">
-                    <span className="label-mono block">{t.jeuScore}</span>
-                    <span className="font-display text-[34px] leading-none">
+                    <span className="label-mono block text-foreground">{t.jeuScore}</span>
+                    <span className="font-display text-[34px] leading-none text-foreground">
                       {DEFIS_FAITS.length}<span className="text-muted-foreground">/12</span>
                     </span>
                   </div>
@@ -280,14 +284,26 @@ const Demo = () => {
                     return (
                       <div
                         key={d}
-                        className={`flex flex-col justify-between gap-3 rounded-2xl border p-4 ${
-                          fait ? "border-primary bg-secondary" : "border-border bg-card"
+                        className={`flex flex-col justify-between gap-3 rounded-2xl border bg-secondary p-4 ${
+                          fait ? "border-primary ring-1 ring-primary" : "border-border"
                         }`}
                       >
-                        <span className="text-[14px] leading-snug text-foreground">{d}</span>
-                        <span className={`label-mono opacity-100 ${fait ? "text-primary" : "text-muted-foreground"}`}>
-                          {fait ? `✓ ${t.jeuFait}` : "—"}
+                        <span
+                          className={`text-[15px] leading-snug ${
+                            fait ? "font-medium text-foreground" : "text-muted-foreground"
+                          }`}
+                        >
+                          {d}
                         </span>
+                        {fait ? (
+                          <span className="label-mono inline-flex w-fit items-center rounded-full bg-primary px-3 py-1 text-primary-foreground opacity-100">
+                            ✓ {t.jeuFait}
+                          </span>
+                        ) : (
+                          <span className="label-mono inline-flex w-fit items-center rounded-full border border-border px-3 py-1 text-muted-foreground opacity-100">
+                            —
+                          </span>
+                        )}
                       </div>
                     );
                   })}
