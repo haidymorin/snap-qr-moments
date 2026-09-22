@@ -14,39 +14,30 @@ export const MARIAGE_REEL = [
   { src: voiture, alt: "mariageAltVoiture" },
 ];
 
-/* Photos de mariage libres de droits (Pexels — licence gratuite, usage
-   commercial autorisé, sans attribution obligatoire). Servies par le CDN de
-   Pexels, recadrées en carré : une vingtaine de Ko par vignette.
-   Pour les héberger nous-mêmes plus tard, il suffira de changer photoUrl.
-
-   Charte : un produit qui promet de belles photos ne montre jamais un
-   dégradé à la place d'une photo. Tout aplat décoratif passe par ici. */
-
-/* La banque d'images du site.
+/* La banque d'images du site, hébergée par nous.
  *
- * L'ancienne série montrait surtout des tables dressées, des fleurs et des
- * décors : joli, et à côté du sujet. Ce que le produit collecte, ce sont des
- * gens — des invités qui se prennent en photo, qui dansent, qui lèvent leur
- * verre. Une page qui ne montre que du décor ne ressemble pas à ce qu'on
- * reçoit le lendemain d'un mariage.
+ * Les vignettes venaient du CDN de Pexels : quand une image ne répondait pas,
+ * sa case restait vide sur la page d'accueil. Les cinquante photos sont
+ * désormais dans `public/photos`, recadrées en carré de 700 px (~60 Ko), et
+ * plus rien ne dépend d'un service extérieur.
  *
- * Ces vingt-cinq photos viennent d'un seul et même mariage, comme un vrai
- * album, et chacune a été regardée avant d'être retenue. */
-export const PHOTO_IDS = [
-  13434416, 13434419, 13434413, 13434420, 13434422,
-  13434417, 13434423, 13434424, 13434426, 13434421,
-  13434429, 13434430, 13434433, 13434434, 13434425,
-  13434436, 13434437, 13434438, 13434427, 13434439,
-  13434440, 13434431, 13434443, 13434444, 11988908,
-];
+ * Ce sont des photos libres de droits (Pexels et Unsplash, usage commercial
+ * autorisé), choisies dans la banque d'images du projet : des gens, pas des
+ * décors. Pour en ajouter une, la déposer dans `public/photos` sous le nom
+ * suivant et incrémenter NOMBRE_PHOTOS. */
 
+export const NOMBRE_PHOTOS = 50;
 
-export const photoUrl = (id: number, size = 420) =>
-  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${size}&h=${size}&fit=crop`;
+const nom = (n: number) => `/photos/photo-${String(n).padStart(2, "0")}.jpg`;
 
-/** Une photo par index, en boucle sur la liste. */
-export const photo = (i: number, size = 420) =>
-  photoUrl(PHOTO_IDS[((i % PHOTO_IDS.length) + PHOTO_IDS.length) % PHOTO_IDS.length], size);
+/** Une photo par index, en boucle sur la banque. Le paramètre de taille est
+    conservé pour ne rien casser côté appelants : les fichiers sont déjà
+    servis à la bonne taille. */
+export const photo = (i: number, _size = 420) =>
+  nom((((i % NOMBRE_PHOTOS) + NOMBRE_PHOTOS) % NOMBRE_PHOTOS) + 1);
+
+/** Utilisée là où un identifiant précis était demandé. */
+export const photoUrl = (id: number, _size = 420) => photo(id);
 
 /** La même, prête à poser en fond de bloc. */
 export const photoBg = (i: number, size = 420) =>

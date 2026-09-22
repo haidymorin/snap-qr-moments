@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
 import { lienAchat } from "@/lib/vente";
-import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
+import { photo, photoUrl } from "@/lib/photos";
 import { X } from "lucide-react";
 
 /* La galerie de démonstration.
@@ -146,7 +146,9 @@ const T: Record<Lang, {
 /* Huit photos où la mariée apparaît, reprises de la démonstration de
    l'accueil : c'est la même personne, sans quoi la reconnaissance par visage
    ne veut rien dire. */
-const CAMILLE = [13434416, 13434413, 13434423, 13434424, 13434430, 13434433, 13434437, 13434429];
+/* Les huit photos où « Camille » apparaît : des index de la banque, choisis
+   pour que la série se tienne. */
+const CAMILLE = [3, 9, 14, 21, 28, 33, 41, 47];
 const DEFIS_FAITS = [0, 2, 3, 6, 9];
 
 const Demo = () => {
@@ -155,14 +157,12 @@ const Demo = () => {
   const [onglet, setOnglet] = useState<Onglet>("toutes");
   const [agrandie, setAgrandie] = useState<string | null>(null);
 
-  /* Les photos du mariage de juin ouvrent la galerie, le reste vient de la
-     banque d'images. */
-  const toutes = useMemo(() => {
-    const libres = Array.from({ length: 44 }, (_, i) => photo(i * 3 + 2, 640));
-    const reelles = MARIAGE_REEL.map((p) => p.src);
-    return [reelles[0], ...libres.slice(0, 5), reelles[1], ...libres.slice(5, 11),
-            reelles[2], ...libres.slice(11, 19), reelles[3], ...libres.slice(19)];
-  }, []);
+  /* Uniquement des photos libres de droits : les photos du mariage de juin
+     ne servent plus de démonstration. */
+  const toutes = useMemo(
+    () => Array.from({ length: 48 }, (_, i) => photo(i * 3 + 2, 640)),
+    [],
+  );
 
   const mesPhotos = useMemo(() => CAMILLE.map((id) => photoUrl(id, 640)), []);
   const affichees = onglet === "moi" ? mesPhotos : toutes;

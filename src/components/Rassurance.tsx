@@ -30,7 +30,7 @@ const T: Record<Lang, {
       {
         titre: "Vos invités participent, parce que tout les y pousse",
         texte:
-          "Un panneau à l'entrée, un chevalet sur chaque table, et le QR code sous les yeux pendant tout le repas. Sur les formules avec diaporama, les photos s'affichent au fur et à mesure sur grand écran : c'est ce qui déclenche le reste de la salle. Et il n'y a rien à installer ni de compte à créer — c'est là que les autres solutions perdent la moitié des invités.",
+          "Un panneau à l'entrée, un carton sur chaque table, et le QR code sous les yeux pendant tout le repas. Sur les formules avec diaporama, les photos s'affichent au fur et à mesure sur grand écran : c'est ce qui déclenche le reste de la salle. Et il n'y a rien à installer ni de compte à créer — c'est là que les autres solutions perdent la moitié des invités.",
       },
       {
         titre: "Le réseau de la salle ne fait pas tout rater",
@@ -44,9 +44,9 @@ const T: Record<Lang, {
       "Vos données ne sont ni vendues ni transmises à qui que ce soit",
       "Tout est supprimé définitivement à l'échéance, sauvegardes comprises",
       "La reconnaissance faciale est facultative, invité par invité",
-      "Un seul paiement, pas d'abonnement, pas de commission sur vos photos",
+      "Un seul paiement pour votre événement",
     ],
-    gagesNote: "Une question avant de vous décider ? Écrivez-nous, c'est une personne qui répond.",
+    gagesNote: "Une question avant de vous décider ? Écrivez-nous, notre équipe vous répond sous 48 heures.",
   },
   en: {
     eyebrow: "What people ask us most",
@@ -69,9 +69,9 @@ const T: Record<Lang, {
       "Your data is never sold or passed on to anyone",
       "Everything is permanently deleted at the deadline, backups included",
       "Face recognition is optional, guest by guest",
-      "One payment, no subscription, no commission on your photos",
+      "One payment for your event",
     ],
-    gagesNote: "A question before you decide? Write to us — a person answers.",
+    gagesNote: "A question before you decide? Write to us, our team replies within 48 hours.",
   },
 };
 
@@ -109,9 +109,9 @@ const Rassurance = () => {
           ))}
         </ul>
 
-        <p className="mt-8 text-center text-[14px] text-muted-foreground">
+        <p className="mt-10 text-center text-[clamp(17px,1.6vw,20px)] font-semibold text-foreground">
           {t.gagesNote}{" "}
-          <Link to="/contact" className="border-b border-foreground text-foreground">
+          <Link to="/contact" className="border-b-2 border-foreground text-foreground">
             {lang === "fr" ? "Nous écrire" : "Write to us"}
           </Link>
         </p>

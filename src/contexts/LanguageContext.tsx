@@ -209,10 +209,10 @@ const translations: Record<Lang, Dict> = {
       c1Num: "01 · Avant",
       c1Title: "Vous créez l'événement.",
       c1Desc:
-        "Le nom, la date, et c'est prêt. Votre QR code arrive tout de suite, avec les fichiers à imprimer : le panneau d'accueil et les chevalets à poser sur les tables.",
-      c1B1: "Deux minutes, sans configuration",
-      c1B2: "Le panneau et les chevalets à vos couleurs, avec votre nom et votre date",
-      c1B3: "La signalétique à imprimer, incluse dans tous les paliers",
+        "Le nom, la date, et c'est prêt. Votre QR code arrive tout de suite, avec les fichiers à imprimer : le panneau d'accueil et les cartons à poser sur les tables.",
+      c1B1: "Quelques minutes, sans rien à installer",
+      c1B2: "Les fichiers du panneau et des cartons de table, avec votre nom et votre date, prêts à imprimer",
+      c1B3: "Les fichiers à imprimer sont inclus dans toutes les formules",
 
       c2Num: "02 · Pendant",
       c2Title: "Vos invités déposent.",

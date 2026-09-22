@@ -51,7 +51,7 @@ export const FORMULES: Record<Lang, Formule[]> = {
         "Aucune application à installer et aucun compte à créer pour vos invités",
         "Le tri automatique des doublons et des photos floues",
         "Téléchargement en qualité d'origine, pour vous comme pour vos invités",
-        "Les affiches et les chevalets de table, prêts à imprimer, à votre nom et à votre date",
+        "Les affiches et les cartons de table, en fichiers prêts à imprimer, à votre nom et à votre date",
         "Galerie en ligne six mois, et tout l'album téléchargeable en un clic",
       ],
     },
@@ -72,9 +72,9 @@ export const FORMULES: Record<Lang, Formule[]> = {
       points: [
         "Le livre d'or numérique : messages écrits, vocaux et vidéo",
         "La reconnaissance faciale : chaque invité retrouve ses photos avec un selfie",
-        "Le diaporama en direct : photos et messages projetés pendant la soirée",
+        "Le diaporama en direct, prêt à diffuser sur un écran pendant la soirée : photos et messages",
         "Le jeu photo : une liste de défis à relever, au choix parmi trois modèles",
-        "Trois modèles d'affiches au choix, à vos couleurs, avec votre mot d'accueil",
+        "Des modèles d'affiches supplémentaires, personnalisés à vos couleurs et avec votre mot d'accueil",
       ],
     },
     {
@@ -90,8 +90,8 @@ export const FORMULES: Record<Lang, Formule[]> = {
       herite: "Tout ce que contient le Souvenir, et en plus :",
       cta: "Choisir l'Héritage",
       points: [
-        "L'album photo imprimé grand format 30 × 30 (249 € s'il est pris seul)",
-        "La gazette de votre événement, 50 exemplaires (149 € si elle est prise seule)",
+        "L'album photo imprimé grand format",
+        "La gazette de votre événement, 50 exemplaires",
         "L'outil de composition de l'album : le site vous propose une première sélection, vous ajoutez, retirez et réordonnez comme vous voulez",
       ],
     },
@@ -136,9 +136,9 @@ export const FORMULES: Record<Lang, Formule[]> = {
       points: [
         "The digital guest book: written, voice and video messages",
         "Face recognition: every guest finds their photos from a selfie",
-        "The live slideshow: photos and messages projected during the party",
+        "The live slideshow, ready to show on a screen during the party: photos and messages",
         "The photo game: a list of challenges to take on, in one of three templates",
-        "Three sign templates to choose from, in your colours, with your own welcome line",
+        "Extra sign templates, personalised in your colours and with your own welcome line",
       ],
     },
     {
@@ -153,8 +153,8 @@ export const FORMULES: Record<Lang, Formule[]> = {
       herite: "Everything in Souvenir, plus:",
       cta: "Choose Heritage",
       points: [
-        "The large-format 30 × 30 printed photo album (€249 on its own)",
-        "Your event newspaper, 50 copies (€149 on its own)",
+        "The large-format printed photo album",
+        "Your event newspaper, 50 copies",
         "The album builder: the site suggests a first selection, you add, remove and reorder it as you like",
       ],
     },

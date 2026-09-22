@@ -515,7 +515,7 @@ const Index = () => {
 
       {/* Les objets imprimés, avec le mot posé en très grand */}
       <section className="relative overflow-hidden bg-card py-[clamp(58px,7.5vw,100px)]">
-        <div className="giant-word bottom-[6%] text-[clamp(120px,21vw,300px)]">MEMORIES</div>
+        <div className="giant-word bottom-[6%] text-[clamp(90px,16vw,240px)]">MEMORIES</div>
         <div className="relative z-10 mx-auto max-w-[1180px] px-[clamp(20px,5vw,48px)]">
           <div className="mx-auto mb-[clamp(32px,4.2vw,52px)] max-w-2xl text-center">
             <p className="eyebrow">{t("home.objEyebrow")}</p>

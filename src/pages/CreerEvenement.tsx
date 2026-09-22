@@ -123,8 +123,8 @@ const TEXTES: Record<Lang, {
     gages: [
       "Votre QR code et vos affiches sont disponibles immédiatement après le paiement.",
       "Votre galerie n'ouvre qu'à la date de votre événement — vous avez le temps de tout préparer.",
-      "Un seul paiement. Pas d'abonnement, pas de commission sur vos photos.",
-      "Une question, un souci : écrivez à contact@qr-memories.fr, c'est une personne qui répond.",
+      "Un seul paiement pour votre événement.",
+      "Une question, un souci : écrivez à contact@qr-memories.fr, notre équipe vous répond sous 48 heures.",
     ],
     erreurs: {
       prenom: "Indiquez votre prénom.",

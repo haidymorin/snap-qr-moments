@@ -28,7 +28,7 @@ const TEXTES: Record<Lang, {
     eyebrow: "Un prix par événement, pas d'abonnement",
     titre: "Trois façons de garder votre soirée.",
     chapo:
-      "Vous payez une seule fois, pour un seul événement. Aucun abonnement, aucune commission sur vos photos. Les albums et les objets imprimés se commandent après, une fois que vous avez vu les photos.",
+      "Vous payez une seule fois, pour votre événement. Les albums et les objets imprimés se commandent après, une fois que vous avez vu les photos.",
     avis:
       "Les commandes ouvrent dans quelques jours. En attendant, réservez votre date : rien à payer, et le tarif affiché ici vous reste acquis.",
     detailTitre: "Ce que contient chaque formule",
@@ -73,7 +73,7 @@ const TEXTES: Record<Lang, {
     eyebrow: "One price per event, no subscription",
     titre: "Three ways to keep your night.",
     chapo:
-      "You pay once, for one event. No subscription, no commission on your photos. Albums and printed objects are ordered afterwards, once you have seen the photos.",
+      "You pay once, for your event. Albums and printed objects are ordered afterwards, once you have seen the photos.",
     avis:
       "Orders open in a few days. In the meantime, save your date: nothing to pay, and the price shown here stays yours.",
     detailTitre: "What each plan includes",
@@ -218,9 +218,6 @@ const Pricing = () => {
               })}
             </div>
 
-            <p className="mx-auto mt-[clamp(28px,3.5vw,44px)] max-w-[66ch] text-center text-[14.5px] leading-relaxed text-muted-foreground">
-              {T.ancrage}
-            </p>
 
             <div className="mt-[clamp(20px,2.6vw,32px)] flex flex-col items-center gap-3 rounded-2xl border border-border bg-card px-6 py-7 text-center">
               <p className="max-w-[56ch] text-[15px] leading-relaxed text-foreground">

@@ -24,10 +24,10 @@ const TEXTES = {
     eyebrow: "Paiement reçu",
     attenteTitre: "Nous préparons votre événement.",
     attenteCorps:
-      "Quelques secondes, le temps que notre banque nous confirme le paiement. Ne fermez pas cette page.",
+      "Quelques secondes, le temps de confirmer votre paiement. Ne fermez pas cette page.",
     pretTitre: "C'est prêt.",
     pretCorps:
-      "Votre galerie existe déjà. Voici le QR code que vos invités scanneront ; vous le retrouverez à tout moment dans votre espace, avec la signalétique à imprimer.",
+      "Votre galerie a été créée. Voici le QR code que vos invités scanneront ; vous le retrouverez à tout moment dans votre espace, avec la signalétique à imprimer.",
     palier: "Formule",
     quand: "Date",
     jusqua: "Photos conservées jusqu'au",
