@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
 import { lienAchat } from "@/lib/vente";
-import { photo, photoUrl } from "@/lib/photos";
+import { photo, PHOTOS_INVITEE, SELFIE_EXEMPLE } from "@/lib/photos";
 import { X } from "lucide-react";
 
 /* La galerie de démonstration.
@@ -51,9 +51,9 @@ const T: Record<Lang, {
       jeu: "Le jeu",
       livre: "Le livre d'or",
     },
-    moiTitre: "Ce que voit un invité qui s'est reconnu",
+    moiTitre: "Ce que voit une invitée après son selfie",
     moiTexte:
-      "Il prend un selfie, et il ne lui reste que les photos où il apparaît — huit sur huit cent vingt-sept. C'est facultatif : celui qui ne le fait pas dépose ses photos comme les autres.",
+      "Elle se prend en photo, et il ne lui reste que les photos où elle apparaît, retrouvées parmi les 827 de la soirée. C'est facultatif : celle qui ne le fait pas dépose ses photos comme les autres.",
     jeuTitre: "La chasse au trésor",
     jeuTexte: "Douze défis. On photographie, le défi se coche.",
     jeuFait: "Fait",
@@ -102,9 +102,9 @@ const T: Record<Lang, {
       jeu: "The game",
       livre: "The guest book",
     },
-    moiTitre: "What a guest who recognised themselves sees",
+    moiTitre: "What a guest sees after her selfie",
     moiTexte:
-      "They take a selfie, and only the photos they appear in are left — eight out of eight hundred and twenty-seven. It is optional: whoever skips it uploads like everyone else.",
+      "She takes a selfie, and only the photos she appears in are left, found among the 827 of the night. It is optional: whoever skips it uploads like everyone else.",
     jeuTitre: "The treasure hunt",
     jeuTexte: "Twelve challenges. Take the photo, the challenge is ticked off.",
     jeuFait: "Done",
@@ -146,9 +146,9 @@ const T: Record<Lang, {
 /* Huit photos où la mariée apparaît, reprises de la démonstration de
    l'accueil : c'est la même personne, sans quoi la reconnaissance par visage
    ne veut rien dire. */
-/* Les huit photos où « Camille » apparaît : des index de la banque, choisis
-   pour que la série se tienne. */
-const CAMILLE = [3, 9, 14, 21, 28, 33, 41, 47];
+/* Les photos où « Camille » apparaît. Ce sont celles d'un même mariage, avec
+   la même invitée : c'est ce qui rend la démonstration lisible. */
+const CAMILLE = PHOTOS_INVITEE;
 const DEFIS_FAITS = [0, 2, 3, 6, 9];
 
 const Demo = () => {
@@ -164,7 +164,7 @@ const Demo = () => {
     [],
   );
 
-  const mesPhotos = useMemo(() => CAMILLE.map((id) => photoUrl(id, 640)), []);
+  const mesPhotos = useMemo(() => CAMILLE.map((i) => photo(i, 640)), []);
   const affichees = onglet === "moi" ? mesPhotos : toutes;
 
   return (
@@ -213,11 +213,25 @@ const Demo = () => {
             </div>
 
             {onglet === "moi" && (
-              <div className="mt-6 rounded-2xl border border-border bg-card p-5">
-                <p className="text-[15px] font-semibold text-foreground">{t.moiTitre}</p>
-                <p className="mt-2 max-w-[64ch] text-[14px] leading-relaxed text-muted-foreground">
-                  {t.moiTexte}
-                </p>
+              <div className="mt-6 flex flex-wrap items-center gap-5 rounded-2xl border border-border bg-card p-5">
+                <figure className="m-0 shrink-0">
+                  <img
+                    src={SELFIE_EXEMPLE}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    className="h-24 w-24 rounded-xl border border-border object-cover"
+                  />
+                  <figcaption className="label-mono mt-2 text-center">
+                    {lang === "en" ? "Her selfie" : "Son selfie"}
+                  </figcaption>
+                </figure>
+                <div className="min-w-[240px] flex-1">
+                  <p className="text-[15px] font-semibold text-foreground">{t.moiTitre}</p>
+                  <p className="mt-2 max-w-[64ch] text-[14px] leading-relaxed text-muted-foreground">
+                    {t.moiTexte}
+                  </p>
+                </div>
               </div>
             )}
 

@@ -7,7 +7,7 @@ import etape2 from "@/assets/steps/etape-2-invites.jpg";
 import etape3 from "@/assets/steps/etape-3-galerie.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { lienAchat, cleAchat } from "@/lib/vente";
-import { photo, photoUrl, MARIAGE_REEL } from "@/lib/photos";
+import { photo, SELFIE_EXEMPLE, MARIAGE_REEL } from "@/lib/photos";
 import { RubanPhotos, CarrouselInertie } from "@/components/GaleriesAnimees";
 import CarteLueur from "@/components/CarteLueur";
 import Rassurance from "@/components/Rassurance";
@@ -35,29 +35,27 @@ const STEP_IMAGES = [etape1, etape2, etape3];
 const STEP_ALT = ["stepsAlt1", "stepsAlt2", "stepsAlt3"];
 
 /** Le gros plan du visage recherché. */
-const CAMILLE_SELFIE = 13434422;
-
-const ALBUM_DEMO: { id: number; camille: boolean }[] = [
-  { id: 13434420, camille: false },
-  { id: 13434416, camille: true },
-  { id: 13434417, camille: false },
-  { id: 13434413, camille: true },
-  { id: 13434421, camille: false },
-  { id: 13434425, camille: false },
-  { id: 13434423, camille: true },
-  { id: 13434426, camille: false },
-  { id: 13434424, camille: true },
-  { id: 13434427, camille: false },
-  { id: 13434431, camille: false },
-  { id: 13434430, camille: true },
-  { id: 13434434, camille: false },
-  { id: 13434439, camille: false },
-  { id: 13434433, camille: true },
-  { id: 13434440, camille: false },
-  { id: 13434437, camille: true },
-  { id: 13434443, camille: false },
-  { id: 13434429, camille: true },
-  { id: 13434444, camille: false },
+/* La galerie d'exemple, et dedans les deux photos où apparaît l'invitée du
+   selfie : ce sont les seules à rester nettes une fois le tri lancé. */
+const ALBUM_DEMO: { i: number; elle: boolean }[] = [
+  { i: 4, elle: false },
+  { i: 43, elle: true },
+  { i: 9, elle: false },
+  { i: 18, elle: false },
+  { i: 22, elle: false },
+  { i: 12, elle: false },
+  { i: 44, elle: true },
+  { i: 27, elle: false },
+  { i: 31, elle: false },
+  { i: 2, elle: false },
+  { i: 35, elle: false },
+  { i: 39, elle: false },
+  { i: 7, elle: false },
+  { i: 15, elle: false },
+  { i: 47, elle: false },
+  { i: 20, elle: false },
+  { i: 25, elle: false },
+  { i: 29, elle: false },
 ];
 
 /** Le mur de photos qui se remplit au chargement, puis laisse place au titre. */
@@ -349,7 +347,7 @@ const Index = () => {
 
               <div className="mt-6 flex flex-wrap items-center gap-4 rounded-xl border border-night-border bg-night-surface px-5 py-4">
                 <img
-                  src={photoUrl(CAMILLE_SELFIE)}
+                  src={SELFIE_EXEMPLE}
                   alt=""
                   loading="lazy"
                   decoding="async"
@@ -375,18 +373,18 @@ const Index = () => {
               <div ref={grille} className="mt-3 grid grid-cols-4 gap-1.5 sm:grid-cols-6">
                 {ALBUM_DEMO.map((p, i) => (
                   <div
-                    key={p.id}
+                    key={p.i}
                     style={{ transitionDelay: `${i * 45}ms` }}
                     className={`relative aspect-square overflow-hidden bg-night-surface transition-all duration-700 ease-out ${
                       !trie
                         ? ""
-                        : p.camille
+                        : p.elle
                           ? "outline outline-1 outline-offset-2 outline-night-foreground"
                           : "scale-[0.86] opacity-[0.18] grayscale"
                     }`}
                   >
                     <img
-                      src={photoUrl(p.id)}
+                      src={photo(p.i, 640)}
                       alt=""
                       loading="lazy"
                       decoding="async"

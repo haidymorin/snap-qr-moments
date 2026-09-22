@@ -39,6 +39,16 @@ export const photo = (i: number, _size = 420) =>
 /** Utilisée là où un identifiant précis était demandé. */
 export const photoUrl = (id: number, _size = 420) => photo(id);
 
+/* L'exemple de la recherche par visage.
+ *
+ * La démonstration ne tient que si c'est la même personne sur le selfie et
+ * dans les photos retrouvées : une invitée reconnaissable, deux photos d'un
+ * même mariage, et le portrait recadré dans l'une d'elles. Tant qu'on n'a pas
+ * de série plus longue d'un même mariage, on en montre deux et on n'en
+ * annonce pas davantage. */
+export const SELFIE_EXEMPLE = "/photos/selfie-exemple.jpg";
+export const PHOTOS_INVITEE = [43, 44];
+
 /** La même, prête à poser en fond de bloc. */
 export const photoBg = (i: number, size = 420) =>
   `center / cover no-repeat url("${photo(i, size)}")`;

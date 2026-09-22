@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { siteOrigin } from "@/lib/siteUrl";
 import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -112,6 +113,32 @@ const Auth = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  /* Mot de passe oublié.
+   *
+   * Sans ce chemin, un client qui a payé et fermé la page de confirmation sans
+   * choisir de mot de passe n'a plus aucun moyen d'entrer : le compte existe,
+   * il est créé par le webhook, mais rien ne s'ouvre. Le lien reçu par e-mail
+   * ouvre une session et mène au tableau de bord, où le mot de passe se
+   * définit en deux champs. */
+  const [envoiOubli, setEnvoiOubli] = useState(false);
+
+  const motDePasseOublie = async () => {
+    const email = signInData.email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      toast({ title: t("auth.forgotNeedEmail"), variant: "destructive" });
+      return;
+    }
+    setEnvoiOubli(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${siteOrigin()}/dashboard`,
+    });
+    setEnvoiOubli(false);
+    /* On dit la même chose dans les deux cas : confirmer qu'une adresse existe
+       renseignerait n'importe qui sur la clientèle. */
+    toast({ title: t("auth.forgotSent"), description: t("auth.forgotSentDesc") });
+    if (error) console.error("mot de passe oublié", error.message);
   };
 
   const pwToggle = (visible: boolean, setVisible: (v: boolean) => void) => (
@@ -275,6 +302,14 @@ const Auth = () => {
                       <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isSubmitting}>
                         {isSubmitting ? t("auth.signingIn") : t("auth.signInBtn")}
                       </Button>
+                      <button
+                        type="button"
+                        onClick={motDePasseOublie}
+                        disabled={envoiOubli}
+                        className="block w-full text-center text-sm text-muted-foreground underline underline-offset-4"
+                      >
+                        {t("auth.forgot")}
+                      </button>
                     </form>
                   </TabsContent>
                 </Tabs>

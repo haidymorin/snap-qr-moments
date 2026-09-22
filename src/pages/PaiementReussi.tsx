@@ -32,8 +32,15 @@ const TEXTES = {
     quand: "Date",
     jusqua: "Photos conservées jusqu'au",
     lien: "Lien de vos invités",
-    entrer: "Accéder à mon espace",
-    entrerAide: "Ce bouton vous connecte directement. Vous pourrez choisir un mot de passe ensuite.",
+    entrer: "Créer mon espace",
+    entrerAide: "Ce mot de passe vous servira à revenir dans votre espace quand vous voulez.",
+    mdpTitre: "Choisissez votre mot de passe",
+    mdpChamp: "Mot de passe (8 caractères minimum)",
+    mdpChamp2: "Confirmez le mot de passe",
+    mdpCourt: "Huit caractères minimum.",
+    mdpDifferent: "Les deux mots de passe ne sont pas identiques.",
+    mdpEchec: "Le mot de passe n'a pas pu être enregistré. Vous pourrez le définir depuis votre espace.",
+    plusTard: "Plus tard, entrer sans mot de passe",
     entrerEchec: "La connexion automatique n'a pas abouti. Connectez-vous avec votre adresse e-mail.",
     connexion: "Se connecter",
     lenteurTitre: "Le paiement est bien passé.",
@@ -55,8 +62,15 @@ const TEXTES = {
     quand: "Date",
     jusqua: "Photos kept until",
     lien: "Your guests' link",
-    entrer: "Go to my space",
-    entrerAide: "This button signs you in directly. You can set a password afterwards.",
+    entrer: "Create my space",
+    entrerAide: "This password is what lets you come back to your space whenever you want.",
+    mdpTitre: "Choose your password",
+    mdpChamp: "Password (8 characters minimum)",
+    mdpChamp2: "Confirm the password",
+    mdpCourt: "Eight characters minimum.",
+    mdpDifferent: "The two passwords do not match.",
+    mdpEchec: "The password could not be saved. You can set it from your space.",
+    plusTard: "Later, go in without a password",
     entrerEchec: "Automatic sign-in did not work. Please sign in with your email address.",
     connexion: "Sign in",
     lenteurTitre: "Your payment went through.",
@@ -92,6 +106,14 @@ const PaiementReussi = () => {
   const [evenement, setEvenement] = useState<Evenement | null>(null);
   const [jeton, setJeton] = useState<string | null>(null);
   const [entree, setEntree] = useState<"prete" | "encours" | "echec">("prete");
+  /* Le mot de passe se choisit ici, pas plus tard.
+     Le compte est créé par le webhook sans mot de passe : si la personne ferme
+     cette page sans en poser un, elle n'a plus aucun moyen de revenir dans son
+     espace. Le formulaire est donc sur le chemin, et « plus tard » reste
+     possible — on ne retient personne devant un champ après un paiement. */
+  const [mdp, setMdp] = useState("");
+  const [mdp2, setMdp2] = useState("");
+  const [erreurMdp, setErreurMdp] = useState<string | null>(null);
   const naviguer = useNavigate();
   const [tropLong, setTropLong] = useState(false);
   const depart = useRef(Date.now());
@@ -144,13 +166,25 @@ const PaiementReussi = () => {
      Passer par le lien tout fait de Supabase ferait transiter la personne par
      une adresse de redirection déclarée ailleurs — c'est ce qui la renvoyait
      sur l'ancien site après le changement de nom de domaine. */
-  const entrerDansEspace = async () => {
+  const entrerDansEspace = async (avecMotDePasse: boolean) => {
     if (!jeton) return;
+    if (avecMotDePasse) {
+      if (mdp.length < 8) { setErreurMdp(T.mdpCourt); return; }
+      if (mdp !== mdp2) { setErreurMdp(T.mdpDifferent); return; }
+    }
+    setErreurMdp(null);
     setEntree("encours");
     const { error } = await supabase.auth.verifyOtp({ token_hash: jeton, type: "magiclink" });
     if (error) {
       setEntree("echec");
       return;
+    }
+    if (avecMotDePasse) {
+      const { error: erreurPw } = await supabase.auth.updateUser({ password: mdp });
+      /* Un mot de passe refusé ne doit pas coûter l'accès : la session est
+         ouverte, on entre quand même et on le redira depuis le tableau de
+         bord. */
+      if (erreurPw) setErreurMdp(T.mdpEchec);
     }
     naviguer("/dashboard");
   };
@@ -241,16 +275,45 @@ const PaiementReussi = () => {
             <div className="mt-9">
               {jeton && entree !== "echec" ? (
                 <>
+                  <p className="text-[15px] font-semibold text-foreground">{T.mdpTitre}</p>
+                  <div className="mt-3 grid max-w-[420px] gap-2">
+                    <input
+                      type="password"
+                      value={mdp}
+                      onChange={(e) => { setMdp(e.target.value); setErreurMdp(null); }}
+                      placeholder={T.mdpChamp}
+                      autoComplete="new-password"
+                      className="min-h-[48px] rounded-xl border border-border bg-background px-3 text-[15px] outline-none focus:border-primary"
+                    />
+                    <input
+                      type="password"
+                      value={mdp2}
+                      onChange={(e) => { setMdp2(e.target.value); setErreurMdp(null); }}
+                      placeholder={T.mdpChamp2}
+                      autoComplete="new-password"
+                      className="min-h-[48px] rounded-xl border border-border bg-background px-3 text-[15px] outline-none focus:border-primary"
+                    />
+                    {erreurMdp && <p className="text-[13px] text-destructive">{erreurMdp}</p>}
+                  </div>
+
                   <button
                     type="button"
-                    onClick={entrerDansEspace}
+                    onClick={() => entrerDansEspace(true)}
                     disabled={entree === "encours"}
-                    className="inline-flex min-h-[52px] items-center rounded-full border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-60"
+                    className="mt-5 inline-flex min-h-[52px] items-center rounded-full border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-60"
                   >
                     {entree === "encours" && <Loader2 className="mr-3 h-4 w-4 animate-spin" />}
                     {T.entrer}
                   </button>
                   <p className="mt-3 max-w-[44ch] text-xs text-muted-foreground">{T.entrerAide}</p>
+                  <button
+                    type="button"
+                    onClick={() => entrerDansEspace(false)}
+                    disabled={entree === "encours"}
+                    className="mt-3 block text-[13px] text-muted-foreground underline underline-offset-4"
+                  >
+                    {T.plusTard}
+                  </button>
                 </>
               ) : (
                 <>

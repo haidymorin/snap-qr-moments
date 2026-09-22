@@ -175,6 +175,13 @@ const GuestEvent = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [busy, setBusy] = useState(false);
   const [lightbox, setLightbox] = useState<MediaRow | null>(null);
+  /* La proposition de laisser son adresse, à l'arrivée.
+     La plupart des invités photographient pendant la fête et déposent le
+     lendemain — s'ils y repensent. Une adresse laissée en arrivant est le
+     seul moyen de les y ramener. Elle ne s'affiche qu'une fois par appareil
+     et par événement, et la croix laisse passer : la galerie n'est jamais
+     derrière un formulaire. */
+  const [proposerEmail, setProposerEmail] = useState(false);
   /* Les photos où l'invité a été reconnu. Vide tant qu'aucune recherche n'a
      été faite. Elles alimentent un onglet à part, et ne remplacent jamais la
      galerie : on doit pouvoir passer de ses photos à toutes les photos sans
@@ -358,6 +365,21 @@ const GuestEvent = () => {
     const photo = (photoRes.data as number | null) ?? 0;
     const video = (videoRes.data as number | null) ?? 0;
     setCounts({ photo, video, all: photo + video });
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    const cle = `qrm:email-propose:${id}`;
+    try {
+      if (localStorage.getItem(cle)) return;
+    } catch { /* navigation privée : on propose, sans mémoire */ }
+    const t = window.setTimeout(() => setProposerEmail(true), 1200);
+    return () => window.clearTimeout(t);
+  }, [id]);
+
+  const fermerProposition = useCallback(() => {
+    setProposerEmail(false);
+    try { localStorage.setItem(`qrm:email-propose:${id}`, "1"); } catch { /* rien */ }
   }, [id]);
 
   useEffect(() => {
@@ -1031,6 +1053,10 @@ const GuestEvent = () => {
             />
           )}
         </div>
+      )}
+
+      {proposerEmail && (
+        <LaisserEmail eventId={id!} variante="modale" onFermer={fermerProposition} />
       )}
     </div>
   );

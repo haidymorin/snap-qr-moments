@@ -54,7 +54,7 @@ export function RubanPhotos({ depart = 40 }: RubanProps) {
           {ids.map((image, i) => (
             <figure
               key={`${r}-${i}`}
-              className="m-0 h-[clamp(88px,13vw,164px)] w-[clamp(120px,18vw,232px)] shrink-0 overflow-hidden bg-secondary"
+              className="m-0 h-[clamp(150px,20vw,270px)] w-[clamp(200px,27vw,370px)] shrink-0 overflow-hidden bg-secondary"
               style={
                 calme
                   ? undefined
@@ -139,7 +139,7 @@ export function CarrouselInertie({ depart = 62, nombre = 12 }: CarrouselProps) {
   /* Un pointeur, trois gestes : on attrape, on tire, on lâche. Le mouvement
      horizontal est converti en tours de carrousel, la vitesse du dernier
      déplacement devient l'élan. */
-  const largeurCarte = () => Math.max(180, (boite.current?.clientWidth ?? 900) / 4.2);
+  const largeurCarte = () => Math.max(230, (boite.current?.clientWidth ?? 900) / 3.2);
 
   const prendre = (x: number) => { attrape.current = { actif: true, x }; vitesse.current = 0; };
   const tirer = (x: number) => {
@@ -157,7 +157,7 @@ export function CarrouselInertie({ depart = 62, nombre = 12 }: CarrouselProps) {
   return (
     <div
       ref={boite}
-      className="relative h-[clamp(240px,34vw,400px)] cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing"
+      className="relative h-[clamp(330px,42vw,520px)] cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing"
       onPointerDown={(e) => { (e.target as Element).setPointerCapture?.(e.pointerId); prendre(e.clientX); }}
       onPointerMove={(e) => tirer(e.clientX)}
       onPointerUp={lacher}
