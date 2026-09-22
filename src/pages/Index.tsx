@@ -120,8 +120,24 @@ function PhotoWall() {
     timers.current.push(window.setTimeout(() => setTitle(true), 2750));
   }, [mesurer]);
 
+  /* Un onglet en arriere-plan voit ses minuteries gelees par le navigateur :
+     l'apparition progressive s'arrete en chemin et l'accueil reste vide au
+     retour. Des que la page passe en arriere-plan, on affiche tout d'un coup. */
+  const toutMontrer = useCallback(() => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    setShown(Array.from({ length: mesurer() }, (_, i) => i));
+    setVeil(true);
+    setTitle(true);
+  }, [mesurer]);
+
   useEffect(() => {
-    play();
+    if (document.visibilityState === "hidden") toutMontrer();
+    else play();
+    const auMasquage = () => {
+      if (document.visibilityState === "hidden") toutMontrer();
+    };
+    document.addEventListener("visibilitychange", auMasquage);
     let attente = 0;
     const auRedimensionnement = () => {
       window.clearTimeout(attente);
@@ -131,9 +147,10 @@ function PhotoWall() {
     return () => {
       window.clearTimeout(attente);
       window.removeEventListener("resize", auRedimensionnement);
+      document.removeEventListener("visibilitychange", auMasquage);
       timers.current.forEach(clearTimeout);
     };
-  }, [play, mesurer]);
+  }, [play, mesurer, toutMontrer]);
 
   /* Les photos du mariage déjà livré ne sont plus exposées dans une bande à
      part, légendée « un vrai mariage » : la légende laissait entendre que les
