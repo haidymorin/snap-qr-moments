@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import {
   PX_PAR_MM, type ElementCarton, type JeuCouleurs, type JeuPolices, type ModeleCarton,
@@ -67,9 +68,73 @@ const Coeur = ({ couleur }: { couleur: string }) => (
   </svg>
 );
 
+/* Faire tenir un texte dans la place prévue.
+ *
+ * Les modèles fixent une taille de police à la main. Tant que les prénoms
+ * sont courts, tout va bien ; « Marie-Charlotte & Jean-Baptiste » déborde,
+ * passe à la ligne, recouvre la phrase posée en dessous, et le bas est coupé
+ * par le carton. Personne ne s'en aperçoit avant d'avoir imprimé.
+ *
+ * On mesure donc le texte pour de bon, avec la police réellement chargée, et
+ * on réduit la taille jusqu'à ce qu'il tienne — au maximum de moitié, en
+ * dessous ce n'est plus lisible sur un carton de table, et mieux vaut alors
+ * deux lignes qu'un texte minuscule. */
+
+const LIGNES_MAX = 2;
+const REDUCTION_MAX = 0.5;
+
+let toileMesure: CanvasRenderingContext2D | null = null;
+function mesurer(texte: string, police: string, taillePx: number): number {
+  if (!toileMesure) {
+    const c = document.createElement("canvas");
+    toileMesure = c.getContext("2d");
+  }
+  if (!toileMesure) return 0;
+  toileMesure.font = `${taillePx}px ${police}`;
+  return toileMesure.measureText(texte).width;
+}
+
+/** Le plus grand facteur ≤ 1 pour que le texte tienne en LIGNES_MAX lignes. */
+function facteurAjustement(
+  texte: string,
+  police: string,
+  largeurMm: number,
+  tailleMm: number,
+  ecartEm: number,
+): number {
+  if (!texte.trim() || largeurMm <= 0 || tailleMm <= 0) return 1;
+  /* On raisonne en unités arbitraires : seul le rapport compte. */
+  const REF = 100;
+  const largeurRef = (largeurMm / tailleMm) * REF;
+  const mots = texte.split(/\s+/);
+  const largeurMot = Math.max(...mots.map((m) => mesurer(m, police, REF) + m.length * ecartEm * REF));
+  const largeurTotale = mesurer(texte, police, REF) + texte.length * ecartEm * REF;
+
+  /* Deux contraintes : le mot le plus long doit tenir sur une ligne, et
+     l'ensemble doit tenir en LIGNES_MAX lignes. */
+  const facteur = Math.min(
+    largeurRef / Math.max(largeurMot, 1),
+    (largeurRef * LIGNES_MAX * 0.94) / Math.max(largeurTotale, 1),
+    1,
+  );
+  return Math.max(facteur, REDUCTION_MAX);
+}
+
 const CartonImprimable = ({
   modele, couleurs, polices, textes, url, photo, zoom = 1, sansMarque,
 }: Props) => {
+  /* Mesurer avant que les polices soient chargées donnerait la largeur d'une
+     police de substitution, donc un mauvais facteur. On attend, puis on
+     recalcule une fois. */
+  const [policesPretes, setPolicesPretes] = useState(false);
+  useEffect(() => {
+    let vivant = true;
+    const prete = () => { if (vivant) setPolicesPretes(true); };
+    if (document.fonts?.ready) document.fonts.ready.then(prete).catch(prete);
+    else prete();
+    return () => { vivant = false; };
+  }, [polices.titre, polices.script, polices.texte]);
+
   /* Un millimètre du modèle vaut un millimètre sur le papier. Le zoom ne
      change que l'aperçu à l'écran. */
   const mm = (pxCanevas: number) => (pxCanevas / PX_PAR_MM) * zoom;
@@ -182,14 +247,19 @@ const CartonImprimable = ({
     const contenu = textes[el.champ] ?? "";
     if (!contenu.trim()) return null;
 
+    const police = famille(el.police);
+    const facteur = policesPretes
+      ? facteurAjustement(contenu, police, mm(el.l), mm(el.taille), el.ecart ?? 0)
+      : 1;
+
     return (
       <div
         key={i}
         style={{
           ...base,
           width: `${mm(el.l)}mm`,
-          fontFamily: famille(el.police),
-          fontSize: `${mm(el.taille)}mm`,
+          fontFamily: police,
+          fontSize: `${mm(el.taille) * facteur}mm`,
           lineHeight: el.hauteurLigne ?? 1,
           letterSpacing: el.ecart ? `${el.ecart}em` : undefined,
           color: couleurs[el.couleur],

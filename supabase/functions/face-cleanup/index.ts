@@ -9,6 +9,10 @@
 // un secret partagé (CLEANUP_SECRET) et refuse tout le reste.
 
 import { createClient } from "@supabase/supabase-js";
+/* Sans cet import, `AwsClient` plus bas lève une ReferenceError au chargement
+   du module : la fonction échouait avant même de lire le secret, donc la purge
+   des échéances n'a jamais pu s'exécuter. */
+import { AwsClient } from "aws4fetch";
 import {
   RekognitionClient,
   DeleteFacesCommand,

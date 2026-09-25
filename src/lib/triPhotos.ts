@@ -37,6 +37,10 @@ export const SEUIL_FLOU = 55;
    on refuse de juger et la photo reste. */
 const CONTRASTE_MINIMUM = 12;
 
+/* Luminance moyenne en dessous de laquelle on ne juge plus : la photo est
+   sombre, pas floue. */
+const LUMINANCE_MINIMUM = 32;
+
 export interface MesuresPhoto {
   /** 16 caractères hexadécimaux, ou null si l'image n'a pas pu être lue. */
   empreinte: string | null;
@@ -97,45 +101,78 @@ function empreinteDe(src: CanvasImageSource, l: number, h: number): string | nul
 
 /** La netteté, mesurée sur le centre de l'image — là où se trouve le sujet. */
 function netteteDe(src: CanvasImageSource, l: number, h: number): number | null {
+  /* Neuf carrés, pas un seul.
+     La mesure ne portait que sur le centre de l'image. Or une photo de mariage
+     est très souvent faite à grande ouverture : le sujet est net, et le centre
+     du cadre — l'arrière-plan entre deux visages, la nappe devant l'objectif —
+     est volontairement flou. Sur les cent quarante-sept photos de la banque,
+     dix-sept bonnes photos étaient écartées pour cette raison : une petite
+     fille nette sur fond flou, une robe au premier plan, un discours au micro.
+     On regarde donc neuf zones et on garde la plus nette : une photo est
+     floue quand AUCUNE de ses zones n'est nette. */
+  const cote = Math.min(l, h, NETTETE_COTE);
+
+  /* Le contraste se juge sur l'image entière, réduite : une photo de nuit est
+     sombre partout, et on s'abstient. Le juger zone par zone laisserait un
+     coin éclairé décider pour toute l'image. */
+  const apercu = contexte(64, 64);
+  if (!apercu) return null;
+  apercu.drawImage(src, 0, 0, l, h, 0, 0, 64, 64);
+  const petit = apercu.getImageData(0, 0, 64, 64).data;
+  let sommeP = 0;
+  const gp = new Float32Array(64 * 64);
+  for (let i = 0; i < gp.length; i++) {
+    gp[i] = gris(petit, i * 4);
+    sommeP += gp[i];
+  }
+  const moyenneP = sommeP / gp.length;
+  let ecartsP = 0;
+  for (let i = 0; i < gp.length; i++) ecartsP += (gp[i] - moyenneP) ** 2;
+  if (Math.sqrt(ecartsP / gp.length) < CONTRASTE_MINIMUM) return null;
+
+  /* Une image très sombre — la fin de soirée, la piste éclairée par deux
+     projecteurs — a peu de contours sans être floue. La plus sombre de notre
+     banque est à 40 de luminance moyenne ; en dessous de 32, on s'abstient. */
+  if (moyenneP < LUMINANCE_MINIMUM) return null;
+
   const ctx = contexte(NETTETE_COTE, NETTETE_COTE);
   if (!ctx) return null;
 
-  /* On prend un carré au centre, à l'échelle 1:1 autant que possible :
-     réduire une photo floue la fait paraître nette, et fausserait la mesure. */
-  const cote = Math.min(l, h, NETTETE_COTE);
-  ctx.drawImage(src, (l - cote) / 2, (h - cote) / 2, cote, cote, 0, 0, NETTETE_COTE, NETTETE_COTE);
-  const { data } = ctx.getImageData(0, 0, NETTETE_COTE, NETTETE_COTE);
+  const xs = [0, (l - cote) / 2, l - cote];
+  const ys = [0, (h - cote) / 2, h - cote];
+  let meilleure: number | null = null;
 
-  const g = new Float32Array(NETTETE_COTE * NETTETE_COTE);
-  let somme = 0;
-  for (let i = 0; i < g.length; i++) {
-    g[i] = gris(data, i * 4);
-    somme += g[i];
-  }
+  for (const sx of xs) {
+    for (const sy of ys) {
+      /* À l'échelle 1:1 autant que possible : réduire une photo floue la fait
+         paraître nette, et fausserait la mesure. */
+      ctx.drawImage(src, sx, sy, cote, cote, 0, 0, NETTETE_COTE, NETTETE_COTE);
+      const { data } = ctx.getImageData(0, 0, NETTETE_COTE, NETTETE_COTE);
 
-  /* Le contraste général : s'il est très faible, l'image est sombre ou plate,
-     pas nécessairement floue. On s'abstient plutôt que de se tromper. */
-  const moyenne = somme / g.length;
-  let ecarts = 0;
-  for (let i = 0; i < g.length; i++) ecarts += (g[i] - moyenne) ** 2;
-  if (Math.sqrt(ecarts / g.length) < CONTRASTE_MINIMUM) return null;
+      const g = new Float32Array(NETTETE_COTE * NETTETE_COTE);
+      for (let i = 0; i < g.length; i++) g[i] = gris(data, i * 4);
 
-  /* Laplacien 3 × 3, puis variance de son résultat. */
-  let sommeL = 0;
-  let sommeL2 = 0;
-  let n = 0;
-  for (let y = 1; y < NETTETE_COTE - 1; y++) {
-    for (let x = 1; x < NETTETE_COTE - 1; x++) {
-      const i = y * NETTETE_COTE + x;
-      const v =
-        -4 * g[i] + g[i - 1] + g[i + 1] + g[i - NETTETE_COTE] + g[i + NETTETE_COTE];
-      sommeL += v;
-      sommeL2 += v * v;
-      n++;
+      /* Laplacien 3 × 3, puis variance de son résultat. */
+      let sommeL = 0;
+      let sommeL2 = 0;
+      let n = 0;
+      for (let y = 1; y < NETTETE_COTE - 1; y++) {
+        for (let x = 1; x < NETTETE_COTE - 1; x++) {
+          const i = y * NETTETE_COTE + x;
+          const v =
+            -4 * g[i] + g[i - 1] + g[i + 1] + g[i - NETTETE_COTE] + g[i + NETTETE_COTE];
+          sommeL += v;
+          sommeL2 += v * v;
+          n++;
+        }
+      }
+      const moyenneL = sommeL / n;
+      const variance = sommeL2 / n - moyenneL * moyenneL;
+      if (meilleure === null || variance > meilleure) meilleure = variance;
     }
   }
-  const moyenneL = sommeL / n;
-  return sommeL2 / n - moyenneL * moyenneL;
+
+  return meilleure;
 }
 
 /**
