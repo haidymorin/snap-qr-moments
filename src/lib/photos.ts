@@ -41,13 +41,25 @@ export const photoUrl = (id: number, _size = 420) => photo(id);
 
 /* L'exemple de la recherche par visage.
  *
- * La démonstration ne tient que si c'est la même personne sur le selfie et
- * dans les photos retrouvées : une invitée reconnaissable, deux photos d'un
- * même mariage, et le portrait recadré dans l'une d'elles. Tant qu'on n'a pas
- * de série plus longue d'un même mariage, on en montre deux et on n'en
- * annonce pas davantage. */
+ * La démonstration ne tient que si tout vient d'une seule soirée : vingt-deux
+ * photos d'un même mariage (libres de droits, usage commercial autorisé), la
+ * mariée reconnaissable sur dix d'entre elles, et un selfie qui est le gros
+ * plan de son visage recadré dans la cinquième. Avant, la galerie mélangeait
+ * cinquante mariages différents : la reconnaissance ne voulait rien dire. */
+
+export const NOMBRE_MARIAGE = 22;
+
+const nomMariage = (n: number) => `/photos/mariage-${String(n).padStart(2, "0")}.jpg`;
+
+/** Les vingt-deux photos du mariage de la démonstration, dans l'ordre. */
+export const MARIAGE_DEMO = Array.from({ length: NOMBRE_MARIAGE }, (_, i) =>
+  nomMariage(i + 1),
+);
+
+/** Les index (dans MARIAGE_DEMO) des photos où la mariée est reconnaissable. */
+export const PHOTOS_ELLE = [0, 1, 6, 8, 9, 10, 13, 15, 16, 17];
+
 export const SELFIE_EXEMPLE = "/photos/selfie-exemple.jpg";
-export const PHOTOS_INVITEE = [43, 44];
 
 /** La même, prête à poser en fond de bloc. */
 export const photoBg = (i: number, size = 420) =>

@@ -7,7 +7,7 @@ import etape2 from "@/assets/steps/etape-2-invites.jpg";
 import etape3 from "@/assets/steps/etape-3-galerie.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { lienAchat, cleAchat } from "@/lib/vente";
-import { photo, SELFIE_EXEMPLE, MARIAGE_REEL } from "@/lib/photos";
+import { photo, SELFIE_EXEMPLE, MARIAGE_REEL, MARIAGE_DEMO, PHOTOS_ELLE } from "@/lib/photos";
 import { RubanPhotos, CarrouselInertie } from "@/components/GaleriesAnimees";
 import CarteLueur from "@/components/CarteLueur";
 import Rassurance from "@/components/Rassurance";
@@ -35,29 +35,14 @@ import { FORMULES } from "@/data/formules";
 const STEP_IMAGES = [etape1, etape2, etape3];
 const STEP_ALT = ["stepsAlt1", "stepsAlt2", "stepsAlt3"];
 
-/** Le gros plan du visage recherché. */
-/* La galerie d'exemple, et dedans les deux photos où apparaît l'invitée du
-   selfie : ce sont les seules à rester nettes une fois le tri lancé. */
-const ALBUM_DEMO: { i: number; elle: boolean }[] = [
-  { i: 4, elle: false },
-  { i: 43, elle: true },
-  { i: 9, elle: false },
-  { i: 18, elle: false },
-  { i: 22, elle: false },
-  { i: 12, elle: false },
-  { i: 44, elle: true },
-  { i: 27, elle: false },
-  { i: 31, elle: false },
-  { i: 2, elle: false },
-  { i: 35, elle: false },
-  { i: 39, elle: false },
-  { i: 7, elle: false },
-  { i: 15, elle: false },
-  { i: 47, elle: false },
-  { i: 20, elle: false },
-  { i: 25, elle: false },
-  { i: 29, elle: false },
-];
+/* La galerie d'exemple : dix-huit photos d'un seul et même mariage. Celles où
+   la mariée est reconnaissable restent nettes une fois le tri lancé, les
+   autres s'effacent. Le selfie montré à côté est le gros plan de ce visage,
+   recadré dans l'une de ces photos. */
+const ALBUM_DEMO: { i: number; elle: boolean }[] = Array.from(
+  { length: 18 },
+  (_, i) => ({ i, elle: PHOTOS_ELLE.includes(i) }),
+);
 
 /** Le mur de photos qui se remplit au chargement, puis laisse place au titre. */
 function PhotoWall() {
@@ -422,7 +407,7 @@ const Index = () => {
                     }`}
                   >
                     <img
-                      src={photo(p.i, 640)}
+                      src={MARIAGE_DEMO[p.i]}
                       alt=""
                       loading="lazy"
                       decoding="async"

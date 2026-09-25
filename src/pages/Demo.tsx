@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage, Lang } from "@/contexts/LanguageContext";
 import { lienAchat } from "@/lib/vente";
-import { photo, PHOTOS_INVITEE, SELFIE_EXEMPLE } from "@/lib/photos";
+import { MARIAGE_DEMO, PHOTOS_ELLE, SELFIE_EXEMPLE } from "@/lib/photos";
 import { X } from "lucide-react";
 
 /* La galerie de démonstration.
@@ -51,9 +51,9 @@ const T: Record<Lang, {
       jeu: "Le jeu",
       livre: "Le livre d'or",
     },
-    moiTitre: "Ce que voit une invitée après son selfie",
+    moiTitre: "Ce que voit la mariée après son selfie",
     moiTexte:
-      "Elle se prend en photo, et il ne lui reste que les photos où elle apparaît, retrouvées parmi les 827 de la soirée. C'est facultatif : celle qui ne le fait pas dépose ses photos comme les autres.",
+      "Elle se prend en photo, et il ne lui reste que les photos où elle apparaît, retrouvées parmi toutes celles de la soirée. Chaque invité peut faire la même chose, et c'est facultatif : celui qui ne le fait pas dépose ses photos comme les autres.",
     jeuTitre: "La chasse au trésor",
     jeuTexte: "Douze défis. On photographie, le défi se coche.",
     jeuFait: "Fait",
@@ -102,9 +102,9 @@ const T: Record<Lang, {
       jeu: "The game",
       livre: "The guest book",
     },
-    moiTitre: "What a guest sees after her selfie",
+    moiTitre: "What the bride sees after her selfie",
     moiTexte:
-      "She takes a selfie, and only the photos she appears in are left, found among the 827 of the night. It is optional: whoever skips it uploads like everyone else.",
+      "She takes a selfie, and only the photos she appears in are left, found among all those of the night. Every guest can do the same, and it is optional: whoever skips it uploads like everyone else.",
     jeuTitre: "The treasure hunt",
     jeuTexte: "Twelve challenges. Take the photo, the challenge is ticked off.",
     jeuFait: "Done",
@@ -143,12 +143,10 @@ const T: Record<Lang, {
   },
 };
 
-/* Huit photos où la mariée apparaît, reprises de la démonstration de
-   l'accueil : c'est la même personne, sans quoi la reconnaissance par visage
-   ne veut rien dire. */
-/* Les photos où « Camille » apparaît. Ce sont celles d'un même mariage, avec
-   la même invitée : c'est ce qui rend la démonstration lisible. */
-const CAMILLE = PHOTOS_INVITEE;
+/* Les photos où la mariée apparaît, dans la galerie d'un seul et même
+   mariage : c'est la même personne sur le selfie et dans les résultats, sans
+   quoi la reconnaissance par visage ne démontre rien. */
+const ELLE = PHOTOS_ELLE;
 const DEFIS_FAITS = [0, 2, 3, 6, 9];
 
 const Demo = () => {
@@ -157,14 +155,11 @@ const Demo = () => {
   const [onglet, setOnglet] = useState<Onglet>("toutes");
   const [agrandie, setAgrandie] = useState<string | null>(null);
 
-  /* Uniquement des photos libres de droits : les photos du mariage de juin
-     ne servent plus de démonstration. */
-  const toutes = useMemo(
-    () => Array.from({ length: 48 }, (_, i) => photo(i * 3 + 2, 640)),
-    [],
-  );
+  /* Un seul mariage, libre de droits : la galerie entière vient de la même
+     soirée, sinon la recherche par visage n'a aucun sens. */
+  const toutes = useMemo(() => MARIAGE_DEMO, []);
 
-  const mesPhotos = useMemo(() => CAMILLE.map((i) => photo(i, 640)), []);
+  const mesPhotos = useMemo(() => ELLE.map((i) => MARIAGE_DEMO[i]), []);
   const affichees = onglet === "moi" ? mesPhotos : toutes;
 
   return (
