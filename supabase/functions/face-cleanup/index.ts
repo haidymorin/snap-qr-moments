@@ -6,7 +6,7 @@
 // demande des comptes. Elle doit être testée, et son résultat vérifié.
 //
 // Elle est appelée par une tâche planifiée, pas par le navigateur : elle exige
-// un secret partagé (CLEANUP_SECRET) et refuse tout le reste.
+// la clé de service, que la base lit dans son coffre, et refuse tout le reste.
 
 import { createClient } from "@supabase/supabase-js";
 /* Sans cet import, `AwsClient` plus bas lève une ReferenceError au chargement
@@ -71,8 +71,48 @@ async function supprimerSurR2(chemin: string): Promise<boolean> {
   }
 }
 
+/* Qui a le droit de déclencher la purge.
+ *
+ * La purge efface pour de bon : elle ne doit jamais pouvoir être déclenchée
+ * depuis un navigateur. La passerelle vérifie déjà la signature du jeton,
+ * mais le jeton anonyme est public — il est écrit dans le code du site. Il
+ * faut donc la clé de service, celle que la tâche planifiée lit dans le
+ * coffre de la base et n'écrit nulle part.
+ *
+ * Deux portes, une seule suffit :
+ *  - le porteur est exactement la clé de service (la tâche planifiée) ;
+ *  - le jeton porte le rôle `service_role` (même clé, format jeton — la
+ *    signature a déjà été vérifiée par la passerelle en amont) ;
+ *  - à défaut, l'ancien secret partagé, s'il a été configuré un jour.
+ */
+function roleDuJeton(porteur: string): string | null {
+  const corps = porteur.split(".")[1];
+  if (!corps) return null;
+  try {
+    const clair = atob(corps.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(clair).role ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function autorise(req: Request): boolean {
+  const porteur = (req.headers.get("Authorization") ?? "")
+    .replace(/^Bearer\s+/i, "")
+    .trim();
+
+  const cleDeService = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  if (porteur && cleDeService && porteur === cleDeService) return true;
+  if (porteur && roleDuJeton(porteur) === "service_role") return true;
+
+  const secret = Deno.env.get("CLEANUP_SECRET");
+  if (secret && req.headers.get("x-cleanup-secret") === secret) return true;
+
+  return false;
+}
+
 Deno.serve(async (req) => {
-  if (req.headers.get("x-cleanup-secret") !== Deno.env.get("CLEANUP_SECRET")) {
+  if (!autorise(req)) {
     return new Response("non", { status: 401 });
   }
 
