@@ -279,6 +279,9 @@ export type Database = {
           livre_dor_actif: boolean
           livre_dor_public: boolean
           livre_dor_vocal: boolean
+          merci_envoi_le: string | null
+          merci_envoye_le: string | null
+          merci_texte: string | null
           message_accueil: string | null
           name: string
           offert_par: string | null
@@ -310,6 +313,9 @@ export type Database = {
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
+          merci_envoi_le?: string | null
+          merci_envoye_le?: string | null
+          merci_texte?: string | null
           message_accueil?: string | null
           name: string
           offert_par?: string | null
@@ -341,6 +347,9 @@ export type Database = {
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
+          merci_envoi_le?: string | null
+          merci_envoye_le?: string | null
+          merci_texte?: string | null
           message_accueil?: string | null
           name?: string
           offert_par?: string | null
@@ -954,6 +963,10 @@ export type Database = {
           texte: string
         }[]
       }
+      guest_laisser_email: {
+        Args: { p_email: string; p_event_id: string }
+        Returns: undefined
+      }
       guest_list_by_ids: {
         Args: { p_event_id: string; p_ids: string[] }
         Returns: {
@@ -1047,6 +1060,7 @@ export type Database = {
         }[]
       }
       livre_dor_ouvert: { Args: { p_event_id: string }; Returns: boolean }
+      merci_destinataires: { Args: { p_event_id: string }; Returns: number }
       noter_action: {
         Args: { p_action: string; p_detail?: Json; p_event: string }
         Returns: undefined
