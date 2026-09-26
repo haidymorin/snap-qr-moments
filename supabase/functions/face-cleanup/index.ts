@@ -59,6 +59,19 @@ const R2_RACINE = Deno.env.get("R2_ENDPOINT")?.replace(/\/$/, "")
   ?? `https://${Deno.env.get("R2_ACCOUNT_ID")}.eu.r2.cloudflarestorage.com`;
 const R2_BASE = `${R2_RACINE}/${Deno.env.get("R2_BUCKET")}`;
 
+/** Le chemin dans le bucket, à partir d'une adresse publique complète.
+ *
+ * Le livre d'or stocke des URL, pas des chemins : sans cette conversion, on
+ * signerait une suppression sur une adresse qui n'existe pas côté S3. */
+function cheminR2(adresse: string | null | undefined): string | null {
+  if (!adresse) return null;
+  try {
+    return new URL(adresse).pathname.replace(/^\//, "") || null;
+  } catch {
+    return adresse.replace(/^\//, "") || null;
+  }
+}
+
 /** Supprime un fichier du bucket. Silencieux : un fichier déjà absent va bien. */
 async function supprimerSurR2(chemin: string): Promise<boolean> {
   if (!Deno.env.get("R2_ACCOUNT_ID")) return false;
@@ -115,6 +128,7 @@ function autorise(req: Request): boolean {
 type Rapport = {
   empreintes_supprimees: number;
   collections_supprimees: number;
+  evenements_purges: number;
   fichiers_supprimes: number;
   echecs: number;
 };
@@ -132,6 +146,7 @@ async function journaliser(rapport: Rapport, erreur: string | null) {
     await db.from("journal_purge").insert({
       empreintes_supprimees: rapport.empreintes_supprimees,
       collections_supprimees: rapport.collections_supprimees,
+      evenements_purges: rapport.evenements_purges,
       fichiers_supprimes: rapport.fichiers_supprimes,
       echecs: rapport.echecs,
       erreur,
@@ -149,6 +164,7 @@ Deno.serve(async (req) => {
   const rapport: Rapport = {
     empreintes_supprimees: 0,
     collections_supprimees: 0,
+    evenements_purges: 0,
     fichiers_supprimes: 0,
     echecs: 0,
   };
@@ -183,21 +199,52 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 2. Les événements dont la galerie a dépassé six mois : la collection
-    //    entière disparaît, visages des photos compris.
+    // 2. Les galeries fermées : tout ce que l'événement a produit disparaît.
+    //
+    //    Trois règles apprises en testant la purge pour de vrai :
+    //
+    //    — C'est la date de FERMETURE de la galerie qui fait foi (expire_le),
+    //      pas la date du mariage. Ce sont deux dates différentes, et c'est la
+    //      première que les conditions de vente promettent. Si elle manque, on
+    //      retombe sur six mois après la date de l'événement.
+    //
+    //    — Un événement sans reconnaissance faciale doit être purgé comme les
+    //      autres. L'ancienne version passait son chemin faute de collection :
+    //      ses photos seraient restées indéfiniment, ce qui est le cas le plus
+    //      courant et le manquement le plus grave.
+    //
+    //    — Effacer les fichiers ne suffit pas. Les lignes en base, le livre
+    //      d'or et les adresses des invités doivent partir aussi : sinon la
+    //      galerie continue d'afficher un album d'images cassées, et des
+    //      données personnelles survivent à leur propre suppression.
     const limite = new Date();
     limite.setMonth(limite.getMonth() - 6);
+    const limiteEvenement = limite.toISOString().slice(0, 10);
+    const aujourdhui = new Date().toISOString().slice(0, 10);
 
     const { data: perimes } = await db
       .from("events")
-      .select("id, event_date, face_events(collection_id)")
-      .lt("event_date", limite.toISOString().slice(0, 10));
+      .select("id, expire_le, event_date, face_events(collection_id)")
+      .or(
+        `expire_le.lte.${aujourdhui},` +
+        `and(expire_le.is.null,event_date.lt.${limiteEvenement})`,
+      );
 
     for (const evenement of perimes ?? []) {
       const collection = (evenement as any).face_events?.collection_id;
-      if (!collection) continue;
       try {
-        await rekognition.send(new DeleteCollectionCommand({ CollectionId: collection }));
+        // La collection de visages, quand l'événement en avait une.
+        if (collection) {
+          try {
+            await rekognition.send(new DeleteCollectionCommand({ CollectionId: collection }));
+          } catch (e) {
+            // Une collection déjà absente n'est pas un échec : le but est
+            // qu'elle n'existe plus, et c'est le cas.
+            const nom = (e as { name?: string }).name ?? "";
+            if (nom !== "ResourceNotFoundException") throw e;
+          }
+          rapport.collections_supprimees++;
+        }
 
         // Les fichiers eux-mêmes, image et vignette, avant les lignes en base :
         // une fois la ligne supprimée, on ne saurait plus quel fichier effacer.
@@ -210,12 +257,39 @@ Deno.serve(async (req) => {
           await supprimerSurR2(vignette);
         }
 
+        // Le livre d'or garde des voix et des photos jointes : ce sont des
+        // fichiers comme les autres, et ils sont au moins aussi personnels.
+        const { data: mots } = await db
+          .from("livre_dor")
+          .select("audio_url, photo_url, photo_thumb_url")
+          .eq("event_id", evenement.id);
+        for (const m of mots ?? []) {
+          for (const adresse of [m.audio_url, m.photo_url, m.photo_thumb_url]) {
+            const chemin = cheminR2(adresse);
+            if (chemin && await supprimerSurR2(chemin)) rapport.fichiers_supprimes++;
+          }
+        }
+
+        // Puis les lignes. L'événement lui-même reste : il porte la commande et
+        // la facture, qui relèvent de la comptabilité, pas des données des
+        // invités. Tout ce que les invités ont déposé, lui, s'en va.
+        await db.from("album_pages").delete().eq("event_id", evenement.id);
+        await db.from("livre_dor").delete().eq("event_id", evenement.id);
+        await db.from("guest_contacts").delete().eq("event_id", evenement.id);
+        await db.from("photos").delete().eq("event_id", evenement.id);
         await db.from("face_events").delete().eq("event_id", evenement.id);
         await db.from("photo_faces").delete().eq("event_id", evenement.id);
         await db.from("face_consents").delete().eq("event_id", evenement.id);
-        rapport.collections_supprimees++;
+
+        // La galerie est fermée pour de bon : l'état le dit, et la date de
+        // purge reste comme preuve.
+        await db.from("events")
+          .update({ statut: "expire", purge_le: new Date().toISOString() })
+          .eq("id", evenement.id);
+
+        rapport.evenements_purges++;
       } catch (e) {
-        console.error("purge — collection", collection, e);
+        console.error("purge — événement", evenement.id, e);
         rapport.echecs++;
       }
     }
