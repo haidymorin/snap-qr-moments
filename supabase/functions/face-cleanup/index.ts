@@ -111,12 +111,42 @@ function autorise(req: Request): boolean {
   return false;
 }
 
+/** Ce que la purge a effacé pendant une exécution. */
+type Rapport = {
+  empreintes_supprimees: number;
+  collections_supprimees: number;
+  fichiers_supprimes: number;
+  echecs: number;
+};
+
+/* Écrit une ligne dans le journal des purges.
+ *
+ * Les journaux techniques ne remontent qu'à quelques heures : sans cette
+ * table, personne ne peut dire, trois mois plus tard, si la purge du 12 mars
+ * a bien eu lieu. C'est la preuve que la promesse des conditions de vente est
+ * tenue. Un échec d'écriture ne doit jamais faire échouer la purge
+ * elle-même : le ménage compte plus que son compte rendu.
+ */
+async function journaliser(rapport: Rapport, erreur: string | null) {
+  try {
+    await db.from("journal_purge").insert({
+      empreintes_supprimees: rapport.empreintes_supprimees,
+      collections_supprimees: rapport.collections_supprimees,
+      fichiers_supprimes: rapport.fichiers_supprimes,
+      echecs: rapport.echecs,
+      erreur,
+    });
+  } catch (e) {
+    console.error("purge — journal", e);
+  }
+}
+
 Deno.serve(async (req) => {
   if (!autorise(req)) {
     return new Response("non", { status: 401 });
   }
 
-  const rapport = {
+  const rapport: Rapport = {
     empreintes_supprimees: 0,
     collections_supprimees: 0,
     fichiers_supprimes: 0,
@@ -191,11 +221,13 @@ Deno.serve(async (req) => {
     }
 
     console.log("purge", rapport);
+    await journaliser(rapport, null);
     return new Response(JSON.stringify(rapport), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("face-cleanup", e);
+    await journaliser(rapport, String(e));
     return new Response(JSON.stringify({ error: String(e), rapport }), { status: 500 });
   }
 });
