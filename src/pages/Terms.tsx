@@ -54,7 +54,6 @@ const SECTIONS: Section[] = [
         li: [
           "Album grand format — 129 €",
           "Mini-album personnalisé — 45 €",
-          "Kit de signalétique imprimé — 89 €",
           "Année d'hébergement supplémentaire — 29 €",
         ],
       },
