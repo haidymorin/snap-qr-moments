@@ -57,7 +57,6 @@ const MODULES: { id: string; debloque: PlanId; fr: string; en: string }[] = [
   { id: "affiches-plus", debloque: "souvenir", fr: "Les modèles d'affiches supplémentaires, à vos couleurs", en: "Extra sign templates, in your colours" },
 
   { id: "album", debloque: "heritage", fr: "L'album photo imprimé grand format", en: "The large-format printed photo album" },
-  { id: "gazette", debloque: "heritage", fr: "La gazette de votre événement, 50 exemplaires", en: "Your event newspaper, 50 copies" },
   { id: "composition", debloque: "heritage", fr: "L'outil de composition de l'album, à partir d'une première sélection", en: "The album builder, starting from a first selection" },
 ];
 

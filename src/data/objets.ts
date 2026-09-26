@@ -7,10 +7,7 @@ import { type Lang } from "@/contexts/LanguageContext";
  * un service qu'on oublie en six mois et un souvenir qu'on garde : ils
  * méritent un onglet.
  *
- * La gazette n'apparaît plus dans cette liste : son prix à la carte n'est pas
- * arrêté. Elle reste comprise dans la formule Héritage, et c'est tout ce que
- * le site en dit pour l'instant. Annoncer un tarif qu'on révisera dans trois
- * mois coûte plus cher que de se taire.
+ * La gazette a été retirée du site, formule Héritage comprise.
  */
 
 export interface Objet {

@@ -86,12 +86,11 @@ export const FORMULES: Record<Lang, Formule[]> = {
       pitch:
         "Tout le numérique, et les objets imprimés qui restent quand la galerie, elle, aura fermé.",
       resume:
-        "Tout le numérique du Souvenir, l'album photo imprimé grand format et la gazette de votre événement. L'outil de composition vous propose une première sélection de vos photos, que vous ajustez avant l'impression.",
+        "Tout le numérique du Souvenir et l'album photo imprimé grand format. L'outil de composition vous propose une première sélection de vos photos, que vous ajustez avant l'impression.",
       herite: "Tout ce que contient le Souvenir, et en plus :",
       cta: "Choisir l'Héritage",
       points: [
         "L'album photo imprimé grand format",
-        "La gazette de votre événement, 50 exemplaires",
         "L'outil de composition de l'album : le site vous propose une première sélection, vous ajoutez, retirez et réordonnez comme vous voulez",
       ],
     },
@@ -149,12 +148,11 @@ export const FORMULES: Record<Lang, Formule[]> = {
       periode: "for one event",
       pitch: "All of the digital, plus the printed objects that remain once the gallery has closed.",
       resume:
-        "Everything digital in Souvenir, the large-format printed photo album and your event newspaper. The album builder suggests a first selection of your photos, which you adjust before it goes to print.",
+        "Everything digital in Souvenir and the large-format printed photo album. The album builder suggests a first selection of your photos, which you adjust before it goes to print.",
       herite: "Everything in Souvenir, plus:",
       cta: "Choose Heritage",
       points: [
         "The large-format printed photo album",
-        "Your event newspaper, 50 copies",
         "The album builder: the site suggests a first selection, you add, remove and reorder it as you like",
       ],
     },

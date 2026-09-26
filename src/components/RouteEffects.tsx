@@ -38,21 +38,21 @@ const META: Record<string, { fr: Meta; en: Meta }> = {
   "/pricing": {
     fr: {
       title: "Formules et tarifs · QR Memories",
-      desc: "Essentiel 59 €, Souvenir 179 €, Héritage 390 €. Album, gazette et objets imprimés à la carte. Sans abonnement, sans application.",
+      desc: "Essentiel 59 €, Souvenir 179 €, Héritage 390 €. Album et objets imprimés à la carte. Sans abonnement, sans application.",
     },
     en: {
       title: "Plans and pricing · QR Memories",
-      desc: "Essential €59, Souvenir €179, Heritage €390. Album, newspaper and printed keepsakes à la carte. No subscription, no app.",
+      desc: "Essential €59, Souvenir €179, Heritage €390. Album and printed keepsakes à la carte. No subscription, no app.",
     },
   },
   "/albums": {
     fr: {
-      title: "Albums, gazette et objets imprimés · QR Memories",
-      desc: "L'album photo grand format 30×30, la gazette de votre événement, le mini-album à offrir : ce qu'il reste de votre soirée quand la galerie a fermé.",
+      title: "Albums et objets imprimés · QR Memories",
+      desc: "L'album photo grand format 30×30, le mini-album à offrir : ce qu'il reste de votre soirée quand la galerie a fermé.",
     },
     en: {
-      title: "Albums, newspaper and printed objects · QR Memories",
-      desc: "The 30×30 large photo album, your event newspaper, the mini album to give away: what remains of your night once the gallery has closed.",
+      title: "Albums and printed objects · QR Memories",
+      desc: "The 30×30 large photo album, the mini album to give away: what remains of your night once the gallery has closed.",
     },
   },
   "/demo": {

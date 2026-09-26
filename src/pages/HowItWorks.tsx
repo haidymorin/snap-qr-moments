@@ -141,19 +141,18 @@ function SortVisual() {
   );
 }
 
-/** Les objets : trois formats posés côte à côte. */
+/** Les objets : deux formats posés côte à côte. */
 function ObjectsVisual() {
   const { t } = useLanguage();
-  /* Trois formats vraiment différents : l'album est carré, la gazette est
-     un tabloïd haut, le PDF a la forme d'une page. Ils reposent sur une
-     même ligne, comme des objets posés sur une étagère. */
+  /* Deux formats vraiment différents : l'album est carré, le PDF a la
+     forme d'une page. Ils reposent sur une même ligne, comme des objets
+     posés sur une étagère. */
   const items = [
     { label: t("how.objA"), ratio: "aspect-square" },
-    { label: t("how.objB"), ratio: "aspect-[5/8]" },
     { label: t("how.objC"), ratio: "aspect-[1/1.414]" },
   ];
   return (
-    <div className="grid w-full grid-cols-3 items-end gap-4">
+    <div className="grid w-full grid-cols-2 items-end gap-4">
       {items.map((o, i) => (
         <div key={i}>
           <div

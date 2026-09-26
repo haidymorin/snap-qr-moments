@@ -48,7 +48,7 @@ const TEXTES: Record<Lang, {
     ],
     inclusTitre: "Déjà compris dans une formule",
     inclus:
-      "L'album grand format et la gazette sont compris dans la formule Héritage, avec tout le numérique.",
+      "L'album grand format est compris dans la formule Héritage, avec tout le numérique.",
     inclusLien: "Voir les formules",
     bientot: "Photo à venir",
   },
@@ -82,7 +82,7 @@ const TEXTES: Record<Lang, {
     ],
     inclusTitre: "Already included in a plan",
     inclus:
-      "The large album and the newspaper are included in the Heritage plan, along with everything digital.",
+      "The large album is included in the Heritage plan, along with everything digital.",
     inclusLien: "See the plans",
     bientot: "Photo to come",
   },

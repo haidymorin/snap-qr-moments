@@ -291,7 +291,6 @@ const Index = () => {
   const objects = [
     { tag: t("home.obj1Tag"), title: t("home.obj1Title"), text: t("home.obj1Desc") },
     { tag: t("home.obj2Tag"), title: t("home.obj2Title"), text: t("home.obj2Desc") },
-    { tag: t("home.obj3Tag"), title: t("home.obj3Title"), text: t("home.obj3Desc") },
     { tag: t("home.obj4Tag"), title: t("home.obj4Title"), text: t("home.obj4Desc") },
   ];
 
@@ -544,7 +543,7 @@ const Index = () => {
             <p className="lead mx-auto mt-4 max-w-[54ch]">{t("home.objDesc")}</p>
           </div>
 
-          <div className="grid gap-[clamp(13px,1.7vw,20px)] sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-[clamp(13px,1.7vw,20px)] md:grid-cols-3">
             {objects.map((o, i) => (
               <article key={i} className="flex flex-col rounded-xl border border-border bg-background">
                 {/* Pas de photo tant que l'objet n'existe pas : un aplat sombre

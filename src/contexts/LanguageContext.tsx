@@ -166,7 +166,7 @@ const translations: Record<Lang, Dict> = {
       plan3Name: "Héritage",
       plan3Price: "390 €",
       plan3Desc:
-        "Tout le Souvenir, plus l'album grand format et la gazette en cinquante exemplaires. Photos gardées six mois.",
+        "Tout le Souvenir, plus l'album photo imprimé grand format et l'outil pour le composer. Photos gardées six mois.",
       planDetail: "Le détail",
       plansAncrage:
         "Pour situer : un photographe coûte entre 1 500 et 2 500 €, une borne photo entre 500 et 900 € pour la soirée.",
@@ -185,10 +185,6 @@ const translations: Record<Lang, Dict> = {
       obj2Title: "L'album souvenir",
       obj2Desc:
         "Format carré 20×20, couverture souple, 40 pages. Vos photos et les mots de vos invités en regard.",
-      obj3Tag: "À offrir",
-      obj3Title: "La gazette",
-      obj3Desc:
-        "Le journal de votre mariage, à distribuer à vos invités. Votre journée racontée sur quatre pages.",
       obj4Tag: "L'objet",
       obj4Title: "Le grand album",
       obj4Desc:
@@ -238,7 +234,6 @@ const translations: Record<Lang, Dict> = {
         "Une galerie s'oublie au bout de six mois. Un album posé sur une table, non. Vous commandez quand vous voulez, une fois les photos triées.",
       c4Link: "Voir les formules",
       objA: "L'album",
-      objB: "La gazette",
       objC: "Le PDF",
 
       ctaEyebrow: "Votre date approche",
@@ -468,7 +463,7 @@ const translations: Record<Lang, Dict> = {
       plan3Name: "Heritage",
       plan3Price: "€390",
       plan3Desc:
-        "Everything in Souvenir, plus the large-format album and fifty copies of the newspaper. Photos kept six months.",
+        "Everything in Souvenir, plus the large-format printed photo album and the tool to build it. Photos kept six months.",
       planDetail: "The detail",
       plansAncrage:
         "For scale: a wedding photographer costs between €1,500 and €2,500, a photo booth between €500 and €900 for the night.",
@@ -487,10 +482,6 @@ const translations: Record<Lang, Dict> = {
       obj2Title: "The keepsake album",
       obj2Desc:
         "Square 20×20, soft cover, 40 pages. Your photos and your guests' words side by side.",
-      obj3Tag: "To give away",
-      obj3Title: "The newspaper",
-      obj3Desc:
-        "Your wedding as a newspaper, to hand out to your guests. Your day told across four pages.",
       obj4Tag: "The object",
       obj4Title: "The large album",
       obj4Desc:
@@ -540,7 +531,6 @@ const translations: Record<Lang, Dict> = {
         "A gallery is forgotten within six months. An album sitting on a table is not. You order whenever you like, once the photos are sorted.",
       c4Link: "See the plans",
       objA: "The album",
-      objB: "The newspaper",
       objC: "The PDF",
 
       ctaEyebrow: "Your date is coming up",
