@@ -559,6 +559,36 @@ export type Database = {
         }
         Relationships: []
       }
+      journal_purge: {
+        Row: {
+          collections_supprimees: number
+          echecs: number
+          empreintes_supprimees: number
+          erreur: string | null
+          execute_le: string
+          fichiers_supprimes: number
+          id: number
+        }
+        Insert: {
+          collections_supprimees?: number
+          echecs?: number
+          empreintes_supprimees?: number
+          erreur?: string | null
+          execute_le?: string
+          fichiers_supprimes?: number
+          id?: never
+        }
+        Update: {
+          collections_supprimees?: number
+          echecs?: number
+          empreintes_supprimees?: number
+          erreur?: string | null
+          execute_le?: string
+          fichiers_supprimes?: number
+          id?: never
+        }
+        Relationships: []
+      }
       livre_dor: {
         Row: {
           audio_secondes: number | null
