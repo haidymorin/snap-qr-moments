@@ -24,7 +24,7 @@ const json = (b: unknown, s = 200) =>
 const PLANS: Record<string, { amount: number; label: string }> = {
   essentiel: { amount: 5900, label: "QR Memories · Essentiel" },
   souvenir: { amount: 17900, label: "QR Memories · Souvenir" },
-  heritage: { amount: 39000, label: "QR Memories · Héritage" },
+  heritage: { amount: 25900, label: "QR Memories · Héritage" },
 };
 
 const TYPES = ["mariage", "anniversaire", "bapteme", "entreprise", "autre"];

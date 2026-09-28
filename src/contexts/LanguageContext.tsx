@@ -164,7 +164,7 @@ const translations: Record<Lang, Dict> = {
       plan2Desc:
         "Tout l'Essentiel, plus le livre d'or, le tri par visage et le diaporama. Photos gardées six mois.",
       plan3Name: "Héritage",
-      plan3Price: "390 €",
+      plan3Price: "259 €",
       plan3Desc:
         "Tout le Souvenir, plus l'album photo imprimé grand format et l'outil pour le composer. Photos gardées six mois.",
       planDetail: "Le détail",
@@ -461,7 +461,7 @@ const translations: Record<Lang, Dict> = {
       plan2Desc:
         "Everything in Essential, plus the guest book, face sorting and the slideshow. Photos kept six months.",
       plan3Name: "Heritage",
-      plan3Price: "€390",
+      plan3Price: "€259",
       plan3Desc:
         "Everything in Souvenir, plus the large-format printed photo album and the tool to build it. Photos kept six months.",
       planDetail: "The detail",

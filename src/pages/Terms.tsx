@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 
 /* Conditions générales de vente.
 
-   Rédigées à partir de la grille tarifaire réelle (59 / 179 / 390 €, acompte
+   Rédigées à partir de la grille tarifaire réelle (59 / 179 / 259 €, acompte
    de 50 %, hébergement 6 mois pour toutes les formules) et du fonctionnement réel du
    service. Les mentions entre crochets doivent être remplies dès l'obtention
    du SIRET : sans elles, le document est incomplet au regard du code de la
@@ -46,7 +46,7 @@ const SECTIONS: Section[] = [
         li: [
           "Essentiel — 59 € : QR code et page de collecte, galerie partagée, téléchargement en haute définition, nettoyage automatique des doublons et des photos floues, PDF de signalétique à imprimer, hébergement 6 mois.",
           "Souvenir — 179 € : tout l'Essentiel, plus le livre d'or numérique (messages écrits, vocaux et vidéo), le tri par visage, le diaporama en direct, la personnalisation aux couleurs de l'événement, hébergement 6 mois.",
-          "Héritage — 390 € : tout le Souvenir, plus l'album imprimé grand format et l'outil de composition de l'album, hébergement 6 mois.",
+          "Héritage — 259 € : tout le Souvenir, plus l'album imprimé grand format et l'outil de composition de l'album, hébergement 6 mois.",
         ],
       },
       {

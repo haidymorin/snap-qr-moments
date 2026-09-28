@@ -38,11 +38,11 @@ const META: Record<string, { fr: Meta; en: Meta }> = {
   "/pricing": {
     fr: {
       title: "Formules et tarifs · QR Memories",
-      desc: "Essentiel 59 €, Souvenir 179 €, Héritage 390 €. Album et objets imprimés à la carte. Sans abonnement, sans application.",
+      desc: "Essentiel 59 €, Souvenir 179 €, Héritage 259 €. Album et objets imprimés à la carte. Sans abonnement, sans application.",
     },
     en: {
       title: "Plans and pricing · QR Memories",
-      desc: "Essential €59, Souvenir €179, Heritage €390. Album and printed keepsakes à la carte. No subscription, no app.",
+      desc: "Essential €59, Souvenir €179, Heritage €259. Album and printed keepsakes à la carte. No subscription, no app.",
     },
   },
   "/albums": {

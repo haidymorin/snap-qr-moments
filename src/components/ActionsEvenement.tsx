@@ -21,7 +21,7 @@ import { Loader2 } from "lucide-react";
 const PLANS = [
   { id: "essentiel", nom: "Essentiel", prix: 5900 },
   { id: "souvenir", nom: "Souvenir", prix: 17900 },
-  { id: "heritage", nom: "Héritage", prix: 39000 },
+  { id: "heritage", nom: "Héritage", prix: 25900 },
 ];
 
 const MOTIFS: Record<string, string> = {

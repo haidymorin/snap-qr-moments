@@ -80,8 +80,8 @@ export const FORMULES: Record<Lang, Formule[]> = {
     {
       id: "heritage",
       nom: "Héritage",
-      prix: "390 €",
-      prixCentimes: 39000,
+      prix: "259 €",
+      prixCentimes: 25900,
       periode: "pour un événement",
       pitch:
         "Tout le numérique, et les objets imprimés qui restent quand la galerie, elle, aura fermé.",
@@ -143,8 +143,8 @@ export const FORMULES: Record<Lang, Formule[]> = {
     {
       id: "heritage",
       nom: "Heritage",
-      prix: "€390",
-      prixCentimes: 39000,
+      prix: "€259",
+      prixCentimes: 25900,
       periode: "for one event",
       pitch: "All of the digital, plus the printed objects that remain once the gallery has closed.",
       resume:
