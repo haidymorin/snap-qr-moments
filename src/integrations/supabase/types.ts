@@ -259,65 +259,8 @@ export type Database = {
         }
         Relationships: []
       }
-      commandes: {
-        Row: {
-          adresse_livraison: Json | null
-          applique_le: string | null
-          cree_le: string
-          email: string | null
-          event_id: string
-          id: string
-          montant_centimes: number
-          plan_avant: string | null
-          plan_cible: string | null
-          produit: string
-          quantite: number
-          statut: string
-          stripe_session_id: string | null
-        }
-        Insert: {
-          adresse_livraison?: Json | null
-          applique_le?: string | null
-          cree_le?: string
-          email?: string | null
-          event_id: string
-          id?: string
-          montant_centimes: number
-          plan_avant?: string | null
-          plan_cible?: string | null
-          produit: string
-          quantite?: number
-          statut?: string
-          stripe_session_id?: string | null
-        }
-        Update: {
-          adresse_livraison?: Json | null
-          applique_le?: string | null
-          cree_le?: string
-          email?: string | null
-          event_id?: string
-          id?: string
-          montant_centimes?: number
-          plan_avant?: string | null
-          plan_cible?: string | null
-          produit?: string
-          quantite?: number
-          statut?: string
-          stripe_session_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "commandes_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       events: {
         Row: {
-          album_achete: boolean
           album_imprime_le: string | null
           album_notifie_le: string | null
           album_valide_le: string | null
@@ -355,7 +298,6 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          album_achete?: boolean
           album_imprime_le?: string | null
           album_notifie_le?: string | null
           album_valide_le?: string | null
@@ -393,7 +335,6 @@ export type Database = {
           user_id: string
         }
         Update: {
-          album_achete?: boolean
           album_imprime_le?: string | null
           album_notifie_le?: string | null
           album_valide_le?: string | null
@@ -971,10 +912,6 @@ export type Database = {
           p_prioritaires?: string[]
         }
         Returns: number
-      }
-      commande_statut: {
-        Args: { p_commande: string; p_statut: string }
-        Returns: undefined
       }
       album_marquer_imprime: {
         Args: { p_event: string; p_imprime: boolean }
