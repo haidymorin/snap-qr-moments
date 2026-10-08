@@ -9,9 +9,11 @@ import { useLanguage, Lang } from "@/contexts/LanguageContext";
  * il veut voir le reste. Demander avant le dépôt ferait perdre la moitié des
  * gens, et c'est exactement ce qu'on reproche aux autres solutions.
  *
- * Ce que ça permet côté mariés : le mot de remerciement du lendemain soir,
- * quand les invités trient enfin leurs photos de la veille. Sans adresse,
- * aucun moyen de les y ramener — on ne connaît ni leur nom ni leur numéro.
+ * Ce que ça permet : le lien de la galerie, envoyé le lendemain à 20 h, quand
+ * les invités trient enfin leurs photos de la veille — avec le mot des mariés
+ * s'ils en ont écrit un. Sans adresse, aucun moyen de les y ramener : on ne
+ * connaît ni leur nom ni leur numéro. Une adresse laissée après cet envoi
+ * reçoit le lien dans l'heure (fonction `mot-de-merci`).
  *
  * Ce que ça ne permet pas, et c'est écrit à l'écran : entrer dans une liste
  * de diffusion. L'adresse sert au lien de la galerie et au mot des mariés,
@@ -23,33 +25,33 @@ const T: Record<Lang, Record<string, string>> = {
   fr: {
     titreModale: "Profitez de la soirée. On vous rappellera vos photos.",
     chapoModale:
-      "Laissez votre adresse : vous recevrez le lien de la galerie, et un rappel le lendemain soir pour déposer vos photos.",
+      "Laissez votre adresse : le lendemain soir, vous recevrez le lien de la galerie, pour déposer vos photos et voir celles des autres.",
     plusTard: "Plus tard",
     titre: "Vous voulez voir les photos des autres ?",
     chapo:
-      "Laissez votre adresse : vous recevrez le lien de la galerie, et le mot des mariés.",
+      "Laissez votre adresse : vous recevrez le lien de la galerie par e-mail.",
     champ: "votre@adresse.fr",
     envoyer: "Recevoir le lien",
     merci: "C'est noté. Vous recevrez le lien.",
     invalide: "Cette adresse ne semble pas valide.",
     erreur: "L'enregistrement n'a pas abouti.",
     usage:
-      "Cette adresse sert au lien de la galerie et au mot des mariés. Rien d'autre, et elle disparaît avec la galerie.",
+      "Cette adresse sert uniquement à vous envoyer le lien de la galerie, une fois. Rien d'autre, et elle disparaît avec la galerie.",
   },
   en: {
     titreModale: "Enjoy the party. We will remind you about your photos.",
     chapoModale:
-      "Leave your address: you will get the gallery link, and a reminder the next evening to upload your photos.",
+      "Leave your address: the next evening, you will get the gallery link, to upload your photos and see everyone else's.",
     plusTard: "Later",
     titre: "Want to see everyone else's photos?",
-    chapo: "Leave your address: you will get the gallery link, and the couple's note.",
+    chapo: "Leave your address: you will get the gallery link by email.",
     champ: "your@address.com",
     envoyer: "Get the link",
     merci: "Noted. You will receive the link.",
     invalide: "That address does not look valid.",
     erreur: "It could not be saved.",
     usage:
-      "This address is used for the gallery link and the couple's note. Nothing else, and it disappears with the gallery.",
+      "This address is only used to send you the gallery link, once. Nothing else, and it disappears with the gallery.",
   },
 };
 

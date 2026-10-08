@@ -261,10 +261,27 @@ Deno.serve(async (req) => {
         // fichiers comme les autres, et ils sont au moins aussi personnels.
         const { data: mots } = await db
           .from("livre_dor")
-          .select("audio_url, photo_url, photo_thumb_url")
+          .select("audio_url, video_url, video_poster_url, photo_url, photo_thumb_url")
           .eq("event_id", evenement.id);
         for (const m of mots ?? []) {
-          for (const adresse of [m.audio_url, m.photo_url, m.photo_thumb_url]) {
+          for (const adresse of [
+            m.audio_url, m.video_url, m.video_poster_url, m.photo_url, m.photo_thumb_url,
+          ]) {
+            const chemin = cheminR2(adresse);
+            if (chemin && await supprimerSurR2(chemin)) rapport.fichiers_supprimes++;
+          }
+        }
+
+        // Les photos que les mariés ont apportées pour leur album (celles du
+        // photographe, d'un proche) ne sont pas dans la galerie : sans cette
+        // boucle, elles survivraient à la fermeture.
+        const { data: pagesAlbum } = await db
+          .from("album_pages")
+          .select("externe_url, externe_thumb")
+          .eq("event_id", evenement.id)
+          .eq("genre", "externe");
+        for (const p of pagesAlbum ?? []) {
+          for (const adresse of [p.externe_url, p.externe_thumb]) {
             const chemin = cheminR2(adresse);
             if (chemin && await supprimerSurR2(chemin)) rapport.fichiers_supprimes++;
           }

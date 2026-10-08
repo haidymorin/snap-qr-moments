@@ -188,7 +188,7 @@ const translations: Record<Lang, Dict> = {
       obj4Tag: "L'objet",
       obj4Title: "Le grand album",
       obj4Desc:
-        "Format 30×30 qui s'ouvre à plat, papier épais, couverture toilée. Fabriqué par un imprimeur de photographes.",
+        "Format carré 28×28, 80 pages, couverture rigide au fini mat, papier épais. Vos photos et les mots de vos invités en regard.",
 
       finalEyebrow: "Votre date approche",
       finalTitle: "Vos invités prendront des photos. Autant les garder.",
@@ -485,7 +485,7 @@ const translations: Record<Lang, Dict> = {
       obj4Tag: "The object",
       obj4Title: "The large album",
       obj4Desc:
-        "30×30 layflat, thick paper, cloth cover. Made by a printer who works for photographers.",
+        "Square 28×28, 80 pages, matte hard cover, thick paper. Your photos and your guests' words side by side.",
 
       finalEyebrow: "Your date is coming",
       finalTitle: "Your guests will take photos. You may as well keep them.",

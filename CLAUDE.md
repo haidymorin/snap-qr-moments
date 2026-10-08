@@ -58,12 +58,22 @@ développeuse.
 
 | | France | Contenu |
 |---|---|---|
-| Essentiel / Essential | 59 € | QR, galerie, nettoyage automatique, signalétique |
-| **Souvenir** | **179 €** | **+ livre d'or, tri par visage, diaporama — l'offre cible** |
-| Héritage / Heritage | 390 € | + album grand format et gazette 50 ex. |
+| Essentiel / Essential | 59 € | QR, galerie, tri automatique, signalétique, lien de la galerie envoyé aux invités |
+| **Souvenir** | **179 €** | **+ livre d'or (écrit, vocal, vidéo), tri par visage, diaporama, jeu photo — l'offre cible** |
+| Héritage / Heritage | 259 € | + album grand format 28×28 et outil de composition (validation → export pour l'imprimeur) |
 
-Six mois d'hébergement pour toutes. Les noms ne se traduisent pas au-delà de ça :
-« Souvenir » est identique dans les deux langues et fait le pont.
+Le contenu exact vendu vit dans `src/data/formules.ts` : c'est lui qui fait foi, pas ce
+tableau. Six mois d'hébergement pour toutes. Les noms ne se traduisent pas au-delà de
+ça : « Souvenir » est identique dans les deux langues et fait le pont.
+
+**Audit du 8 octobre 2026** (migration `20261008100000_promesses_des_formules.sql`) :
+chaque ligne des formules relue contre le code. Ajoutés : la vidéo dans le livre d'or ;
+le lien de la galerie envoyé à chaque invité qui a laissé son adresse, même sans mot des
+mariés (fonction `mot-de-merci`, horaire) ; la validation de l'album, l'alerte e-mail à
+l'administratrice et le téléchargement numéroté pour l'impression. Corrigé : l'import
+de photos personnelles dans l'album (chemin refusé par `r2-sign-upload`) et la fiche de
+l'album, qui promettait un 30×30 toilé à plat alors que Gelato livre un 28×28 rigide mat
+à reliure collée.
 
 ## Direction artistique — « Écru & Prune fumée »
 

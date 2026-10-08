@@ -33,7 +33,7 @@ export const OBJETS: Record<Lang, { objets: Objet[]; note: string }> = {
         quoi:
           "Un vrai livre photo, celui qu'on pose sur une table basse et qu'on rouvre dix ans plus tard.",
         detail:
-          "30 × 30 cm, environ 80 pages, papier épais, couverture toilée. Il s'ouvre bien à plat, donc une photo peut occuper les deux pages sans se casser au milieu.",
+          "28 × 28 cm, 80 pages, couverture rigide au fini mat, papier épais. Un vrai livre, fait de vos photos et des mots de vos invités.",
         pourQui:
           "Vos photos et les mots de vos invités en vis-à-vis. Vous composez l'album depuis votre espace, à partir d'une sélection déjà faite pour vous.",
         inclus: "Compris dans la formule Héritage",
@@ -67,7 +67,7 @@ export const OBJETS: Record<Lang, { objets: Objet[]; note: string }> = {
         prix: "€129",
         quoi: "A real photo book — the kind that sits on a coffee table and gets reopened ten years later.",
         detail:
-          "30 × 30 cm, around 80 pages, heavy paper, cloth cover. It lies flat when open, so a photo can spread across both pages without breaking in the middle.",
+          "28 × 28 cm, 80 pages, matte hard cover, thick paper. A real book, made of your photos and your guests' words.",
         pourQui:
           "Your photos facing your guests' words. You build the album from your dashboard, starting from a selection already made for you.",
         inclus: "Included in the Heritage plan",

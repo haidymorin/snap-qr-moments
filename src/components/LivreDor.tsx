@@ -1,33 +1,51 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { envoyerSurR2, extensionDe } from "@/lib/r2";
+import { envoyerSurR2, extensionDe, typeDeclare } from "@/lib/r2";
+import { generateVideoPoster } from "@/lib/videoPoster";
 import { compressImage } from "@/lib/imageCompression";
 import {
   demarrerEnregistrement, enregistrementDisponible, type SessionEnregistrement,
 } from "@/lib/enregistreurVocal";
-import { Image as ImageIcon, Loader2, Mic, Pause, Play, Square, Trash2, X } from "lucide-react";
+import { Image as ImageIcon, Loader2, Mic, Pause, Play, Square, Trash2, Video, X } from "lucide-react";
 
 /* Le livre d'or, côté invité.
  *
- * Un mot, ou une voix, et une photo si on veut. Rien d'autre : pas de compte,
+ * Un mot, une voix ou une vidéo, et une photo si on veut. Rien d'autre : pas de compte,
  * pas d'adresse e-mail, pas de mot de passe. Quelqu'un qui a envie d'écrire à
  * un couple le fait dans la minute ou ne le fait pas — chaque champ ajouté ici
  * coûte des messages.
  *
  * Le prénom est le seul renseignement demandé, et il est indispensable : un
  * livre d'or anonyme n'a aucune valeur le jour où on l'imprime.
+ *
+ * La vidéo passe par la caméra du téléphone lui-même (champ fichier avec
+ * `capture`), pas par un enregistreur maison dans la page : c'est l'appareil
+ * photo que tout le monde sait déjà utiliser, il marche sur tous les
+ * téléphones, et il ne plante pas au milieu d'un message de deux minutes.
  */
+
+/** Trois minutes : un message, pas un film. Revérifié par la base. */
+const VIDEO_MAX_SECONDES = 180;
+/** Le même plafond que les vidéos de la galerie. */
+const VIDEO_MAX_OCTETS = 500 * 1024 * 1024;
 
 const TEXTES = {
   fr: {
     titre: "Le livre d'or",
-    intro: "Laissez un mot aux mariés. Quelques lignes, ou votre voix.",
-    introAutre: "Laissez un mot aux hôtes. Quelques lignes, ou votre voix.",
+    intro: "Laissez un mot aux mariés. Quelques lignes, votre voix ou une vidéo.",
+    introAutre: "Laissez un mot aux hôtes. Quelques lignes, votre voix ou une vidéo.",
     prive: "Vos messages ne sont lus que par eux.",
     prenom: "Votre prénom",
     ecrire: "Écrire un mot",
     parler: "Enregistrer ma voix",
+    filmer: "Filmer un message",
+    videoDemarrer: "Filmer mon message",
+    videoAide: "Trois minutes au plus. Votre téléphone ouvre sa caméra : filmez, puis validez.",
+    videoRefaire: "Refilmer",
+    videoTropLongue: "Cette vidéo dure plus de trois minutes. Refilmez un message plus court.",
+    videoTropLourde: "Cette vidéo est trop lourde pour être envoyée. Refilmez un message plus court.",
+    videoEnvoi: "Envoi de la vidéo",
     message: "Votre message",
     messagePlaceholder: "Ce que vous avez envie de leur dire…",
     micDemarrer: "Appuyez pour enregistrer",
@@ -47,12 +65,19 @@ const TEXTES = {
   },
   en: {
     titre: "The guest book",
-    intro: "Leave a word for the couple. A few lines, or your voice.",
-    introAutre: "Leave a word for the hosts. A few lines, or your voice.",
+    intro: "Leave a word for the couple. A few lines, your voice or a video.",
+    introAutre: "Leave a word for the hosts. A few lines, your voice or a video.",
     prive: "Only they will read your message.",
     prenom: "Your first name",
     ecrire: "Write a note",
     parler: "Record my voice",
+    filmer: "Film a message",
+    videoDemarrer: "Film my message",
+    videoAide: "Three minutes at most. Your phone opens its camera: film, then confirm.",
+    videoRefaire: "Film again",
+    videoTropLongue: "This video is longer than three minutes. Please film a shorter message.",
+    videoTropLourde: "This video is too large to send. Please film a shorter message.",
+    videoEnvoi: "Sending the video",
     message: "Your message",
     messagePlaceholder: "What you feel like telling them…",
     micDemarrer: "Tap to record",
@@ -78,6 +103,9 @@ export interface Message {
   texte: string | null;
   audio_url: string | null;
   audio_secondes: number | null;
+  video_url?: string | null;
+  video_poster_url?: string | null;
+  video_secondes?: number | null;
   photo_url: string | null;
   photo_thumb_url: string | null;
   created_at: string;
@@ -135,6 +163,19 @@ const LecteurVocal = ({ url, secondes }: { url: string; secondes: number | null 
   );
 };
 
+/* La vidéo ne se charge qu'au moment où l'on appuie sur lecture : une liste
+   de messages ne doit pas télécharger vingt vidéos sur le réseau d'une salle. */
+export const LecteurVideo = ({ url, poster }: { url: string; poster: string | null }) => (
+  <video
+    src={url}
+    poster={poster ?? undefined}
+    controls
+    playsInline
+    preload="none"
+    className="max-h-[360px] w-full border border-border bg-night object-contain"
+  />
+);
+
 const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Props) => {
   const { lang } = useLanguage();
   const T = TEXTES[lang === "en" ? "en" : "fr"];
@@ -142,7 +183,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
   const [messages, setMessages] = useState<Message[]>([]);
   const [total, setTotal] = useState(0);
 
-  const [mode, setMode] = useState<"ecrit" | "vocal">("ecrit");
+  const [mode, setMode] = useState<"ecrit" | "vocal" | "video">("ecrit");
   const [prenom, setPrenom] = useState("");
   const [texte, setTexte] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
@@ -153,11 +194,16 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
   const [vocal, setVocal] = useState<{ blob: Blob; mime: string; secondes: number } | null>(null);
   const [vocalUrl, setVocalUrl] = useState<string | null>(null);
 
+  const [video, setVideo] = useState<{ fichier: File; poster: Blob | null; secondes: number } | null>(null);
+  const [videoApercu, setVideoApercu] = useState<string | null>(null);
+  const [progression, setProgression] = useState<number | null>(null);
+
   const [envoi, setEnvoi] = useState(false);
   const [envoye, setEnvoye] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
 
   const photoInput = useRef<HTMLInputElement>(null);
+  const videoInput = useRef<HTMLInputElement>(null);
 
   const charger = useCallback(async (offset = 0) => {
     if (!messagesPublics) return;
@@ -184,6 +230,29 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
   // Les aperçus locaux se révoquent, sinon la mémoire du téléphone se remplit.
   useEffect(() => () => { if (apercu) URL.revokeObjectURL(apercu); }, [apercu]);
   useEffect(() => () => { if (vocalUrl) URL.revokeObjectURL(vocalUrl); }, [vocalUrl]);
+  useEffect(() => () => { if (videoApercu) URL.revokeObjectURL(videoApercu); }, [videoApercu]);
+
+  /* La durée et l'aperçu sont lus sur le téléphone, avant tout envoi : une
+     vidéo trop longue est refusée tout de suite, pas après deux minutes
+     d'envoi sur le wifi d'une salle des fêtes. */
+  const choisirVideo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    e.target.value = "";
+    if (!f) return;
+    setErreur(null);
+    if (f.size > VIDEO_MAX_OCTETS) { setErreur(T.videoTropLourde); return; }
+    const { thumb, duration } = await generateVideoPoster(f);
+    if (duration !== null && duration > VIDEO_MAX_SECONDES + 1) { setErreur(T.videoTropLongue); return; }
+    if (videoApercu) URL.revokeObjectURL(videoApercu);
+    setVideo({ fichier: f, poster: thumb, secondes: Math.round(duration ?? 0) });
+    setVideoApercu(thumb ? URL.createObjectURL(thumb) : null);
+  };
+
+  const refilmer = () => {
+    if (videoApercu) URL.revokeObjectURL(videoApercu);
+    setVideo(null);
+    setVideoApercu(null);
+  };
 
   const choisirPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] ?? null;
@@ -228,7 +297,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
 
   const pret =
     prenom.trim().length >= 1 &&
-    (mode === "ecrit" ? texte.trim().length >= 2 : vocal !== null) &&
+    (mode === "ecrit" ? texte.trim().length >= 2 : mode === "vocal" ? vocal !== null : video !== null) &&
     !envoi;
 
   const envoyer = async (e: React.FormEvent) => {
@@ -240,6 +309,33 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
       let audioUrl: string | null = null;
       let photoUrl: string | null = null;
       let photoThumb: string | null = null;
+      let videoUrl: string | null = null;
+      let videoPoster: string | null = null;
+
+      if (mode === "video" && video) {
+        const uuid = crypto.randomUUID();
+        const type = typeDeclare(video.fichier, "video/mp4");
+        setProgression(0);
+        videoUrl = await envoyerSurR2({
+          eventId,
+          chemin: `${eventId}/${uuid}.${extensionDe(type)}`,
+          fichier: video.fichier,
+          contentType: type,
+          onProgress: (r) => setProgression(r),
+        });
+        if (video.poster) {
+          try {
+            videoPoster = await envoyerSurR2({
+              eventId,
+              chemin: `${eventId}/${uuid}-thumb.jpg`,
+              fichier: video.poster,
+              contentType: "image/jpeg",
+            });
+          } catch {
+            /* Sans aperçu, la vidéo se lit quand même. */
+          }
+        }
+      }
 
       if (mode === "vocal" && vocal) {
         const uuid = crypto.randomUUID();
@@ -279,8 +375,11 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
         event_id: eventId,
         auteur: prenom.trim(),
         texte: mode === "ecrit" ? texte.trim() : null,
-        audio_url: audioUrl,
-        audio_secondes: vocal?.secondes ?? null,
+        audio_url: mode === "vocal" ? audioUrl : null,
+        audio_secondes: mode === "vocal" ? vocal?.secondes ?? null : null,
+        video_url: videoUrl,
+        video_poster_url: videoPoster,
+        video_secondes: videoUrl ? Math.min(video?.secondes ?? 0, VIDEO_MAX_SECONDES) : null,
         photo_url: photoUrl,
         photo_thumb_url: photoThumb,
       });
@@ -290,11 +389,13 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
       setTexte("");
       retirerPhoto();
       refaire();
+      refilmer();
       await charger(0);
     } catch {
       setErreur(T.erreur);
     } finally {
       setEnvoi(false);
+      setProgression(null);
     }
   };
 
@@ -331,9 +432,12 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
             />
           </div>
 
-          {vocalAutorise && enregistrementDisponible() && (
-            <div className="flex border-b border-border">
-              {(["ecrit", "vocal"] as const).map((m) => (
+          {(
+            <div className="flex flex-wrap border-b border-border">
+              {(vocalAutorise && enregistrementDisponible()
+                ? (["ecrit", "vocal", "video"] as const)
+                : (["ecrit", "video"] as const)
+              ).map((m) => (
                 <button
                   key={m}
                   type="button"
@@ -342,7 +446,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
                     mode === m ? "border-primary text-foreground opacity-100" : "border-transparent hover:text-foreground"
                   }`}
                 >
-                  {m === "ecrit" ? T.ecrire : T.parler}
+                  {m === "ecrit" ? T.ecrire : m === "vocal" ? T.parler : T.filmer}
                 </button>
               ))}
             </div>
@@ -360,6 +464,50 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
                 maxLength={2000}
                 className="rounded-xl border border-border bg-background p-3 text-base outline-none focus:border-primary"
               />
+            </div>
+          ) : mode === "video" ? (
+            <div className="flex flex-col gap-3">
+              <input
+                ref={videoInput}
+                type="file"
+                accept="video/*"
+                capture="user"
+                onChange={(e) => void choisirVideo(e)}
+                className="hidden"
+              />
+              {video ? (
+                <div className="flex flex-wrap items-center gap-3">
+                  {videoApercu ? (
+                    <img src={videoApercu} alt="" className="h-20 w-20 border border-border object-cover" />
+                  ) : (
+                    <span className="flex h-20 w-20 items-center justify-center border border-border">
+                      <Video className="h-5 w-5" />
+                    </span>
+                  )}
+                  <span className="label-mono">{duree(video.secondes)}</span>
+                  <button
+                    type="button"
+                    onClick={refilmer}
+                    disabled={envoi}
+                    className="label-mono inline-flex min-h-[44px] items-center gap-2 border border-border px-4 hover:border-primary"
+                  >
+                    <Trash2 className="h-4 w-4" /> {T.videoRefaire}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => videoInput.current?.click()}
+                  className="inline-flex min-h-[56px] items-center justify-center gap-3 border border-primary px-6 transition-colors hover:bg-primary hover:text-primary-foreground"
+                >
+                  <Video className="h-4 w-4" />
+                  <span className="label-mono">{T.videoDemarrer}</span>
+                </button>
+              )}
+              <p className="text-[13px] text-muted-foreground">{T.videoAide}</p>
+              {progression !== null && (
+                <p className="label-mono">{T.videoEnvoi} · {Math.round(progression * 100)} %</p>
+              )}
             </div>
           ) : (
             <div className="flex flex-col gap-3">
@@ -463,6 +611,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
                     </div>
                     {m.texte && <p className="whitespace-pre-line text-[15px] leading-relaxed">{m.texte}</p>}
                     {m.audio_url && <LecteurVocal url={m.audio_url} secondes={m.audio_secondes} />}
+                    {m.video_url && <LecteurVideo url={m.video_url} poster={m.video_poster_url ?? null} />}
                     {m.photo_url && (
                       <img
                         src={m.photo_thumb_url ?? m.photo_url}

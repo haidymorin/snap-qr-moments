@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Loader2, Pause, Play } from "lucide-react";
+import { LecteurVideo } from "@/components/LivreDor";
 
 /* Le livre d'or, côté hôtes.
  *
@@ -38,6 +39,8 @@ interface MessageHote {
   texte: string | null;
   audio_url: string | null;
   audio_secondes: number | null;
+  video_url?: string | null;
+  video_poster_url?: string | null;
   photo_url: string | null;
   photo_thumb_url: string | null;
   masque: boolean;
@@ -154,6 +157,7 @@ const LivreDorHote = ({ eventId, lang }: { eventId: string; lang: string }) => {
                 <p className="whitespace-pre-line text-[15px] leading-relaxed">{m.texte}</p>
               )}
               {m.audio_url && <Lecteur url={m.audio_url} secondes={m.audio_secondes} />}
+              {m.video_url && <LecteurVideo url={m.video_url} poster={m.video_poster_url ?? null} />}
               {m.photo_url && (
                 <img
                   src={m.photo_thumb_url ?? m.photo_url}

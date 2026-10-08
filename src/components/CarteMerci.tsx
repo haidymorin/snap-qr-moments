@@ -20,6 +20,11 @@ import { useLanguage, Lang } from "@/contexts/LanguageContext";
  *     une liste de diffusion à partir d'un mariage ;
  *   · le nombre de destinataires est affiché AVANT l'écriture. On n'écrit
  *     pas le même mot pour trois personnes et pour quatre-vingts.
+ *
+ * Le mot est facultatif, le lien ne l'est pas. L'invité qui a laissé son
+ * adresse a lu « vous recevrez le lien de la galerie » : il le reçoit, le
+ * lendemain à 20 h, avec un message simple si les mariés n'ont rien écrit.
+ * Leur mot, s'ils en écrivent un, remplace le message simple.
  */
 
 const MAX = 600;
@@ -41,7 +46,7 @@ const T: Record<Lang, Record<string, string>> = {
   fr: {
     titre: "Le mot du lendemain",
     chapo:
-      "Vos invités trient leurs photos le lendemain soir, pas pendant la soirée. Écrivez votre mot maintenant : il partira tout seul, avec le lien de la galerie, pendant que vous serez ailleurs.",
+      "Vos invités trient leurs photos le lendemain soir, pas pendant la soirée. Ceux qui ont laissé leur adresse reçoivent ce soir-là le lien de la galerie, avec un message simple de notre part. Écrivez votre propre mot si vous le souhaitez : il remplacera le nôtre et partira tout seul, pendant que vous serez ailleurs.",
     destinataires: "invités recevront ce message",
     aucun:
       "Aucun invité n'a encore laissé son adresse. Elle leur est proposée dans la galerie, après leur premier dépôt — le message attendra qu'il y en ait.",
@@ -51,17 +56,18 @@ const T: Record<Lang, Record<string, string>> = {
     quand: "Envoi programmé",
     quandAide: "Par défaut, le lendemain du mariage à 20 h.",
     enregistrer: "Programmer l'envoi",
-    annuler: "Annuler l'envoi",
+    annuler: "Retirer mon mot",
     enregistre: "Envoi programmé.",
-    annule: "Envoi annulé.",
+    annule: "Votre mot est retiré : vos invités recevront le message simple, le lendemain à 20 h.",
     envoye: "Message envoyé le",
+    apres: "Les invités qui laissent leur adresse après cette date reçoivent le même message dans l'heure.",
     erreur: "L'enregistrement a échoué.",
     restants: "caractères restants",
   },
   en: {
     titre: "The morning-after note",
     chapo:
-      "Your guests sort their photos the next evening, not during the party. Write your note now: it goes out on its own, with the gallery link, while you are somewhere else.",
+      "Your guests sort their photos the next evening, not during the party. Those who left their address receive the gallery link that evening, with a short message from us. Write your own note if you like: it replaces ours and goes out on its own, while you are somewhere else.",
     destinataires: "guests will receive this message",
     aucun:
       "No guest has left an address yet. They are offered the option in the gallery after their first upload — the message will wait until someone has.",
@@ -71,10 +77,11 @@ const T: Record<Lang, Record<string, string>> = {
     quand: "Scheduled for",
     quandAide: "By default, the day after the wedding at 8 p.m.",
     enregistrer: "Schedule it",
-    annuler: "Cancel the send",
+    annuler: "Remove my note",
     enregistre: "Scheduled.",
-    annule: "Send cancelled.",
+    annule: "Your note is removed: your guests will get the short message, the day after at 8 p.m.",
     envoye: "Message sent on",
+    apres: "Guests who leave their address after that date get the same message within the hour.",
     erreur: "Saving failed.",
     restants: "characters left",
   },
@@ -115,7 +122,7 @@ const CarteMerci = ({ eventId, eventDate, texte, envoiLe, envoyeLe, onChange }: 
     setNote(null);
     const valeurs = actif
       ? { merci_texte: mot.trim(), merci_envoi_le: new Date(quand).toISOString() }
-      : { merci_texte: mot.trim() || null, merci_envoi_le: null };
+      : { merci_texte: null, merci_envoi_le: null };
 
     const { error } = await supabase
       .from("events")
@@ -124,6 +131,7 @@ const CarteMerci = ({ eventId, eventDate, texte, envoiLe, envoyeLe, onChange }: 
 
     if (error) setNote(t.erreur);
     else {
+      if (!actif) setMot("");
       onChange(valeurs as { merci_texte: string | null; merci_envoi_le: string | null });
       setNote(actif ? t.enregistre : t.annule);
     }
@@ -152,6 +160,7 @@ const CarteMerci = ({ eventId, eventDate, texte, envoiLe, envoyeLe, onChange }: 
               day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit",
             })}
           </b>
+          <span className="mt-2 block text-[13px]">{t.apres}</span>
         </p>
       ) : (
         <>
