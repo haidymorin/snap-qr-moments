@@ -261,6 +261,9 @@ export type Database = {
       }
       events: {
         Row: {
+          album_imprime_le: string | null
+          album_notifie_le: string | null
+          album_valide_le: string | null
           albums_offerts: boolean
           annonce_depuis: string | null
           annonce_texte: string | null
@@ -279,9 +282,6 @@ export type Database = {
           livre_dor_actif: boolean
           livre_dor_public: boolean
           livre_dor_vocal: boolean
-          album_imprime_le: string | null
-          album_notifie_le: string | null
-          album_valide_le: string | null
           merci_envoi_le: string | null
           merci_envoye_le: string | null
           merci_texte: string | null
@@ -298,6 +298,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          album_imprime_le?: string | null
+          album_notifie_le?: string | null
+          album_valide_le?: string | null
           albums_offerts?: boolean
           annonce_depuis?: string | null
           annonce_texte?: string | null
@@ -316,9 +319,6 @@ export type Database = {
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
-          album_imprime_le?: string | null
-          album_notifie_le?: string | null
-          album_valide_le?: string | null
           merci_envoi_le?: string | null
           merci_envoye_le?: string | null
           merci_texte?: string | null
@@ -335,6 +335,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          album_imprime_le?: string | null
+          album_notifie_le?: string | null
+          album_valide_le?: string | null
           albums_offerts?: boolean
           annonce_depuis?: string | null
           annonce_texte?: string | null
@@ -353,9 +356,6 @@ export type Database = {
           livre_dor_actif?: boolean
           livre_dor_public?: boolean
           livre_dor_vocal?: boolean
-          album_imprime_le?: string | null
-          album_notifie_le?: string | null
-          album_valide_le?: string | null
           merci_envoi_le?: string | null
           merci_envoye_le?: string | null
           merci_texte?: string | null
