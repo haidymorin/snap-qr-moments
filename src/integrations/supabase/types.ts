@@ -142,6 +142,62 @@ export type Database = {
         }
         Relationships: []
       }
+      commandes: {
+        Row: {
+          adresse_livraison: Json | null
+          applique_le: string | null
+          cree_le: string
+          email: string | null
+          event_id: string
+          id: string
+          montant_centimes: number
+          plan_avant: string | null
+          plan_cible: string | null
+          produit: string
+          quantite: number
+          statut: string
+          stripe_session_id: string | null
+        }
+        Insert: {
+          adresse_livraison?: Json | null
+          applique_le?: string | null
+          cree_le?: string
+          email?: string | null
+          event_id: string
+          id?: string
+          montant_centimes: number
+          plan_avant?: string | null
+          plan_cible?: string | null
+          produit: string
+          quantite?: number
+          statut?: string
+          stripe_session_id?: string | null
+        }
+        Update: {
+          adresse_livraison?: Json | null
+          applique_le?: string | null
+          cree_le?: string
+          email?: string | null
+          event_id?: string
+          id?: string
+          montant_centimes?: number
+          plan_avant?: string | null
+          plan_cible?: string | null
+          produit?: string
+          quantite?: number
+          statut?: string
+          stripe_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commandes_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       defis: {
         Row: {
           event_id: string
@@ -258,62 +314,6 @@ export type Database = {
           type_evenement?: string | null
         }
         Relationships: []
-      }
-      commandes: {
-        Row: {
-          adresse_livraison: Json | null
-          applique_le: string | null
-          cree_le: string
-          email: string | null
-          event_id: string
-          id: string
-          montant_centimes: number
-          plan_avant: string | null
-          plan_cible: string | null
-          produit: string
-          quantite: number
-          statut: string
-          stripe_session_id: string | null
-        }
-        Insert: {
-          adresse_livraison?: Json | null
-          applique_le?: string | null
-          cree_le?: string
-          email?: string | null
-          event_id: string
-          id?: string
-          montant_centimes: number
-          plan_avant?: string | null
-          plan_cible?: string | null
-          produit: string
-          quantite?: number
-          statut?: string
-          stripe_session_id?: string | null
-        }
-        Update: {
-          adresse_livraison?: Json | null
-          applique_le?: string | null
-          cree_le?: string
-          email?: string | null
-          event_id?: string
-          id?: string
-          montant_centimes?: number
-          plan_avant?: string | null
-          plan_cible?: string | null
-          produit?: string
-          quantite?: number
-          statut?: string
-          stripe_session_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "commandes_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       events: {
         Row: {
@@ -972,10 +972,6 @@ export type Database = {
         }
         Returns: number
       }
-      commande_statut: {
-        Args: { p_commande: string; p_statut: string }
-        Returns: undefined
-      }
       album_marquer_imprime: {
         Args: { p_event: string; p_imprime: boolean }
         Returns: undefined
@@ -999,6 +995,10 @@ export type Database = {
       }
       album_valider: { Args: { p_event: string }; Returns: string }
       collecte_ouverte: { Args: { p_event_id: string }; Returns: boolean }
+      commande_statut: {
+        Args: { p_commande: string; p_statut: string }
+        Returns: undefined
+      }
       creer_evenement_offert: {
         Args: {
           p_albums_offerts: boolean
