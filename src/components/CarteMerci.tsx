@@ -49,10 +49,10 @@ const T: Record<Lang, Record<string, string>> = {
       "Vos invités trient leurs photos le lendemain soir, pas pendant la soirée. Ceux qui ont laissé leur adresse reçoivent ce soir-là le lien de la galerie, avec un message simple de notre part. Écrivez votre propre mot si vous le souhaitez : il remplacera le nôtre et partira tout seul, pendant que vous serez ailleurs.",
     destinataires: "invités recevront ce message",
     aucun:
-      "Aucun invité n'a encore laissé son adresse. Elle leur est proposée dans la galerie, après leur premier dépôt — le message attendra qu'il y en ait.",
+      "Aucun invité n'a encore laissé son adresse. Elle leur est proposée dans la galerie, à leur arrivée et après leur premier dépôt. Le message attendra qu'il y en ait.",
     votreMot: "Votre mot",
     exemple:
-      "Merci d'être venus. On a dansé jusqu'à 4 h grâce à vous.\n\nSi vous avez encore des photos sur votre téléphone, c'est le moment — le lien est juste en dessous.",
+      "Merci d'être venus. On a dansé jusqu'à 4 h grâce à vous.\n\nSi vous avez encore des photos sur votre téléphone, c'est le moment : le lien est juste en dessous.",
     quand: "Envoi programmé",
     quandAide: "Par défaut, le lendemain du mariage à 20 h.",
     enregistrer: "Programmer l'envoi",
@@ -70,10 +70,10 @@ const T: Record<Lang, Record<string, string>> = {
       "Your guests sort their photos the next evening, not during the party. Those who left their address receive the gallery link that evening, with a short message from us. Write your own note if you like: it replaces ours and goes out on its own, while you are somewhere else.",
     destinataires: "guests will receive this message",
     aucun:
-      "No guest has left an address yet. They are offered the option in the gallery after their first upload — the message will wait until someone has.",
+      "No guest has left an address yet. They are offered the option in the gallery when they arrive and after their first upload. The message will wait until someone has.",
     votreMot: "Your note",
     exemple:
-      "Thank you for coming. We danced until 4 a.m. because of you.\n\nIf you still have photos on your phone, now is the moment — the link is just below.",
+      "Thank you for coming. We danced until 4 a.m. because of you.\n\nIf you still have photos on your phone, now is the moment: the link is just below.",
     quand: "Scheduled for",
     quandAide: "By default, the day after the wedding at 8 p.m.",
     enregistrer: "Schedule it",

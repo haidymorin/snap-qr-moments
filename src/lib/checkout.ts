@@ -48,6 +48,12 @@ const MOTIFS: Record<string, string> = {
     "Votre événement a lieu dans moins de quatorze jours : cochez la case pour que nous puissions commencer tout de suite.",
   stripe_refuse: "Le paiement n'a pas pu être ouvert. Réessayez dans un instant.",
   email_invalide: "Cette adresse email ne semble pas valide.",
+  connexion_requise: "Reconnectez-vous à votre espace, puis réessayez.",
+  acces_refuse: "Cet événement n'appartient pas à ce compte.",
+  galerie_fermee: "Cette galerie est fermée.",
+  montee_impossible: "Cette formule n'est pas au-dessus de la vôtre.",
+  produit_inconnu: "Ce produit n'existe pas.",
+  album_deja_inclus: "L'album est déjà compris pour cet événement.",
 };
 
 /* Envoie le visiteur vers la page de paiement Stripe.
@@ -77,6 +83,37 @@ export async function startCheckout(commande: Commande): Promise<void> {
   /* `functions.invoke` ne rend pas le corps des réponses d'erreur : le motif
      exact est dans la réponse HTTP, qu'il faut aller relire. Sans cela, un
      refus de consentement s'afficherait comme une panne réseau. */
+  let code = data?.error as string | undefined;
+  const contexte = (error as { context?: unknown } | null)?.context;
+  if (!code && contexte instanceof Response) {
+    try {
+      code = (await contexte.clone().json())?.error;
+    } catch {
+      /* corps illisible */
+    }
+  }
+  throw new Error(MOTIFS[code ?? ""] ?? code ?? error?.message ?? "Réponse inattendue.");
+}
+
+export type ProduitCommande = "album" | "mini_album" | "annee" | "montee";
+
+/* Une commande passée depuis l'espace des mariés : produit à la carte ou
+ * montée de formule. Comme pour les formules, le navigateur ne dit que quoi
+ * et combien ; le prix est décidé par le serveur, qui vérifie aussi que
+ * l'événement appartient bien à la personne connectée. */
+export async function startCommande(commande: {
+  eventId: string;
+  produit: ProduitCommande;
+  quantite?: number;
+  planCible?: PlanId;
+}): Promise<void> {
+  const { data, error } = await supabase.functions.invoke("create-checkout-session", {
+    body: { origin: window.location.origin, commande },
+  });
+  if (data?.url) {
+    window.location.href = data.url as string;
+    return;
+  }
   let code = data?.error as string | undefined;
   const contexte = (error as { context?: unknown } | null)?.context;
   if (!code && contexte instanceof Response) {

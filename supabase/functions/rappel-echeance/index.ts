@@ -2,7 +2,7 @@
 //
 // L'hébergement dure six mois. Sans ce rappel, la galerie se ferme un matin
 // sans que personne n'ait rien vu venir, et le client découvre la perte après
-// coup — c'est exactement le genre d'histoire qui se raconte. Trente jours,
+// coup : c'est exactement le genre d'histoire qui se raconte. Trente jours,
 // c'est assez pour tout télécharger tranquillement, ou pour prolonger.
 //
 // Un seul rappel par événement : la date d'envoi est horodatée en base, et la
@@ -15,6 +15,7 @@
 // Secrets attendus : SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY
 
 import { createClient } from "@supabase/supabase-js";
+import { dateEnFrancais, paragraphes, rendreEmail, rendreTexte, typeEnFrancais } from "../_shared/gabarit-email.ts";
 
 const db = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -30,12 +31,6 @@ const json = (b: unknown, s = 200) =>
 
 const jour = (d: Date) => d.toISOString().slice(0, 10);
 
-const enFrancais = (iso: string) =>
-  new Date(`${iso}T12:00:00Z`).toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
 
 Deno.serve(async () => {
   try {
@@ -45,7 +40,7 @@ Deno.serve(async () => {
 
     const { data: evenements, error } = await db
       .from("events")
-      .select("id, name, expire_le, user_id")
+      .select("id, name, event_type, event_date, expire_le, user_id")
       .is("rappel_envoye_le", null)
       .not("expire_le", "is", null)
       .gte("expire_le", debut)
@@ -72,22 +67,30 @@ Deno.serve(async () => {
       const destinataire = compte?.user?.email;
       if (!destinataire) continue;
 
-      const date = enFrancais(ev.expire_le as string);
+      const date = dateEnFrancais(ev.expire_le as string);
       const nom = (ev.name as string) || "votre événement";
+      const espace = `${SITE}/dashboard/event/${ev.id}`;
 
-      const texte = [
-        `Bonjour,`,
-        ``,
-        `La galerie de « ${nom} » restera en ligne jusqu'au ${date}. Passé cette date, les photos et les vidéos seront effacées.`,
-        ``,
-        `Deux possibilités, et rien à faire si vous avez déjà tout récupéré :`,
-        ``,
-        `• Tout télécharger en une fois depuis votre espace : ${SITE}/dashboard`,
-        `• Prolonger d'un an pour 29 € — répondez simplement à ce message.`,
-        ``,
-        `À bientôt,`,
-        `QR Memories`,
-      ].join("\n");
+      /* Le message est construit sur le même gabarit que celui des invités :
+         c'est la même marque qui écrit. Le bouton « Prolonger » mène droit à
+         la commande de l'année supplémentaire, payable en ligne. */
+      const texte =
+        `La galerie de ${nom} reste en ligne jusqu'au ${date}. Passé cette date, les photos, ` +
+        `les vidéos et les messages seront effacés définitivement.\n\n` +
+        `Deux possibilités, et rien à faire si vous avez déjà tout récupéré : tout télécharger ` +
+        `en une fois depuis votre espace, ou garder la galerie ouverte un an de plus pour 29 €.`;
+      const gabarit = {
+        apercu: `Votre galerie ferme le ${date}. Téléchargez tout, ou prolongez d'un an.`,
+        etiquette: `${typeEnFrancais(ev.event_type as string)} · ${dateEnFrancais(ev.event_date as string)}`,
+        titre: `Votre galerie ferme le ${date}`,
+        corps: paragraphes(texte),
+        boutons: [
+          { texte: "Tout télécharger", lien: espace },
+          { texte: "Prolonger d'un an, 29 €", lien: `${espace}?prolonger=1`, secondaire: true },
+        ],
+        apres: "Une question ? Répondez simplement à ce message.",
+        pied: `Vous recevez ce message parce que vous avez créé la galerie de ${nom} sur QR Memories.`,
+      };
 
       const envoi = await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -95,8 +98,10 @@ Deno.serve(async () => {
         body: JSON.stringify({
           from: EXPEDITEUR,
           to: [destinataire],
+          reply_to: "contact@qr-memories.fr",
           subject: `Votre galerie ferme le ${date}`,
-          text: texte,
+          html: rendreEmail(gabarit),
+          text: rendreTexte(gabarit, texte),
         }),
       });
 

@@ -65,6 +65,85 @@ async function compteDe(email: string): Promise<string> {
   return data.user.id;
 }
 
+/* Une commande passée depuis l'espace des mariés : produit à la carte ou
+   montée de formule. L'événement existe déjà ; on enregistre la commande, puis
+   on applique son effet une seule fois (colonne `applique_le`). */
+async function traiterCommande(
+  session: Record<string, any>, meta: Record<string, string>, email: string,
+) {
+  const eventId = meta.event_id;
+  const produit = meta.produit;
+  const adresse = session.shipping_details ?? session.collected_information?.shipping_details ?? null;
+
+  const { error: erreurInsert } = await db.from("commandes").insert({
+    event_id: eventId,
+    produit,
+    quantite: Number(meta.quantite) || 1,
+    montant_centimes: session.amount_total ?? 0,
+    plan_avant: meta.plan_avant || null,
+    plan_cible: meta.plan_cible || null,
+    stripe_session_id: session.id,
+    adresse_livraison: adresse,
+    email,
+  });
+  if (erreurInsert && erreurInsert.code !== "23505") throw erreurInsert;
+
+  const { data: commande } = await db
+    .from("commandes").select("id, applique_le").eq("stripe_session_id", session.id).single();
+
+  if (commande && !commande.applique_le) {
+    if (produit === "album") {
+      await db.from("events").update({ album_achete: true }).eq("id", eventId);
+    } else if (produit === "annee") {
+      const { data: ev } = await db.from("events").select("expire_le").eq("id", eventId).single();
+      const base = new Date(Math.max(Date.now(), new Date(`${ev?.expire_le ?? ""}T12:00:00Z`).getTime() || 0));
+      base.setUTCFullYear(base.getUTCFullYear() + 1);
+      // Le rappel des trente jours repartira avant la nouvelle échéance.
+      await db.from("events")
+        .update({ expire_le: base.toISOString().slice(0, 10), rappel_envoye_le: null })
+        .eq("id", eventId);
+    } else if (produit === "montee" && meta.plan_cible) {
+      await db.from("events").update({ plan: meta.plan_cible })
+        .eq("id", eventId).eq("plan", meta.plan_avant);
+    }
+    await db.from("commandes").update({ applique_le: new Date().toISOString() }).eq("id", commande.id);
+  }
+
+  await db.from("paiements").update({ event_id: eventId }).eq("stripe_session_id", session.id);
+
+  /* L'administratrice est prévenue de chaque commande. Un album à imprimer
+     qui dort dans une table ne part jamais. Un échec d'envoi ne doit pas
+     faire rejouer le paiement. */
+  try {
+    const cle = Deno.env.get("RESEND_API_KEY");
+    if (cle) {
+      const noms: Record<string, string> = {
+        album: "Album grand format", mini_album: "Mini-album",
+        annee: "Une année de plus en ligne", montee: `Passage à la formule ${meta.plan_cible}`,
+      };
+      const lignes = [
+        `${noms[produit] ?? produit} × ${meta.quantite || 1}`,
+        `Montant : ${((session.amount_total ?? 0) / 100).toFixed(2).replace(".", ",")} €`,
+        `Client : ${email}`,
+        adresse ? `Livraison : ${JSON.stringify(adresse.address ?? adresse)}` : "",
+        `Événement : https://qr-memories.fr/dashboard/event/${eventId}`,
+      ].filter(Boolean);
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${cle}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: "QR Memories <contact@qr-memories.fr>",
+          to: ["contact@qr-memories.fr"],
+          subject: `Nouvelle commande : ${noms[produit] ?? produit}`,
+          text: lignes.join("\n"),
+        }),
+      });
+    }
+  } catch (e) {
+    console.error("stripe-webhook notification commande", e);
+  }
+}
+
 Deno.serve(async (req) => {
   const secret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
   const entete = req.headers.get("stripe-signature");
@@ -108,6 +187,11 @@ Deno.serve(async (req) => {
       const { data: trace } = await db
         .from("paiements").select("event_id").eq("stripe_session_id", session.id).maybeSingle();
       if (trace?.event_id) return new Response("déjà traité", { status: 200 });
+    }
+
+    if (meta.genre === "commande") {
+      await traiterCommande(session, meta, email);
+      return new Response("ok", { status: 200 });
     }
 
     const proprietaire = await compteDe(email);

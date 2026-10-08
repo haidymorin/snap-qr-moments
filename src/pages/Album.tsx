@@ -75,7 +75,7 @@ const T = {
     exporterAide: "Les fichiers en qualité d'origine, numérotés dans l'ordre des pages.",
     marquerImprime: "Marquer comme envoyé à l'impression",
     annulerImprime: "Annuler « envoyé à l'impression »",
-    nonInclus: "La composition de l'album est comprise dans la formule Héritage.",
+    nonInclus: "La composition de l'album est comprise dans la formule Héritage, ou avec l'album commandé depuis votre espace.",
     erreur: "L'opération n'a pas abouti. Réessayez dans un instant.",
     importEchecs: "fichier(s) n'ont pas pu être ajoutés.",
     exportEchecs: "fichier(s) n'ont pas pu être récupérés.",
@@ -116,7 +116,7 @@ const T = {
     exporterAide: "Original-quality files, numbered in page order.",
     marquerImprime: "Mark as sent to print",
     annulerImprime: "Undo “sent to print”",
-    nonInclus: "Building the album is included in the Heritage plan.",
+    nonInclus: "Building the album is included in the Heritage plan, or with an album ordered from your space.",
     erreur: "That did not go through. Try again in a moment.",
     importEchecs: "file(s) could not be added.",
     exportEchecs: "file(s) could not be fetched.",
@@ -140,9 +140,14 @@ interface Page {
 
 interface EtatAlbum {
   plan: string;
+  album_achete?: boolean;
+  albums_offerts?: boolean;
   album_valide_le: string | null;
   album_imprime_le: string | null;
 }
+
+const albumOuvert = (e: EtatAlbum) =>
+  ["heritage", "admin"].includes(e.plan) || Boolean(e.album_achete) || Boolean(e.albums_offerts);
 
 /** Un nom de fichier sans accents ni caractères qui gênent un imprimeur. */
 const slug = (s: string) =>
@@ -199,7 +204,7 @@ const Album = () => {
     if (!id) return;
     const { data } = await supabase
       .from("events")
-      .select("plan, album_valide_le, album_imprime_le")
+      .select("plan, album_valide_le, album_imprime_le, album_achete, albums_offerts")
       .eq("id", id)
       .maybeSingle();
     setEtat((data as EtatAlbum | null) ?? null);
@@ -391,14 +396,14 @@ const Album = () => {
       const n = String(i + 1).padStart(3, "0");
       if (p.genre === "message" && p.livre_dor) {
         const auteur = p.livre_dor.auteur;
-        const contenu = `${p.livre_dor.texte ?? ""}\n\n— ${auteur}\n`;
+        const contenu = `${p.livre_dor.texte ?? ""}\n\n${auteur}\n`;
         fichiers.push({
           url: URL.createObjectURL(new Blob([contenu], { type: "text/plain;charset=utf-8" })),
           nom: `${n}-mot-de-${slug(auteur)}.txt`,
         });
         const photo = p.livre_dor.photo_url ?? p.livre_dor.photo_thumb_url;
         if (photo) fichiers.push({ url: photo, nom: `${n}-photo-de-${slug(auteur)}.${extensionUrl(photo)}` });
-        textes.push(`${n}  mot du livre d'or — ${auteur}`);
+        textes.push(`${n}  mot du livre d'or, ${auteur}`);
         return;
       }
       const url = p.genre === "externe" ? p.externe_url : p.photos?.url;
@@ -407,7 +412,7 @@ const Album = () => {
       textes.push(`${n}  ${p.genre === "externe" ? "photo apportée par les mariés" : p.photos?.file_name ?? "photo"}`);
     });
     fichiers.unshift({
-      url: URL.createObjectURL(new Blob([`Album — ${pages.length} pages\n\n${textes.join("\n")}\n`], {
+      url: URL.createObjectURL(new Blob([`Album, ${pages.length} pages\n\n${textes.join("\n")}\n`], {
         type: "text/plain;charset=utf-8",
       })),
       nom: "000-sommaire.txt",
@@ -448,7 +453,7 @@ const Album = () => {
         <h1 className="mt-6 text-[clamp(28px,4vw,44px)]">{t.titre}</h1>
         <p className="mt-3 max-w-[64ch] text-muted-foreground">{t.chapo}</p>
 
-        {etat && !["heritage", "admin"].includes(etat.plan) && !admin && (
+        {etat && !albumOuvert(etat) && !admin && (
           <p className="mt-6 border border-border bg-card p-5 text-muted-foreground">{t.nonInclus}</p>
         )}
 
@@ -474,7 +479,7 @@ const Album = () => {
           <p className="mt-6 border-l-2 border-destructive pl-3 text-sm text-destructive">{alerte}</p>
         )}
 
-        {(etat && (["heritage", "admin"].includes(etat.plan) || admin)) && (
+        {(etat && (albumOuvert(etat) || admin)) && (
         <>
 
         {modifiable && (

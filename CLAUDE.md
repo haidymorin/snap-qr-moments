@@ -40,10 +40,6 @@ développeuse.
 - **`.env` ne contient que des variables `VITE_`**, publiques par construction. Aucun
   secret : les clés vivent dans le formulaire de secrets de Lovable, jamais dans son
   chat.
-- **Piège Tailwind** : tous les `borderRadius` sont forcés à `0` et les ombres à `none`
-  dans `tailwind.config.ts`. Donc `rounded-2xl` et `shadow-card` dans le code ne rendent
-  rien — ce ne sont pas des écarts de charte. Les vrais écarts sont `rounded-full`, les
-  `linear-gradient(...)` en dur, et `text-white` / `bg-white`.
 
 ## Le public réel
 
@@ -75,23 +71,34 @@ de photos personnelles dans l'album (chemin refusé par `r2-sign-upload`) et la 
 l'album, qui promettait un 30×30 toilé à plat alors que Gelato livre un 28×28 rigide mat
 à reliure collée.
 
-## Direction artistique — « Écru & Prune fumée »
+**Commandes après l'achat** (migration `20261008160000_commandes_a_la_carte.sql`) :
+album 129 €, mini-album 45 €, année en ligne 29 € et passage à une formule supérieure
+(on paie la différence) se commandent depuis l'espace des mariés (`CarteCommandes`).
+`create-checkout-session` fixe les prix, `stripe-webhook` écrit la table `commandes` et
+applique l'effet une seule fois (`applique_le`). L'administratrice suit les commandes
+dans `/admin` (`CommandesAdmin`) et reçoit un e-mail à chacune.
+
+## Direction artistique : « Signal » (depuis le 4 septembre 2026)
+
+**Le site en ligne fait foi.** L'ancienne charte « Écru & Prune fumée » (serif sur écru,
+angles à zéro) a été abandonnée le 4 septembre (commit `3104148`) : elle donnait l'air
+d'un vieux journal.
 
 ```
-fond #F5F1EA · texte #3A2E32 · secondaire #6E6164 · filets #E2DAD3 · nuit #1B1917
+fond #FFFFFF · encre #111014 · aubergine #40203B (action) · cuivre #C1793E (étiquettes)
+prune #7E4479 (halos) · gris #69606C · filets #EAE6EA · surface #F8F7F8
 ```
 
-**Cormorant Garamond 600** pour les titres · **Montserrat 400** pour le texte en 17 px ·
-**JetBrains Mono** uniquement pour les chiffres et les étiquettes en capitales espacées.
+**Bricolage Grotesque 700** pour les titres (interlettrage serré) · **Instrument Sans**
+pour le texte · **JetBrains Mono** pour les étiquettes en capitales espacées, en cuivre.
+Angles arrondis de 6 à 28 px selon l'échelle, boutons en pilule. Fond blanc, beaucoup de
+contraste ; la couleur vient des photos.
 
-*Un écrin clair et calme. La couleur vient des photos, pas de la marque.*
+Les e-mails suivent la même direction : gabarit commun dans
+`supabase/functions/_shared/gabarit-email.ts`.
 
-**Interdits absolus** : angles arrondis, dégradés, icônes dans des ronds de couleur,
-ombres portées, blanc pur. Les séparations sont des filets de 1 px.
-
-Chantier ouvert : le site manque de contraste — un seul plan, un fond unique, aucun
-accent. Trois directions comparées (« Bandes », « Bleu de four », « Nuit »), décision
-non prise. Éviter le terracotta, réflexe de tous les sites crème à titrage serif.
+**Rédaction : pas de tiret long (—) dans les textes destinés aux clients.** Haïdy trouve
+que ça fait écrit par une IA. Deux-points, virgules ou phrases séparées.
 
 ## RGPD
 

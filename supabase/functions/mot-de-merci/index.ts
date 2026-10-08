@@ -38,6 +38,9 @@
 // Secrets attendus : SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY
 
 import { createClient } from "@supabase/supabase-js";
+import {
+  dateEnFrancais, echapper, nomExpediteur, paragraphes, rendreEmail, rendreTexte, typeEnFrancais,
+} from "../_shared/gabarit-email.ts";
 
 const db = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -56,17 +59,6 @@ const PAR_MESSAGE = 45;
 const json = (b: unknown, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { "Content-Type": "application/json" } });
 
-const echapper = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-/* Le texte des mariés est écrit dans un champ libre : on garde les
-   paragraphes, on n'interprète rien d'autre. */
-const paragraphes = (texte: string) =>
-  texte
-    .split(/\n{2,}/)
-    .map((p) => `<p style="margin:0 0 16px">${echapper(p).replace(/\n/g, "<br>")}</p>`)
-    .join("");
-
 /** Le lendemain de `dateIso` (AAAA-MM-JJ) à `heure` h, heure de Paris. */
 function lendemainAParis(dateIso: string, heure: number): Date {
   const [a, m, j] = dateIso.split("-").map(Number);
@@ -79,15 +71,17 @@ function lendemainAParis(dateIso: string, heure: number): Date {
   return new Date(approx.getTime() - (hParis - heure) * 3_600_000);
 }
 
+/* Le message quand les mariés n'ont rien écrit. Court, chaleureux, et une
+   ligne en anglais pour les invités qui ne lisent pas le français. */
 const MESSAGE_SIMPLE = (nom: string) =>
-  `Bonsoir,\n\nVous étiez à ${nom}. La galerie est ouverte : retrouvez toutes les photos de la ` +
-  `soirée, et ajoutez celles qui dorment encore dans votre téléphone.\n\n` +
-  `Good evening — you were at ${nom}. The gallery is open: see every photo from the party, ` +
-  `and add the ones still on your phone.`;
+  `La galerie de ${nom} est ouverte. Les photos de la soirée arrivent, et il manque ` +
+  `peut-être les vôtres : celles qui dorment encore dans votre téléphone.\n\n` +
+  `In English: the gallery is open. Add your photos with the button below.`;
 
 interface Ev {
   id: string;
   name: string;
+  event_type: string | null;
   event_date: string;
   statut: string;
   expire_le: string | null;
@@ -100,7 +94,7 @@ async function envoyer(cle: string, corps: Record<string, unknown>) {
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${cle}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: EXPEDITEUR, ...corps }),
+    body: JSON.stringify({ from: EXPEDITEUR, ...corps }),  // `corps.from` peut remplacer l'expéditeur
   });
   if (!r.ok) throw new Error(`resend ${r.status} ${await r.text()}`);
 }
@@ -121,7 +115,7 @@ async function liensDeGalerie(cle: string, maintenant: Date) {
   const idsEvenements = [...new Set(attente.map((c) => c.event_id))];
   const { data: evs } = await db
     .from("events")
-    .select("id,name,event_date,statut,expire_le,merci_texte,merci_envoi_le,merci_envoye_le")
+    .select("id,name,event_type,event_date,statut,expire_le,merci_texte,merci_envoi_le,merci_envoye_le")
     .in("id", idsEvenements);
 
   const aujourdhui = maintenant.toISOString().slice(0, 10);
@@ -154,31 +148,56 @@ async function liensDeGalerie(cle: string, maintenant: Date) {
     if (adresses.length === 0) continue;
 
     const lien = `${SITE}/event/${ev.id}`;
-    const html = `
-      <div style="font:16px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#3A2E32;background:#F5F1EA;max-width:520px;margin:0 auto;padding:32px 24px">
-        ${paragraphes(motProgramme ? mot : MESSAGE_SIMPLE(ev.name))}
-        <p style="margin:32px 0 0">
-          <a href="${lien}" style="display:inline-block;background:#3A2E32;color:#F5F1EA;text-decoration:none;padding:14px 26px;font-weight:600">
-            Voir la galerie et ajouter mes photos
-          </a>
-        </p>
-        <p style="margin:24px 0 0;font-size:13.5px;color:#6E6164">
-          Vous recevez ce message parce que vous avez laissé votre adresse dans
-          la galerie de ${echapper(ev.name)} pour en recevoir le lien.
-          Elle ne sert à rien d'autre et disparaît avec la galerie.
-        </p>
-      </div>`;
-    const sujet = motProgramme ? `Un mot de ${ev.name}` : `Les photos de ${ev.name}`;
+
+    /* Trois vraies photos de l'événement, les plus nettes, et le vrai nombre
+       de photos déposées. C'est ce qui donne envie d'ouvrir la galerie. */
+    const [{ data: meilleures }, { count: nbPhotos }] = await Promise.all([
+      db.from("photos").select("thumbnail_url")
+        .eq("event_id", ev.id).eq("media_type", "photo").is("ecarte", null)
+        .not("thumbnail_url", "is", null)
+        .order("nettete", { ascending: false, nullsFirst: false })
+        .limit(3),
+      db.from("photos").select("id", { count: "exact", head: true })
+        .eq("event_id", ev.id).is("ecarte", null),
+    ]);
+    const photos = (meilleures ?? []).map((p) => p.thumbnail_url as string).filter(Boolean);
+    const n = nbPhotos ?? 0;
+
+    const texte = motProgramme ? mot : MESSAGE_SIMPLE(ev.name);
+    const gabarit = {
+      apercu: motProgramme
+        ? `Un mot de ${ev.name}, et le lien de la galerie.`
+        : `Les photos de ${ev.name} sont en ligne. Ajoutez les vôtres.`,
+      etiquette: `${typeEnFrancais(ev.event_type)} · ${dateEnFrancais(ev.event_date)}`,
+      titre: motProgramme ? `Un mot de ${ev.name}` : "Merci d'avoir été là.",
+      corps: paragraphes(texte),
+      photos: photos.length >= 3 ? photos : [],
+      legendePhotos: n > 0 ? `${n} photo${n > 1 ? "s" : ""} déjà déposée${n > 1 ? "s" : ""}` : undefined,
+      boutons: [
+        { texte: "Ajouter mes photos", lien },
+        { texte: "Voir toute la galerie", lien, secondaire: true },
+      ],
+      apres: "Pas d'application à installer, pas de compte à créer : le lien ouvre directement la galerie.",
+      pied: `Vous recevez ce message parce que vous avez laissé votre adresse dans la galerie de ${ev.name} ` +
+        `pour en recevoir le lien. Elle ne sert à rien d'autre et disparaît avec la galerie.`,
+    };
+    const html = rendreEmail(gabarit);
+    const textBrut = rendreTexte(gabarit, texte);
+    const sujet = motProgramme
+      ? `Un mot de ${ev.name}`
+      : `Les photos de ${ev.name} vous attendent`;
 
     /* Les adresses partent en copie cachée : un invité n'a pas à découvrir
        le carnet d'adresses des autres invités. */
     for (let i = 0; i < adresses.length; i += PAR_MESSAGE) {
       try {
         await envoyer(cle, {
+          from: nomExpediteur(ev.name),
           to: [ADMINISTRATRICE],
           bcc: adresses.slice(i, i + PAR_MESSAGE),
           subject: sujet,
           html,
+          text: textBrut,
         });
         rapport.invites += Math.min(PAR_MESSAGE, adresses.length - i);
       } catch (e) {

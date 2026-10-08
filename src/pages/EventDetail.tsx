@@ -17,6 +17,7 @@ import CarteJeu from "@/components/CarteJeu";
 import FaceSearch from "@/components/FaceSearch";
 import CarteAnnonce from "@/components/CarteAnnonce";
 import CarteMerci from "@/components/CarteMerci";
+import CarteCommandes from "@/components/CarteCommandes";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { FiltreType, MediaFilter, PlayOverlay } from "@/components/MediaTabs";
@@ -46,6 +47,9 @@ interface EventRow {
   merci_texte: string | null;
   merci_envoi_le: string | null;
   merci_envoye_le: string | null;
+  expire_le: string | null;
+  album_achete?: boolean;
+  albums_offerts?: boolean;
 }
 
 /* Le livre d'or fait partie du Souvenir, pas de l'Essentiel : sans lui, ni ses
@@ -53,6 +57,10 @@ interface EventRow {
 const PLANS_AVEC_LIVRE_DOR = ["souvenir", "heritage", "admin"];
 const PLANS_AVEC_VISAGE = ["souvenir", "heritage", "admin"];
 const PLANS_AVEC_ALBUM = ["heritage", "admin"];
+/* L'album est compris dans l'Héritage, et s'ouvre aussi quand il a été acheté
+   à la carte ou offert par l'administratrice. */
+const albumOuvert = (e: EventRow) =>
+  PLANS_AVEC_ALBUM.includes(e.plan) || Boolean(e.album_achete) || Boolean(e.albums_offerts);
 /* Cette page était écrite entièrement en français dans le code. C'est celle
    où atterrit un client juste après avoir payé — donc la première qu'il ouvre
    en anglais si c'est sa langue. */
@@ -434,7 +442,7 @@ const EventDetail = () => {
               <Button asChild variant="outline" className="mt-2 w-full">
                 <Link to={`/dashboard/event/${id}/signaletique`}>{T.signaletique}</Link>
               </Button>
-              {PLANS_AVEC_ALBUM.includes(event.plan) && (
+              {albumOuvert(event) && (
                 <Button asChild variant="outline" className="mt-2 w-full">
                   <Link to={`/dashboard/event/${id}/album`}>{T.album}</Link>
                 </Button>
@@ -594,6 +602,17 @@ const EventDetail = () => {
             envoiLe={event.merci_envoi_le}
             envoyeLe={event.merci_envoye_le}
             onChange={(v) => setEvent((prev) => (prev ? { ...prev, ...v } : prev))}
+          />
+
+          <CarteCommandes
+            eventId={event.id}
+            plan={event.plan}
+            expireLe={event.expire_le}
+            albumInclus={albumOuvert(event)}
+            onActualiser={async () => {
+              const { data } = await supabase.from("events").select("*").eq("id", event.id).maybeSingle();
+              if (data) setEvent(data as unknown as EventRow);
+            }}
           />
 
           <ReglagesEvenement

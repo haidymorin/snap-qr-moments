@@ -44,17 +44,18 @@ const SECTIONS: Section[] = [
       {
         t: "Les trois formules",
         li: [
-          "Essentiel — 59 € : QR code et page de collecte, galerie partagée, téléchargement en haute définition, nettoyage automatique des doublons et des photos floues, PDF de signalétique à imprimer, hébergement 6 mois.",
-          "Souvenir — 179 € : tout l'Essentiel, plus le livre d'or numérique (messages écrits, vocaux et vidéo), le tri par visage, le diaporama en direct, la personnalisation aux couleurs de l'événement, hébergement 6 mois.",
-          "Héritage — 259 € : tout le Souvenir, plus l'album imprimé grand format et l'outil de composition de l'album, hébergement 6 mois.",
+          "Essentiel, 59 € : QR code et page de collecte, galerie partagée, téléchargement en haute définition, nettoyage automatique des doublons et des photos floues, PDF de signalétique à imprimer, hébergement 6 mois.",
+          "Souvenir, 179 € : tout l'Essentiel, plus le livre d'or numérique (messages écrits, vocaux et vidéo), le tri par visage, le diaporama en direct, le jeu photo (une liste de défis, au choix parmi trois modèles), la personnalisation aux couleurs de l'événement, hébergement 6 mois.",
+          "Héritage, 259 € : tout le Souvenir, plus l'album imprimé grand format et l'outil de composition de l'album, hébergement 6 mois.",
         ],
       },
       {
-        t: "Les objets imprimés, commandés séparément",
+        t: "Commandés séparément, depuis l'espace client",
         li: [
-          "Album grand format — 129 €",
-          "Mini-album personnalisé — 45 €",
-          "Année d'hébergement supplémentaire — 29 €",
+          "Album grand format : 129 €",
+          "Mini-album personnalisé : 45 € l'exemplaire",
+          "Année d'hébergement supplémentaire : 29 €",
+          "Passage à une formule supérieure : la différence entre le prix des deux formules, tant que la galerie est en ligne. Le contenu déjà déposé est conservé.",
         ],
       },
       {
