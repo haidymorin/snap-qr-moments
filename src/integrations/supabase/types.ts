@@ -261,6 +261,9 @@ export type Database = {
       }
       events: {
         Row: {
+          album_imprime_le: string | null
+          album_notifie_le: string | null
+          album_valide_le: string | null
           albums_offerts: boolean
           annonce_depuis: string | null
           annonce_texte: string | null
@@ -295,6 +298,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          album_imprime_le?: string | null
+          album_notifie_le?: string | null
+          album_valide_le?: string | null
           albums_offerts?: boolean
           annonce_depuis?: string | null
           annonce_texte?: string | null
@@ -329,6 +335,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          album_imprime_le?: string | null
+          album_notifie_le?: string | null
+          album_valide_le?: string | null
           albums_offerts?: boolean
           annonce_depuis?: string | null
           annonce_texte?: string | null
@@ -601,6 +610,9 @@ export type Database = {
           photo_thumb_url: string | null
           photo_url: string | null
           texte: string | null
+          video_poster_url: string | null
+          video_secondes: number | null
+          video_url: string | null
         }
         Insert: {
           audio_secondes?: number | null
@@ -613,6 +625,9 @@ export type Database = {
           photo_thumb_url?: string | null
           photo_url?: string | null
           texte?: string | null
+          video_poster_url?: string | null
+          video_secondes?: number | null
+          video_url?: string | null
         }
         Update: {
           audio_secondes?: number | null
@@ -625,6 +640,9 @@ export type Database = {
           photo_thumb_url?: string | null
           photo_url?: string | null
           texte?: string | null
+          video_poster_url?: string | null
+          video_secondes?: number | null
+          video_url?: string | null
         }
         Relationships: [
           {
@@ -895,10 +913,15 @@ export type Database = {
         }
         Returns: number
       }
+      album_marquer_imprime: {
+        Args: { p_event: string; p_imprime: boolean }
+        Returns: undefined
+      }
       album_reordonner: {
         Args: { p_event: string; p_ordre: string[] }
         Returns: undefined
       }
+      album_rouvrir: { Args: { p_event: string }; Returns: undefined }
       album_suggerer: {
         Args: {
           p_cible?: number
@@ -911,6 +934,7 @@ export type Database = {
           rang: number
         }[]
       }
+      album_valider: { Args: { p_event: string }; Returns: string }
       collecte_ouverte: { Args: { p_event_id: string }; Returns: boolean }
       creer_evenement_offert: {
         Args: {
@@ -1032,6 +1056,9 @@ export type Database = {
           photo_thumb_url: string
           photo_url: string
           texte: string
+          video_poster_url: string
+          video_secondes: number
+          video_url: string
         }[]
       }
       guest_list_media: {
