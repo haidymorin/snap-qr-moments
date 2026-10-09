@@ -709,7 +709,7 @@ const GuestEvent = () => {
               type="button"
               onClick={() => libraryInputRef.current?.click()}
               disabled={busy}
-              className="inline-flex min-h-[56px] items-center justify-center gap-3 rounded-xl border border-border px-8 py-4 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:border-primary disabled:opacity-50"
+              className="btn-cuivre min-h-[56px] px-8 py-4 text-xs uppercase tracking-[0.1em]"
             >
               <Images className="h-5 w-5" aria-hidden="true" />
               {t("guest.choosePhotos")}
@@ -776,7 +776,7 @@ const GuestEvent = () => {
                       <button
                         type="button"
                         onClick={retryFailed}
-                        className="inline-flex min-h-[44px] items-center rounded-full border border-primary px-5 py-2 text-xs font-semibold uppercase tracking-[0.1em] text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                        className="btn-cuivre min-h-[44px] px-5 py-2 text-xs uppercase tracking-[0.1em]"
                       >
                         {t("guest.retry")}
                       </button>
@@ -831,7 +831,7 @@ const GuestEvent = () => {
               <button
                 type="button"
                 onClick={() => setSelection((prev) => (prev ? null : new Set()))}
-                className="label-mono inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-border px-4 transition-colors hover:border-primary"
+                className="btn-cuivre min-h-[44px] px-5 text-sm"
               >
                 {selection ? <X className="h-4 w-4" /> : <CheckSquare className="h-4 w-4" />}
                 {selection ? t("guest.selAnnuler") : t("guest.selChoisir")}
@@ -943,7 +943,7 @@ const GuestEvent = () => {
                 type="button"
                 onClick={enregistrerSelection}
                 disabled={selection.size === 0 || enCours !== null}
-                className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-primary bg-primary px-6 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:opacity-40"
+                className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-primary px-6 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground shadow-[0_10px_24px_-14px_rgba(64,32,59,.7)] transition-transform active:scale-[.98] disabled:opacity-40"
               >
                 {enCours ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                 {enCours ? `${enCours.faits}/${enCours.total}` : t("guest.selEnregistrer")}
@@ -984,7 +984,7 @@ const GuestEvent = () => {
               saveCurrent();
             }}
             disabled={saving}
-            className="label-mono absolute left-4 top-4 flex min-h-[48px] items-center gap-2 border border-white/40 px-4 text-white opacity-100 transition-colors hover:bg-white/10 disabled:opacity-60"
+            className="btn-cuivre absolute left-4 top-4 min-h-[48px] px-5 text-sm"
           >
             <Download className="h-4 w-4" aria-hidden="true" />
             {saving ? t("guest.downloading") : t("guest.download")}

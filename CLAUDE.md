@@ -94,6 +94,13 @@ pour le texte · **JetBrains Mono** pour les étiquettes en capitales espacées,
 Angles arrondis de 6 à 28 px selon l'échelle, boutons en pilule. Fond blanc, beaucoup de
 contraste ; la couleur vient des photos.
 
+**Trois niveaux de boutons** (9 octobre 2026, classes dans `src/index.css`) :
+`.btn-action` aubergine plein pour l'action finale d'un bloc, avec une pastille cuivre et
+sa flèche quand c'est un envoi ; `.btn-cuivre` (variante `cuivre` du composant `Button`)
+pour les gestes secondaires : télécharger, choisir dans ses photos, sélectionner,
+réessayer ; `.tuile` pour choisir entre plusieurs façons de faire (écrire, voix, vidéo).
+Haïdy trouvait les contours gris « fades » : rien n'appelait le doigt.
+
 Les e-mails suivent la même direction : gabarit commun dans
 `supabase/functions/_shared/gabarit-email.ts`.
 

@@ -7,7 +7,7 @@ import { compressImage } from "@/lib/imageCompression";
 import {
   demarrerEnregistrement, enregistrementDisponible, type SessionEnregistrement,
 } from "@/lib/enregistreurVocal";
-import { Image as ImageIcon, Loader2, Mic, Pause, Play, Square, Trash2, Video, X } from "lucide-react";
+import { ArrowRight, Image as ImageIcon, Loader2, Mic, Pause, PenLine, Play, Square, Trash2, Video, X } from "lucide-react";
 
 /* Le livre d'or, côté invité.
  *
@@ -37,9 +37,9 @@ const TEXTES = {
     introAutre: "Laissez un mot aux hôtes. Quelques lignes, votre voix ou une vidéo.",
     prive: "Vos messages ne sont lus que par eux.",
     prenom: "Votre prénom",
-    ecrire: "Écrire un mot",
-    parler: "Enregistrer ma voix",
-    filmer: "Filmer un message",
+    ecrire: "Écrire",
+    parler: "Ma voix",
+    filmer: "En vidéo",
     videoDemarrer: "Filmer mon message",
     videoAide: "Trois minutes au plus. Votre téléphone ouvre sa caméra : filmez, puis validez.",
     videoRefaire: "Refilmer",
@@ -69,9 +69,9 @@ const TEXTES = {
     introAutre: "Leave a word for the hosts. A few lines, your voice or a video.",
     prive: "Only they will read your message.",
     prenom: "Your first name",
-    ecrire: "Write a note",
-    parler: "Record my voice",
-    filmer: "Film a message",
+    ecrire: "Write",
+    parler: "My voice",
+    filmer: "Video",
     videoDemarrer: "Film my message",
     videoAide: "Three minutes at most. Your phone opens its camera: film, then confirm.",
     videoRefaire: "Film again",
@@ -433,7 +433,11 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
           </div>
 
           {(
-            <div className="flex flex-wrap border-b border-border">
+            <div
+              role="group"
+              aria-label={T.message}
+              className={`grid gap-2 ${vocalAutorise && enregistrementDisponible() ? "grid-cols-3" : "grid-cols-2"}`}
+            >
               {(vocalAutorise && enregistrementDisponible()
                 ? (["ecrit", "vocal", "video"] as const)
                 : (["ecrit", "video"] as const)
@@ -442,10 +446,10 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
                   key={m}
                   type="button"
                   onClick={() => setMode(m)}
-                  className={`label-mono -mb-px min-h-[44px] border-b px-4 py-3 transition-colors ${
-                    mode === m ? "border-primary text-foreground opacity-100" : "border-transparent hover:text-foreground"
-                  }`}
+                  aria-pressed={mode === m}
+                  className="tuile"
                 >
+                  {m === "ecrit" ? <PenLine aria-hidden="true" /> : m === "vocal" ? <Mic aria-hidden="true" /> : <Video aria-hidden="true" />}
                   {m === "ecrit" ? T.ecrire : m === "vocal" ? T.parler : T.filmer}
                 </button>
               ))}
@@ -498,10 +502,10 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
                 <button
                   type="button"
                   onClick={() => videoInput.current?.click()}
-                  className="inline-flex min-h-[56px] items-center justify-center gap-3 border border-primary px-6 transition-colors hover:bg-primary hover:text-primary-foreground"
+                  className="btn-cuivre min-h-[56px] px-6 text-sm"
                 >
                   <Video className="h-4 w-4" />
-                  <span className="label-mono">{T.videoDemarrer}</span>
+                  {T.videoDemarrer}
                 </button>
               )}
               <p className="text-[13px] text-muted-foreground">{T.videoAide}</p>
@@ -535,10 +539,10 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
                 <button
                   type="button"
                   onClick={commencer}
-                  className="inline-flex min-h-[56px] items-center justify-center gap-3 rounded-full border border-primary px-6 transition-colors hover:bg-primary hover:text-primary-foreground"
+                  className="btn-cuivre min-h-[56px] px-6 text-sm"
                 >
                   <Mic className="h-4 w-4" />
-                  <span className="label-mono">{T.micDemarrer}</span>
+                  {T.micDemarrer}
                 </button>
               )}
             </div>
@@ -567,7 +571,7 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
               <button
                 type="button"
                 onClick={() => photoInput.current?.click()}
-                className="label-mono inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-border px-4 hover:border-primary"
+                className="btn-cuivre min-h-[44px] px-5 text-sm"
               >
                 <ImageIcon className="h-4 w-4" /> {T.photo}
               </button>
@@ -581,10 +585,12 @@ const LivreDor = ({ eventId, messagesPublics, vocalAutorise, typeEvenement }: Pr
           <button
             type="submit"
             disabled={!pret}
-            className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full border border-primary bg-primary px-8 text-xs font-semibold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-transparent hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+            className="btn-action w-full"
           >
-            {envoi && <Loader2 className="h-4 w-4 animate-spin" />}
-            {envoi ? T.envoi : T.envoyer}
+            <span>{envoi ? T.envoi : T.envoyer}</span>
+            <span className="pastille-fleche" aria-hidden="true">
+              {envoi ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+            </span>
           </button>
         </form>
       )}

@@ -496,7 +496,7 @@ const EventDetail = () => {
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <FiltreType type={filter} onType={changeFilter} counts={counts} />
-              <Button variant="outline" onClick={downloadZip} disabled={zipping || counts.all === 0}>
+              <Button variant="cuivre" className="min-h-[48px] px-6" onClick={downloadZip} disabled={zipping || counts.all === 0}>
                 <Download className="w-4 h-4" /> {avancement ? `${T.preparation} ${avancement.faits}/${avancement.total}` : zipping ? `${T.preparation}…` : T.toutTelecharger}
               </Button>
             </div>

@@ -233,3 +233,90 @@
     .carte-lueur::before { transition: none; }
   }
 }
+
+/* ── Les boutons « cuivre » (9 octobre 2026) ─────────────────────────────
+   Trois niveaux, pour qu'on voie tout de suite où poser le doigt :
+     · l'action finale d'un bloc : aubergine plein (.btn-action), avec la
+       pastille cuivre et sa flèche quand c'est un envoi ;
+     · les gestes secondaires (télécharger, choisir dans ses photos,
+       sélectionner, réessayer) : fond cuivre très clair, contour cuivre,
+       texte brun foncé (.btn-cuivre). Contraste du texte : plus de 7:1 ;
+     · le choix entre plusieurs façons de faire (écrire, voix, vidéo) :
+       des tuiles avec icône, la tuile choisie passe en cuivre (.tuile).
+   Avant, tout était contour gris et capitales grises : rien n'appelait le
+   doigt, et la page paraissait fade. */
+@layer components {
+  .btn-cuivre {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    border-radius: 9999px;
+    border: 1.5px solid #C1793E;
+    background: #FBF0E6;
+    color: #7A3F14;
+    font-weight: 600;
+    transition: background-color .15s ease, transform .1s ease, box-shadow .15s ease;
+  }
+  .btn-cuivre svg { color: #C1793E; }
+  .btn-cuivre:hover { background: #F6E2CF; box-shadow: 0 8px 20px -14px rgba(193,121,62,.8); }
+  .btn-cuivre:active { transform: scale(.98); }
+  .btn-cuivre:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .tuile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 76px;
+    border-radius: 16px;
+    border: 1.5px solid hsl(var(--border));
+    background: #fff;
+    color: hsl(var(--muted-foreground));
+    font-size: 13px;
+    font-weight: 600;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .tuile svg { width: 22px; height: 22px; }
+  .tuile:hover { border-color: #C1793E; color: #7A3F14; }
+  .tuile[aria-pressed="true"] {
+    border: 2px solid #C1793E;
+    background: #FBF0E6;
+    color: #7A3F14;
+  }
+  .tuile[aria-pressed="true"] svg { color: #C1793E; }
+
+  .pastille-fleche {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    background: #C1793E;
+    color: #fff;
+    flex-shrink: 0;
+    transition: transform .15s ease;
+  }
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 56px;
+    border-radius: 9999px;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    padding: 0 8px 0 26px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    box-shadow: 0 10px 24px -14px rgba(64,32,59,.7);
+    transition: transform .1s ease, box-shadow .15s ease, opacity .15s ease;
+  }
+  .btn-action:hover .pastille-fleche { transform: translateX(3px); }
+  .btn-action:active { transform: scale(.98); }
+  .btn-action:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+}
